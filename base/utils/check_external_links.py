@@ -1,9 +1,11 @@
 import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlparse
+from time import sleep
 
 def get_external_links_from_url(url, excluded):
     try:
+        print('Sprawdzam: ', url)
         response = requests.get(url)
         response.raise_for_status()
 
@@ -12,21 +14,21 @@ def get_external_links_from_url(url, excluded):
         links = []
 
         for link in soup.find_all('a', href=True):
+            
             absolute_url = urljoin(url, link['href'])
             parsed_url = urlparse(absolute_url)
             domain = parsed_url.netloc.replace('www.', '')
+
 
             if domain == base_domain.replace('www.', ''):
                 continue
 
             skip = False
             for keyword in excluded:
-                print(keyword, absolute_url)
                 if keyword in absolute_url:
                     skip = True
                     break
             if skip:
-                print('skipp')
                 continue            
 
             
@@ -44,6 +46,7 @@ def get_external_links_from_url(url, excluded):
         return links
 
     except requests.exceptions.RequestException as e:
+        print('Wystąpił błąd', e)
         return []
     
 
@@ -79,12 +82,11 @@ def get_external_links(domain, excluded=['mailto:', 'tel:']):
     
 
     for site in sites:
-        
         links = get_external_links_from_url(site, excluded)
         if links:
             path = site.split(domain)[-1]
             external_links[path] = []
-            print('Sprawdzam: ', site)
+            
 
         for link in links:
             external_links[path].append(link)

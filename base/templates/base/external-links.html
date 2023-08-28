@@ -41,7 +41,7 @@ external_links.js
                         <tr>
                             <td rowspan="{{ link_list|length }}"><a href="{{ link_group.grouper }}" rel="nofollow" target="_blank">{{ link_group.grouper|extract_path }}</a></td>
                             {% for link in link_list %}
-                                <td><a href="{{ link.linked_page }}" rel="nofollow" target="_blank">{{ link.linked_page }}</a></td>
+                                <td><a href="{{ link.linked_page }}" rel="nofollow" target="_blank">{{ link.linked_page|extract_domain }}</a></td>
                                 <td>{{ link.rel }}</td>
                             </tr>
                             {% if not forloop.last %}

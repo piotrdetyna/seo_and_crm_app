@@ -64,8 +64,12 @@ def add_site(request):
 
 
 @api_view(['GET'])
-def site_details(request, site_id):
+def site_details(request, site_id=None):
+    if not site_id:
+        site_id = get_value_or_none(request.session, 'current_site')
+    
     site = Site.objects.get(id=site_id)
+
     site.payment_date = site.payment_date.strftime('%Y-%m-%d')       
     return render(request, 'base/site-details.html', context={
         'site': site,
@@ -99,7 +103,7 @@ def find_external_links(request):
 
     to_exclude = request.data['to_exclude']
     links = get_external_links(site.url, excluded=to_exclude)
-    
+    print(links)
     external_link_objects = []
 
     for linking_page, linked_page in links.items():

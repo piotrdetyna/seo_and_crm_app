@@ -7,6 +7,7 @@ urlpatterns = [
     path('external/', views.external_links, name="external_links"),
     path('add-site/', views.add_site, name="add_site"),
     path('site/<int:site_id>/', views.site_details, name="site_details"),
+    path('site/', views.site_details, name="site_details"),
     path('edit-site/', views.edit_site, name="edit_site"),
     path('add-client/', views.add_client, name="add_client"),
     path('find-external/', views.find_external_links, name="find_external_links"),
