@@ -408,23 +408,39 @@ img.miniature {
 
 }
 
-.accordion {
-  width: 95%;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  padding: 10px;
-  margin: 20px;
-}
-
-.accordion-item {
-  display: none;
-  margin-top: 10px;
-}
 
 textarea {
-  border-radius: 5px;
+  border: solid 1px #7157f6;
+  padding: 5px 10px;
+  border-radius: 10px;
+  width: 50%;
+  height: 48px;
 }
 
 #toggleButton {
+  margin-left:20px;
   cursor: pointer;
+}
+
+.inline {
+  display: inline;
+}
+
+.disabled {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+
+.top {
+  display: flex; 
+  flex-direction: 
+  row; align-items: 
+  flex-start;
+  gap: 10px;
+}
+
+table caption {
+  text-align:right;
+  margin: 5px;
 }

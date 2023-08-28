@@ -9,29 +9,25 @@ external_links.js
         <h1>Linki wychodzące</h1>
     </div>
     <div class="card-content">        
-        <p>Sprawdź linki wychodzące</p>
-        {% csrf_token %}
         
-        <div class="accordion">
-            <span id="toggleButton">Pokaż zawartość</span>
-            <div class="accordion-item" id="accordion-item">
-                <div class="row">
-                    <div class="column">
-                        <button id="find-links" class="button-purple" value="{{ site_id }}">Znajdź linki</button>
-                        <small id="find-links-message"></small>
-                    </div>
-                    <div class="column">
-                        <textarea id="to-exclude">{% for keyword in external_links.excluded %}{{ keyword }}{% if not forloop.last %}, {% endif %}{% empty %}facebook, pinterest, reddit{% endfor %}</textarea>
-                    </div>
-                
-                </div>
+        {% csrf_token %}
+        <div class="row">
+            <div class="column top">
+                <button id="find-links" class="button-purple" value="{{ site_id }}">Znajdź linki</button>
+                <textarea id="to-exclude">{% for keyword in external_links.excluded %}{{ keyword }}{% if not forloop.last %}, {% endif %}{% empty %}facebook, pinterest, reddit{% endfor %}</textarea>
+            </div>
+            <div class="column">
+                {% if external_links %}
+                    <p>Wykluczono: {% for keyword in external_links.excluded %}{{ keyword }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
+                {% endif %}
             </div>
         </div>
         
         {% if external_links %}
-        <p>Dane z {{ external_links.date }}</p>
-        <p>Wykluczono: {{ external_links.excluded }}</p>
         <table>
+            <caption>
+                Dane z {{ external_links.date }}
+            </caption>
             <thead>
                 <tr>
                     <th width="50%">Strona linkująca</th>
