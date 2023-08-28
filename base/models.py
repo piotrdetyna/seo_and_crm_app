@@ -20,7 +20,7 @@ class Client(models.Model):
 
 
 class Site(models.Model):
-    url = models.CharField(max_length=50, unique=True)
+    url = models.CharField(max_length=150, unique=True)
     payment_date = models.DateField(blank=True, null=True)
     client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name="sites")
     logo = models.ImageField(upload_to=logo_file_name)
@@ -45,4 +45,5 @@ class ExternalLinks(models.Model):
     links = models.JSONField()
     excluded = models.JSONField()
     date = models.DateField(auto_now=True)
+
 
