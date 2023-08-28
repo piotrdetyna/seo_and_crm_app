@@ -1,0 +1,49 @@
+{% extends "base/layout.html" %}
+
+{% block script %}
+add_site.js
+{% endblock %}
+
+{% block main %}
+    <div class="card-top">
+        <h1>Dodaj stronę</h1>
+    </div>
+    <div class="card-content">
+        <p>Dodaj nową stronę</p>
+        <div class="row">
+            <div class="column">
+                <div id="client-choice-container">
+                    <h2>Wybierz klienta <small id="add-client-button">Lub dodaj nowego</small></h2>
+                    <div class="clients-list">
+                        {% for client in clients %}
+                            <label><input type="checkbox" value="{{ client.id }}">{{ client.name }}</label>
+                        {% empty %}
+                            <p>Brak klientów</p>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div id="client-add-container">
+                    <h2>Dodaj klienta <small id="choice-client-button">Lub wybierz z listy</small></h2>
+                    <form id="add-client">
+                        {% csrf_token %}
+                        <label>Nazwa firmy<input type="text" name="name"></label>
+                        <label>NIP<input type="number" name="nip"></label>
+                        <label>E-mail<input type="email" name="email"></label>
+                        <input type="submit" class="button-purple" value="Dodaj">
+                    </form>
+                    <span id="add-client-message"></span>
+                </div>
+            </div>
+            <div class="column">
+                <h2>Wprowadź dane</h2>
+                <form id="add-site">
+                    <label>URL<input type="text" name="url"></label>
+                    <label>Data opłacenia hostingu<input type="date" name="payment_date"></label>
+                    <label class="file-input">Logo<input type="file" name="logo"><div class="file-input-button">Prześlij</div></label>
+                    <input type="submit" class="button-purple" value="Dodaj">
+                </form>
+                <span id="add-site-message"></span>
+            </div>
+        </div>
+    </div>
+{% endblock %}

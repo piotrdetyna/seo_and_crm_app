@@ -1,0 +1,31 @@
+{% extends "base/layout.html" %}
+
+{% block script %}
+site_details.js
+{% endblock %}
+{% block main %}
+    <div class="card-top">
+        <h1>Szczegóły strony {{ site.url }}</h1>
+    </div>
+    <div class="card-content">
+        <p>Dodaj nową stronę</p>
+        <div class="row">
+            <div class="column">
+                
+                <img src="{{ site.logo.url }}" class="client-image-big">
+            </div>
+            <div class="column">
+                {{ site.payment_date }}
+                <h2>Edytuj stronę</h2>
+                <form id="edit-site">
+                    {% csrf_token %}
+                    <label>URL<input type="text" name="url" value="{{ site.url }}"></label>
+                    <label>Data opłacenia hostingu<input type="date" name="payment_date" value="{{ site.payment_date }}"></label>
+                    <label class="file-input">Logo<input type="file" name="logo" value="{{ site.logo }}"><div class="file-input-button">Zmień</div></label>
+                    <input type="submit" class="button-purple" value="Dodaj">
+                </form>
+                <span id="add-site-message"></span>
+            </div>
+        </div>
+    </div>
+{% endblock %}

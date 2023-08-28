@@ -1,0 +1,61 @@
+{% extends "base/layout.html" %}
+{% load custom_filters %}
+{% block script %}
+external_links.js
+{% endblock %}
+
+{% block main %}
+    <div class="card-top">
+        <h1>Linki wychodzące</h1>
+    </div>
+    <div class="card-content">        
+        <p>Sprawdź linki wychodzące</p>
+        {% csrf_token %}
+        
+        <div class="accordion">
+            <span id="toggleButton">Pokaż zawartość</span>
+            <div class="accordion-item" id="accordion-item">
+                <div class="row">
+                    <div class="column">
+                        <button id="find-links" class="button-purple" value="{{ site_id }}">Znajdź linki</button>
+                        <small id="find-links-message"></small>
+                    </div>
+                    <div class="column">
+                        <textarea id="to-exclude">{% for keyword in external_links.excluded %}{{ keyword }}{% if not forloop.last %}, {% endif %}{% empty %}facebook, pinterest, reddit{% endfor %}</textarea>
+                    </div>
+                
+                </div>
+            </div>
+        </div>
+        
+        {% if external_links %}
+        <p>Dane z {{ external_links.date }}</p>
+        <p>Wykluczono: {{ external_links.excluded }}</p>
+        <table>
+            <thead>
+                <tr>
+                    <th width="50%">Strona linkująca</th>
+                    <th width="25%">Strona docelowa</th>
+                    <th width="25%">Rel</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for url, links in external_links.links.items %}
+                <tr>
+                    <td rowspan="{{ links|length }}"><a href="{{ url }}" rel="nofollow" target="_blank">{{ url|extract_path }}</a></td>
+                    {% for link in links %}
+                        <td><a href="{{ link.href }}" rel="nofollow" target="_blank">{{ link.domain }}</a></td>
+                        <td>{{ link.rel }}</td>
+                </tr>
+                        {% if not forloop.last %}
+                            <tr>
+                        {% endif %}
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+
+            </tbody>
+        </table>
+        {% endif %}
+    </div>
+{% endblock %}
