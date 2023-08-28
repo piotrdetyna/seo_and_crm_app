@@ -7,3 +7,7 @@ def extract_path(value):
     if get_domain_from_url(value):
         return value.split(get_domain_from_url(value))[-1]
     return ''
+
+@register.filter(name="extract_domain")
+def extract_domain(value):
+    return get_domain_from_url(value)

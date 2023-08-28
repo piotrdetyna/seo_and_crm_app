@@ -22,7 +22,6 @@ external_links.js
                 {% endif %}
             </div>
         </div>
-        
         {% if external_links %}
         <table>
             <caption>
@@ -36,19 +35,23 @@ external_links.js
                 </tr>
             </thead>
             <tbody>
-                {% for url, links in external_links.links.items %}
-                <tr>
-                    <td rowspan="{{ links|length }}"><a href="{{ url }}" rel="nofollow" target="_blank">{{ url|extract_path }}</a></td>
-                    {% for link in links %}
-                        <td><a href="{{ link.href }}" rel="nofollow" target="_blank">{{ link.domain }}</a></td>
-                        <td>{{ link.rel }}</td>
-                </tr>
-                        {% if not forloop.last %}
-                            <tr>
-                        {% endif %}
-                    {% endfor %}
-                </tr>
+                {% regroup external_links.links.all by linking_page as links %}
+                {% for link_group in links %}
+                    {% with link_list=link_group.list %}
+                        <tr>
+                            <td rowspan="{{ link_list|length }}"><a href="{{ link_group.grouper }}" rel="nofollow" target="_blank">{{ link_group.grouper|extract_path }}</a></td>
+                            {% for link in link_list %}
+                                <td><a href="{{ link.linked_page }}" rel="nofollow" target="_blank">{{ link.linked_page }}</a></td>
+                                <td>{{ link.rel }}</td>
+                            </tr>
+                            {% if not forloop.last %}
+                                <tr>
+                            {% endif %}
+                            {% endfor %}
+                        </tr>
+                    {% endwith %}
                 {% endfor %}
+                
 
             </tbody>
         </table>

@@ -40,10 +40,17 @@ class Site(models.Model):
         }
     
 
+class ExternalLink(models.Model):
+    linking_page = models.CharField(max_length=150)
+    linked_page = models.CharField(max_length=150)
+    rel = models.CharField(max_length=10)
+
+    def __str__(self):
+        return f'link {self.rel} from {self.linking_page} to {self.linked_page}'
+
+
 class ExternalLinks(models.Model):
-    site = models.ForeignKey(Site, on_delete=models.CASCADE, related_name="external_links")
-    links = models.JSONField()
+    site = models.OneToOneField(Site, on_delete=models.CASCADE, related_name="external_links")
+    links = models.ManyToManyField(ExternalLink)
     excluded = models.JSONField()
     date = models.DateField(auto_now=True)
-
-

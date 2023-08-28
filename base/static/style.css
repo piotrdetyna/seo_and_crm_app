@@ -61,6 +61,7 @@ body {
     left: 0;
     top: 54px;
     height: calc(100% - 54px);
+    z-index: 1;
 }
 
 .sidebar-bottom {
@@ -101,17 +102,17 @@ box-shadow: 0px 0px 20px -4px rgba(231, 231, 231, 1);
   padding: 5px 20px;
 }
 
-  footer {
-    z-index: -1;
-    border-top: solid #e7e1eb 0.01px;
-    width: 100%;
-    margin: 0 auto;
-    text-align: center;
-    padding-bottom: 20px;
-    position: absolute;
-    bottom: 0;
-    height: 30px;
-  }
+footer {
+  border-top: solid #e7e1eb 0.01px;
+  width: 100%;
+  margin: 0 auto;
+  text-align: center;
+  padding: 0 0 20px 0;
+  position: relative;
+  clear: both;
+  height:30px;
+}
+
 
   footer > p {
     margin-right: 40px;

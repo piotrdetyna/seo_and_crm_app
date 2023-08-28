@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from .serializers import SiteSerializer, ClientSerializer
-from .models import User, Client, Site, ExternalLinks
+from .models import User, Client, Site, ExternalLinks, ExternalLink
 from .utils.check_external_links import get_external_links
 from .utils.utils import get_domain_from_url
 from django.core.exceptions import ObjectDoesNotExist
@@ -96,25 +96,29 @@ def edit_site(request):
 def find_external_links(request):
     site_id = request.data['site_id']
     site = Site.objects.get(id=site_id)
-    to_exclude = request.data['to_exclude']
 
-    external_links_object = get_object_or_none(ExternalLinks, site=site)
-    if external_links_object:
-       links = get_external_links(site.url, excluded=to_exclude)
-       external_links_object.links = links
-       external_links_object.excluded = to_exclude
-    else:
-        links = get_external_links(site.url, excluded=to_exclude)
-        external_links_object = ExternalLinks(
-            site=site,
-            links=links,
-            excluded=to_exclude
-        )
+    to_exclude = request.data['to_exclude']
+    links = get_external_links(site.url, excluded=to_exclude)
+    
+    external_link_objects = []
+
+    for linking_page, linked_page in links.items():
+        for link in linked_page:
+            external_link = ExternalLink(
+                linking_page=linking_page,
+                linked_page=link['href'],
+                rel=link['rel']
+            )
+            external_link.save()
+            external_link_objects.append(external_link)
+    
+    external_links_object, created = ExternalLinks.objects.get_or_create(site=site, defaults={'excluded': to_exclude})
+    external_links_object.save()
+    external_links_object.links.set(external_link_objects)
+    external_links_object.excluded = to_exclude
     external_links_object.save()
 
-    return Response({
-        'links': links,
-    }, 200)
+    return Response({'links': links}, status=200)
         
     
 @api_view(['POST'])
