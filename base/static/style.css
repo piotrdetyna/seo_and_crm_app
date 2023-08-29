@@ -3,6 +3,7 @@ body {
     padding: 0;
     font-family: 'Quicksand';
     letter-spacing: 1.5px;
+    position: relative;
     
   }
   
@@ -105,18 +106,14 @@ box-shadow: 0px 0px 20px -4px rgba(231, 231, 231, 1);
 footer {
   border-top: solid #e7e1eb 0.01px;
   width: 100%;
-  margin: 0 auto;
   text-align: center;
-  padding: 0 0 20px 0;
-  position: relative;
-  clear: both;
-  height:30px;
+  height: 30px;
+  padding-bottom: 20px;
+  
 }
 
 
-  footer > p {
-    margin-right: 40px;
-  }
+
 
  
   .card-top {
@@ -416,6 +413,11 @@ textarea {
   border-radius: 10px;
   width: 50%;
   height: 48px;
+}
+
+textarea:focus {
+  border: 1px solid #5a3be6;
+  box-shadow: 6px 6px 0px #7157f6;
 }
 
 #toggleButton {

@@ -7,7 +7,6 @@ from .utils.check_external_links import get_external_links
 from .utils.check_site_availability import is_site_available
 from .utils.utils import get_domain_from_url
 from django.core.exceptions import ObjectDoesNotExist
-from time import sleep
 
 def get_object_or_none(model, **kwargs):
     try:
@@ -176,6 +175,5 @@ def check_linked_page_availability(request):
         linked_page = external_link.linked_page
         external_link.is_linked_page_available = is_site_available(linked_page)
         external_link.save()
-        sleep(1)
 
     return Response('Successfully setted current site', 200)

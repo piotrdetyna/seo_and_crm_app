@@ -14,7 +14,7 @@ external_links.js
         <div class="row">
             <div class="column top">
                 <button id="find-links" class="button-purple" value="{{ site_id }}">Znajdź linki</button>
-                <textarea id="to-exclude">{% for keyword in external_links.excluded %}{{ keyword }}{% if not forloop.last %}, {% endif %}{% empty %}facebook, pinterest, reddit{% endfor %}</textarea>
+                <textarea id="to-exclude">{% for keyword in external_links.excluded %}{{ keyword }}{% if not forloop.last %}, {% endif %}{% endfor %}</textarea>
             </div>
             <div class="column">
                 {% if external_links %}
@@ -22,7 +22,7 @@ external_links.js
                 {% endif %}
             </div>
         </div>
-        {% if external_links %}
+        {% if external_links.links.all %}
         
         <table>
             <caption>
@@ -44,8 +44,8 @@ external_links.js
                             <td rowspan="{{ link_list|length }}"><a href="{{ link_group.grouper }}" rel="nofollow" target="_blank">{{ link_group.grouper|extract_path }}</a></td>
                             {% for link in link_list %}
                                 <td><a href="{{ link.linked_page }}" rel="nofollow" target="_blank">{{ link.linked_page|extract_domain }}</a></td>
-                                <td>{{ link.rel }}</td>
-                                <td class="{{ link.is_linked_page_available|color_class_from_bool }}">{{ link.is_linked_page_available|page_availability_from_bool }}</td>
+                                <td class="{{ link.rel | color_class_from_rel_attribute}}">{{ link.rel }}</td>
+                                <td class="{{ link.is_linked_page_available | color_class_from_bool }}">{{ link.is_linked_page_available | page_availability_from_bool }}</td>
                             </tr>
                             {% if not forloop.last %}
                                 <tr>
@@ -54,7 +54,6 @@ external_links.js
                         </tr>
                     {% endwith %}
                 {% endfor %}
-                
 
             </tbody>
         </table>

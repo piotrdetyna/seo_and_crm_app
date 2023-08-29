@@ -29,3 +29,11 @@ def color_class_from_bool(value):
         None: "black-text"
     }
     return bool_to_text[value]
+
+@register.filter(name="color_class_from_rel_attribute")
+def color_class_from_rel_attribute(value):
+    rel_to_text = {
+        'dofollow': "purple-text",
+        'nofollow': "black-text",
+    }
+    return rel_to_text[value]
