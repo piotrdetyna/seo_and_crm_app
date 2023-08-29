@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let currentSiteId = currentSiteSpan.dataset.id
         if (currentSiteId) {
             let current_site = await getSite(currentSiteId)
-            currentSiteSpan.innerHTML = `Aktualna strona: <a href="/site/${current_site.id}/"> ${current_site.url}✏️</a>`
+            currentSiteSpan.innerHTML = `Aktualna strona: <a href="/site/"> ${current_site.url}✏️</a>`
         } 
         else {
             currentSiteSpan.innerText = 'Wybierz stronę'

@@ -4,8 +4,10 @@ from rest_framework.decorators import api_view
 from .serializers import SiteSerializer, ClientSerializer
 from .models import User, Client, Site, ExternalLinks, ExternalLink
 from .utils.check_external_links import get_external_links
+from .utils.check_site_availability import is_site_available
 from .utils.utils import get_domain_from_url
 from django.core.exceptions import ObjectDoesNotExist
+from time import sleep
 
 def get_object_or_none(model, **kwargs):
     try:
@@ -103,11 +105,10 @@ def find_external_links(request):
 
     to_exclude = request.data['to_exclude']
     links = get_external_links(site.url, excluded=to_exclude)
-    print(links)
     external_link_objects = []
 
-    for linking_page, linked_page in links.items():
-        for link in linked_page:
+    for linking_page, links in links.items():
+        for link in links:
             external_link = ExternalLink(
                 linking_page=linking_page,
                 linked_page=link['href'],
@@ -163,4 +164,18 @@ def set_current_site(request):
         request.session['current_site'] = site_id
     except ObjectDoesNotExist:
         return Response('Site is not valid', 400)
+    return Response('Successfully setted current site', 200)
+
+
+@api_view(['PUT'])
+def check_linked_page_availability(request):
+    external_links_id = request.data['external_links_id']
+    external_links = ExternalLinks.objects.get(id=external_links_id)
+
+    for external_link in external_links.links.all():
+        linked_page = external_link.linked_page
+        external_link.is_linked_page_available = is_site_available(linked_page)
+        external_link.save()
+        sleep(1)
+
     return Response('Successfully setted current site', 200)

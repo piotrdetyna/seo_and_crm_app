@@ -44,6 +44,7 @@ class ExternalLink(models.Model):
     linking_page = models.CharField(max_length=150)
     linked_page = models.CharField(max_length=150)
     rel = models.CharField(max_length=10)
+    is_linked_page_available = models.BooleanField(blank=True, null=True)
 
     def __str__(self):
         return f'link {self.rel} from {self.linking_page} to {self.linked_page}'

@@ -23,15 +23,17 @@ external_links.js
             </div>
         </div>
         {% if external_links %}
+        
         <table>
             <caption>
-                Dane z {{ external_links.date }}
+                Dane z {{ external_links.date }} | <span id="check-availability" class="purple-text" data-external-links-id="{{ external_links.id }}">Sprawdź dostępność stron docelowych</span>
             </caption>
             <thead>
                 <tr>
-                    <th width="50%">Strona linkująca</th>
+                    <th width="60%">Strona linkująca</th>
                     <th width="25%">Strona docelowa</th>
-                    <th width="25%">Rel</th>
+                    <th width="15%">Rel</th>
+                    <th width="10%">Dostępność</th>
                 </tr>
             </thead>
             <tbody>
@@ -43,6 +45,7 @@ external_links.js
                             {% for link in link_list %}
                                 <td><a href="{{ link.linked_page }}" rel="nofollow" target="_blank">{{ link.linked_page|extract_domain }}</a></td>
                                 <td>{{ link.rel }}</td>
+                                <td class="{{ link.is_linked_page_available|color_class_from_bool }}">{{ link.is_linked_page_available|page_availability_from_bool }}</td>
                             </tr>
                             {% if not forloop.last %}
                                 <tr>

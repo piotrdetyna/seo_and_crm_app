@@ -5,8 +5,11 @@ from time import sleep
 
 def get_external_links_from_url(url, excluded):
     try:
-        print('Sprawdzam: ', url)
-        response = requests.get(url)
+        response = requests.get(url, headers={
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36',
+        })
         response.raise_for_status()
 
         soup = BeautifulSoup(response.content, 'html.parser')

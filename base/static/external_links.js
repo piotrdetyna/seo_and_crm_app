@@ -26,4 +26,31 @@ document.addEventListener('DOMContentLoaded', () => {
         })
     }
 
+
+    const checkAvailabilityButton = document.querySelector('#check-availability');
+    console.log(checkAvailabilityButton.dataset)
+    const externalLinksId = checkAvailabilityButton.dataset.externalLinksId
+    checkAvailabilityButton.onclick = () => {
+        checkAvailabilityButton.classList.add('disabled')
+        console.log(externalLinksId)
+        fetch('/check-linked-page-availability/', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name="csrfmiddlewaretoken"]').value,
+            },
+            body: JSON.stringify({
+                'external_links_id': externalLinksId,
+            })
+        })
+        .then(response => {
+            if (response.ok) {
+                response.json().then(data => {
+                    location.reload()
+                })
+
+            }
+        })
+    }
+
 })

@@ -14,4 +14,5 @@ urlpatterns = [
     path('get-sites/', views.get_sites, name="get_sites"),
     path('get-sites/<int:site_id>/', views.get_sites, name="get_sites"),
     path('set-current-site/', views.set_current_site, name="set_current_site"),
+    path('check-linked-page-availability/', views.check_linked_page_availability, name="check_linked_page_availability"),
 ]
