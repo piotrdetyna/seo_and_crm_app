@@ -73,26 +73,15 @@ def get_links_from_xml(url):
     
     return links
 
-def get_external_links(domain, excluded=['mailto:', 'tel:']):
-
+def get_pages_from_sitemap(domain):
     domain = 'https://' + domain
     sitemaps = ['/sitemap-posts.xml', '/sitemap-pages.xml', '/sitemap-categories.xml', '/wp-sitemap-posts-page-1.xml', '/wp-sitemap-posts-post-1.xml', '/sitemap-home.xml']
-    sites = []
+    pages = []
     for sitemap in sitemaps:
-        sites.extend(get_links_from_xml(domain + sitemap))
-    external_links = {}
+        pages.extend(get_links_from_xml(domain + sitemap))
+    return pages
 
-    
-
-    for site in sites:
-        print('Checking...', site)
-        links = get_external_links_from_url(site, excluded)
-        if links:
-            path = site.split(domain)[-1]
-            external_links[path] = []
-            
-
-        for link in links:
-            external_links[path].append(link)
-    return external_links
+def get_external_links(page, excluded=['mailto:', 'tel:']):
+    links = get_external_links_from_url(page, excluded)
+    return links
 

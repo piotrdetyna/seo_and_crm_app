@@ -2,11 +2,12 @@ from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from .serializers import SiteSerializer, ClientSerializer
-from .models import User, Client, Site, ExternalLinks, ExternalLink
-from .utils.check_external_links import get_external_links
+from .models import User, Client, Site, ExternalLinks, ExternalLink, ActionProgress
+from .utils.check_external_links import get_external_links, get_pages_from_sitemap
 from .utils.check_site_availability import is_site_available
 from .utils.utils import get_domain_from_url
 from django.core.exceptions import ObjectDoesNotExist
+ACTION_TYPES = ['find_external_links', 'check_page_avilability']
 
 def get_object_or_none(model, **kwargs):
     try:
@@ -98,19 +99,27 @@ def edit_site(request):
 @api_view(['PUT'])
 def find_external_links(request):
     site = Site.objects.get(id=request.data['site_id'])
-    links = get_external_links(site.url, excluded=request.data['to_exclude'])
+    pages = get_pages_from_sitemap(site.url)
+    progress_tracker = ActionProgress(
+        action="find_external_links",
+        target=len(pages)
+    )
+    progress_tracker.save()
     external_link_objects = []
-
-    for linking_page, links_list in links.items():
-        for link in links_list:
-            external_link = ExternalLink(
-                linking_page=linking_page,
+    for page in pages:
+        links = get_external_links(page, excluded=request.data['to_exclude'])
+        for link in links:
+            external_link_object = ExternalLink(
+                linking_page=page,
                 linked_page=link['href'],
                 rel=link['rel']
             )
-            external_link.save()
-            external_link_objects.append(external_link)
-    
+            external_link_object.save()
+            external_link_objects.append(external_link_object)
+        progress_tracker.current += 1
+        progress_tracker.save()
+        print(progress_tracker)
+
     external_links_object, _ = ExternalLinks.objects.get_or_create(site=site, defaults={'excluded': request.data['to_exclude']})
     external_links_object.links.set(external_link_objects)
     external_links_object.excluded = request.data['to_exclude']
@@ -118,7 +127,18 @@ def find_external_links(request):
 
     return Response({'links': links}, status=200)
 
-        
+
+@api_view(['GET'])
+def get_progress(request, progress_id):
+    progress_object = get_object_or_none(ActionProgress, id=progress_id)
+    if not progress_object:
+        return Response('progress_id is not valid', 400)
+    
+    return Response({
+        'current': progress_object.current,
+        'target': progress_object.target,
+    }, 200)
+
     
 @api_view(['POST'])
 def add_client(request):

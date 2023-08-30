@@ -55,3 +55,12 @@ class ExternalLinks(models.Model):
     links = models.ManyToManyField(ExternalLink)
     excluded = models.JSONField()
     date = models.DateField(auto_now=True)
+
+
+class ActionProgress(models.Model):
+    action = models.CharField(max_length=20)
+    target = models.IntegerField()
+    current = models.IntegerField(default=0)
+
+    def __str__(self):
+        return f'Action {self.action}: {self.current} / {self.target}'
