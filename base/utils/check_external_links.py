@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlparse
 from time import sleep
 
-def get_external_links_from_url(url, excluded):
+def get_external_links(url, excluded):
     try:
         response = requests.get(url, headers={
             'Cache-Control': 'no-cache, no-store, must-revalidate',
@@ -22,7 +22,6 @@ def get_external_links_from_url(url, excluded):
             parsed_url = urlparse(absolute_url)
             domain = parsed_url.netloc.replace('www.', '')
 
-
             if domain == base_domain.replace('www.', ''):
                 continue
 
@@ -32,7 +31,7 @@ def get_external_links_from_url(url, excluded):
                     skip = True
                     break
             if skip:
-                continue            
+                continue         
 
             
             rel_attribute = link.get('rel', [])
@@ -80,8 +79,4 @@ def get_pages_from_sitemap(domain):
     for sitemap in sitemaps:
         pages.extend(get_links_from_xml(domain + sitemap))
     return pages
-
-def get_external_links(page, excluded=['mailto:', 'tel:']):
-    links = get_external_links_from_url(page, excluded)
-    return links
 

@@ -50,10 +50,10 @@ class ExternalLink(models.Model):
         return f'link {self.rel} from {self.linking_page} to {self.linked_page}'
 
 
-class ExternalLinks(models.Model):
+class ExternalLinksManager(models.Model):
     site = models.OneToOneField(Site, on_delete=models.CASCADE, related_name="external_links")
     links = models.ManyToManyField(ExternalLink)
-    excluded = models.JSONField()
+    excluded = models.JSONField(default=list)
     date = models.DateField(auto_now=True)
 
 

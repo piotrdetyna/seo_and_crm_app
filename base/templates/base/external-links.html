@@ -13,7 +13,7 @@ external_links.js
         {% csrf_token %}
         <div class="row">
             <div class="column top">
-                {% if external_links %}
+                {% if site_id %}
                     <button id="find-links" class="button-purple" value="{{ site_id }}">Znajdź linki</button>
                     <textarea id="to-exclude" placeholder="Wprowadź słowa do wykluczenia">{% for keyword in external_links.excluded %}{{ keyword }}{% if not forloop.last %}, {% endif %}{% endfor %}</textarea>
                 {% else %}
@@ -21,7 +21,7 @@ external_links.js
                 {% endif %}
                 </div>
             <div class="column">
-                {% if external_links %}
+                {% if external_links.excluded %}
                     <p>Wykluczono: {% for keyword in external_links.excluded %}{{ keyword }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
                 {% endif %}
             </div>
