@@ -85,6 +85,7 @@ def get_external_links(domain, excluded=['mailto:', 'tel:']):
     
 
     for site in sites:
+        print('Checking...', site)
         links = get_external_links_from_url(site, excluded)
         if links:
             path = site.split(domain)[-1]

@@ -27,10 +27,8 @@ def index(request):
 def external_links(request, site_id=None):
     if not site_id:
         site_id = get_value_or_none(request.session, 'current_site')
-
     site = get_object_or_none(Site, id=site_id)
     external_links_object = get_object_or_none(ExternalLinks, site=site)
-
 
     return render(request, 'base/external-links.html', context={
         'external_links': external_links_object,
@@ -99,15 +97,12 @@ def edit_site(request):
 
 @api_view(['PUT'])
 def find_external_links(request):
-    site_id = request.data['site_id']
-    site = Site.objects.get(id=site_id)
-
-    to_exclude = request.data['to_exclude']
-    links = get_external_links(site.url, excluded=to_exclude)
+    site = Site.objects.get(id=request.data['site_id'])
+    links = get_external_links(site.url, excluded=request.data['to_exclude'])
     external_link_objects = []
 
-    for linking_page, links in links.items():
-        for link in links:
+    for linking_page, links_list in links.items():
+        for link in links_list:
             external_link = ExternalLink(
                 linking_page=linking_page,
                 linked_page=link['href'],
@@ -116,13 +111,13 @@ def find_external_links(request):
             external_link.save()
             external_link_objects.append(external_link)
     
-    external_links_object, created = ExternalLinks.objects.get_or_create(site=site, defaults={'excluded': to_exclude})
-    external_links_object.save()
+    external_links_object, _ = ExternalLinks.objects.get_or_create(site=site, defaults={'excluded': request.data['to_exclude']})
     external_links_object.links.set(external_link_objects)
-    external_links_object.excluded = to_exclude
+    external_links_object.excluded = request.data['to_exclude']
     external_links_object.save()
 
     return Response({'links': links}, status=200)
+
         
     
 @api_view(['POST'])
@@ -176,4 +171,4 @@ def check_linked_page_availability(request):
         external_link.is_linked_page_available = is_site_available(linked_page)
         external_link.save()
 
-    return Response('Successfully setted current site', 200)
+    return Response('Successfully set current site', 200)
