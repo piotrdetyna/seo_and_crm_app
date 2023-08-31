@@ -25,17 +25,6 @@ def get_value_or_none(dictionary, key):
 def index(request):
     return render(request, 'base/index.html')
 
-def external_links(request, site_id=None):
-    if not site_id:
-        site_id = get_value_or_none(request.session, 'current_site')
-    site = get_object_or_none(Site, id=site_id)
-    external_links_manager = get_object_or_none(ExternalLinksManager, site=site)
-
-    return render(request, 'base/external-links.html', context={
-        'external_links': external_links_manager,
-        'site_id': site_id,
-    })
-
 
 @api_view(['GET', 'POST'])
 def add_site(request):
@@ -94,52 +83,6 @@ def edit_site(request):
 
             return Response('Successfully edited site', 200)
         return Response('Submitted data is incorrect.', 400)
-
-
-@api_view(['PUT'])
-def find_external_links(request):
-    site = Site.objects.get(id=request.data['site_id'])
-    external_links_manager, _ = ExternalLinksManager.objects.get_or_create(site=site)
-    external_links_manager.progress_current = 0
-    external_links_manager.excluded = request.data['to_exclude']
-    external_links_manager.links.all().delete()
-    pages = get_pages_from_sitemap(site.url)
-    external_links_manager.progress_target = len(pages)
-    
-    
-    external_links_manager.save()
-
-    for page in pages:
-        links = get_external_links(page, request.data['to_exclude'])
-        for link in links:
-            print(link)
-            external_link_object = ExternalLink(
-                linking_page=page,
-                linked_page=link['href'],
-                rel=link['rel'],
-            )
-            external_link_object.save()
-            external_links_manager.links.add(external_link_object)
-        external_links_manager.progress_current += 1
-        external_links_manager.save()
-
-    external_links_manager.progress_current = 0
-    external_links_manager.save()
-
-    return Response({'links': links}, status=200)
-
-
-@api_view(['GET'])
-def get_find_external_links_progress(request, pk):
-    site = Site.objects.get(id=pk)
-    external_links_manager = ExternalLinksManager.objects.get(site=site)
-    print('Odczytano:', external_links_manager.progress_current, external_links_manager.progress_target)
-        
-    return Response({
-        'current': external_links_manager.progress_current,
-        'target': external_links_manager.progress_target,
-    }, 200)
-
     
 @api_view(['POST'])
 def add_client(request):
@@ -182,19 +125,97 @@ def set_current_site(request):
     return Response('Successfully setted current site', 200)
 
 
+def external_links(request, site_id=None):
+    if not site_id:
+        site_id = get_value_or_none(request.session, 'current_site')
+
+    site = get_object_or_none(Site, id=site_id)
+    external_links_manager = get_object_or_none(ExternalLinksManager, site=site)
+
+    return render(request, 'base/external-links.html', context={
+        'external_links': external_links_manager,
+        'site_id': site_id,
+    })
+
+
 @api_view(['PUT'])
-def check_linked_page_availability(request):
+def check_linked_pages_availability(request):
     external_links_id = request.data['external_links_id']
     external_links_manager = ExternalLinksManager.objects.get(id=external_links_id)
-    checked = {}
 
+    #get rid of the same urls
+    unique_linked_pages = set()
     for external_link in external_links_manager.links.all():
-        linked_page = external_link.linked_page
-        if linked_page not in checked:
-            external_link.is_linked_page_available = is_site_available(linked_page)
-            checked[linked_page] = external_link.is_linked_page_available
-        else:
-            external_link.is_linked_page_available = checked[linked_page]
-        external_link.save()
+        unique_linked_pages.add(external_link.linked_page)
 
-    return Response('Successfully set current site', 200)
+    #prepare external_links_manager progress
+    external_links_manager.progress_target = len(unique_linked_pages)
+    external_links_manager.progress_current = 0
+    external_links_manager.save()
+
+    #check availability for every unique linked page
+    for linked_page in unique_linked_pages:
+        is_available = is_site_available(linked_page)
+
+        #update every ExternalLink object with checked URL
+        objects_to_update = external_links_manager.links.filter(linked_page=linked_page)
+        for object_to_update in objects_to_update:
+            object_to_update.is_linked_page_available = is_available
+            object_to_update.save()
+        
+        external_links_manager.progress_current += 1
+        external_links_manager.save()
+    
+    #clear progress
+    external_links_manager.progress_current = 0
+    external_links_manager.save()
+
+    return Response('Successfully checked linked pages availability', 200)
+
+
+@api_view(['PUT'])
+def find_external_links(request):
+    site = Site.objects.get(id=request.data['site_id'])
+    external_links_manager, _ = ExternalLinksManager.objects.get_or_create(site=site)
+    pages = get_pages_from_sitemap(site.url)
+
+    #prepare external_links_manager
+    external_links_manager.progress_current = 0
+    external_links_manager.progress_target = len(pages)
+    external_links_manager.excluded = request.data['to_exclude']
+    external_links_manager.links.all().delete()
+    external_links_manager.save()
+
+    #iterates over all pages in site
+    for page in pages:
+        links = get_external_links(page, request.data['to_exclude'])
+
+        #iterates over all links in page, creates ExternalLink object and adds it to ExternalLinksManager
+        for link in links:
+            external_link_object = ExternalLink(
+                linking_page=page,
+                linked_page=link['href'],
+                rel=link['rel'],
+            )
+            external_link_object.save()
+            external_links_manager.links.add(external_link_object)
+
+        external_links_manager.progress_current += 1
+        external_links_manager.save()
+
+    #clear progress
+    external_links_manager.progress_current = 0
+    external_links_manager.save()
+
+    return Response('Successfully found links', status=200)
+
+
+@api_view(['GET'])
+def get_external_links_progress(request, pk):
+    site = Site.objects.get(id=pk)
+    external_links_manager = ExternalLinksManager.objects.get(site=site)
+        
+    return Response({
+        'current': external_links_manager.progress_current,
+        'target': external_links_manager.progress_target,
+    }, 200)

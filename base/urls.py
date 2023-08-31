@@ -14,6 +14,6 @@ urlpatterns = [
     path('get-sites/', views.get_sites, name="get_sites"),
     path('get-sites/<int:site_id>/', views.get_sites, name="get_sites"),
     path('set-current-site/', views.set_current_site, name="set_current_site"),
-    path('check-linked-page-availability/', views.check_linked_page_availability, name="check_linked_page_availability"),
-    path('find-external-progress/<int:pk>/', views.get_find_external_links_progress, name="get_find_external_links_progress"),
+    path('check-linked-page-availability/', views.check_linked_pages_availability, name="check_linked_pages_availability"),
+    path('external-links-progress/<int:pk>/', views.get_external_links_progress, name="get_external_links_progress"),
 ]
