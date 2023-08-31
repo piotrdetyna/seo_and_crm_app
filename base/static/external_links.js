@@ -1,21 +1,22 @@
 let csrfToken = null;
 
-async function sendRequestAndReload(url, requestData) {
+function sendPUTRequest(url, requestData, onSuccess) {
     try {
-        const response = await fetch(url, {
+        fetch(url, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
                 'X-CSRFToken': csrfToken,
             },
             body: JSON.stringify(requestData),
-        });
+        }).then(response => {
 
-        if (response.ok) {
-            location.reload();
-        } else {
-            console.error('Request failed with status:', response.status);
-        }
+            if (response.ok) {
+                onSuccess();
+            } else {
+                console.error('Request failed with status:', response.status);
+            }
+        })
     } catch (error) {
         console.error('An error occurred:', error);
     }
@@ -31,6 +32,27 @@ function getExcludedDomains() {
     return toExclude;
 }
 
+async function fetchData() {
+    try {
+        const siteId = document.querySelector('#find-links').value;
+        const response = await fetch(`/find-external-progress/${siteId}/`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            const progressElement = document.querySelector('#find-links');
+            progressElement.innerHTML = parseInt((data.current / data.target) * 100) + '%';
+            console.log(data);
+        }
+    } catch (error) {
+        console.error("Error fetching data:", error);
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     csrfToken = document.querySelector('[name="csrfmiddlewaretoken"]').value;
 
@@ -39,18 +61,20 @@ document.addEventListener('DOMContentLoaded', () => {
         findLinksButton.classList.add('disabled');
         const siteId = findLinksButton.value;
         const toExclude = getExcludedDomains();
-        await sendRequestAndReload('/find-external/', {
-            site_id: siteId,
-            to_exclude: toExclude,
+
+        sendPUTRequest('/find-external/', {'site_id': siteId, 'to_exclude': toExclude }, () => {
+            location.reload();
         });
+        setInterval(fetchData, 500);
     };
 
     const checkAvailabilityButton = document.querySelector('#check-availability');
     checkAvailabilityButton.onclick = async () => {
         checkAvailabilityButton.classList.add('disabled');
         const externalLinksId = checkAvailabilityButton.dataset.externalLinksId;
-        await sendRequestAndReload('/check-linked-page-availability/', {
-            external_links_id: externalLinksId,
+
+        sendPUTRequest('/check-linked-page-availability/', { external_links_id: externalLinksId }, () => {
+            location.reload();
         });
     };
 });

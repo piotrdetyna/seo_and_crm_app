@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from .serializers import SiteSerializer, ClientSerializer
-from .models import User, Client, Site, ExternalLinksManager, ExternalLink, ActionProgress
+from .models import User, Client, Site, ExternalLinksManager, ExternalLink
 from .utils.check_external_links import get_external_links, get_pages_from_sitemap
 from .utils.check_site_availability import is_site_available
 from .utils.utils import get_domain_from_url
@@ -99,41 +99,45 @@ def edit_site(request):
 @api_view(['PUT'])
 def find_external_links(request):
     site = Site.objects.get(id=request.data['site_id'])
-    pages = get_pages_from_sitemap(site.url)
     external_links_manager, _ = ExternalLinksManager.objects.get_or_create(site=site)
+    external_links_manager.progress_current = 0
     external_links_manager.excluded = request.data['to_exclude']
     external_links_manager.links.all().delete()
-
-    progress_tracker = ActionProgress(action="find_external_links", target=len(pages))
-    progress_tracker.save()
+    pages = get_pages_from_sitemap(site.url)
+    external_links_manager.progress_target = len(pages)
+    
+    
+    external_links_manager.save()
 
     for page in pages:
         links = get_external_links(page, request.data['to_exclude'])
         for link in links:
+            print(link)
             external_link_object = ExternalLink(
                 linking_page=page,
                 linked_page=link['href'],
-                rel=link['rel']
+                rel=link['rel'],
             )
             external_link_object.save()
             external_links_manager.links.add(external_link_object)
-        progress_tracker.current += 1
-        progress_tracker.save()
+        external_links_manager.progress_current += 1
+        external_links_manager.save()
 
+    external_links_manager.progress_current = 0
     external_links_manager.save()
 
     return Response({'links': links}, status=200)
 
 
 @api_view(['GET'])
-def get_progress(request, progress_id):
-    progress_object = get_object_or_none(ActionProgress, id=progress_id)
-    if not progress_object:
-        return Response('progress_id is not valid', 400)
-    
+def get_find_external_links_progress(request, pk):
+    site = Site.objects.get(id=pk)
+    external_links_manager = ExternalLinksManager.objects.get(site=site)
+    print('Odczytano:', external_links_manager.progress_current, external_links_manager.progress_target)
+        
     return Response({
-        'current': progress_object.current,
-        'target': progress_object.target,
+        'current': external_links_manager.progress_current,
+        'target': external_links_manager.progress_target,
     }, 200)
 
     
@@ -182,10 +186,15 @@ def set_current_site(request):
 def check_linked_page_availability(request):
     external_links_id = request.data['external_links_id']
     external_links_manager = ExternalLinksManager.objects.get(id=external_links_id)
+    checked = {}
 
     for external_link in external_links_manager.links.all():
         linked_page = external_link.linked_page
-        external_link.is_linked_page_available = is_site_available(linked_page)
+        if linked_page not in checked:
+            external_link.is_linked_page_available = is_site_available(linked_page)
+            checked[linked_page] = external_link.is_linked_page_available
+        else:
+            external_link.is_linked_page_available = checked[linked_page]
         external_link.save()
 
     return Response('Successfully set current site', 200)

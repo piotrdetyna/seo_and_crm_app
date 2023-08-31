@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from slugify import slugify
+from django.contrib.contenttypes.fields import GenericForeignKey, ContentType
+
 
 def logo_file_name(instance, filename):
     return '/'.join(['sites', slugify(instance.url), 'logo.'+ filename.split('.')[-1]])
@@ -55,12 +57,5 @@ class ExternalLinksManager(models.Model):
     links = models.ManyToManyField(ExternalLink)
     excluded = models.JSONField(default=list)
     date = models.DateField(auto_now=True)
-
-
-class ActionProgress(models.Model):
-    action = models.CharField(max_length=20)
-    target = models.IntegerField()
-    current = models.IntegerField(default=0)
-
-    def __str__(self):
-        return f'Action {self.action}: {self.current} / {self.target}'
+    progress_current = models.IntegerField(default=0)
+    progress_target = models.IntegerField(default=1)
