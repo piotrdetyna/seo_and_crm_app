@@ -57,13 +57,15 @@ document.addEventListener('DOMContentLoaded', () => {
     siteId = document.querySelector('#find-links').value;
 
     const checkAvailabilityButton = document.querySelector('#check-availability');
-    const externalLinksId = checkAvailabilityButton.dataset.externalLinksId;
+    
     const progressTracker = document.querySelector('#check-availability-progres')
     const findLinksButton = document.querySelector('#find-links');
 
     findLinksButton.onclick = () => {
         findLinksButton.classList.add('disabled');
-        checkAvailabilityButton.classList.add('disabled');
+        if (checkAvailabilityButton) {
+            checkAvailabilityButton.classList.add('disabled');
+        }
         const toExclude = getExcludedDomains();
 
         sendPUTRequest('/find-external/', {'site_id': siteId, 'to_exclude': toExclude }, () => {
@@ -74,6 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     
     checkAvailabilityButton.onclick = () => {
+        const externalLinksId = checkAvailabilityButton.dataset.externalLinksId;
         checkAvailabilityButton.classList.add('disabled');
         findLinksButton.classList.add('disabled');
 

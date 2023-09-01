@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from .serializers import SiteSerializer, ClientSerializer
 from .models import User, Client, Site, ExternalLinksManager, ExternalLink
-from .utils.check_external_links import get_external_links, get_pages_from_sitemap
+from .utils.find_external_links import get_external_links, get_pages_from_sitemap
 from .utils.check_site_availability import is_site_available
 from .utils.utils import get_domain_from_url
 from django.core.exceptions import ObjectDoesNotExist
