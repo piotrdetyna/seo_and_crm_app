@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from .serializers import SiteSerializer, ClientSerializer
-from .models import User, Client, Site, ExternalLinksManager, ExternalLink
+from .models import User, Client, Site, ExternalLinksManager, ExternalLink, Note
 from .utils.find_external_links import get_external_links, get_pages_from_sitemap
 from .utils.check_site_availability import is_site_available
 from .utils.utils import get_domain_from_url
@@ -199,7 +199,6 @@ def find_external_links(request):
             )
             external_link_object.save()
             external_links_manager.links.add(external_link_object)
-
         external_links_manager.progress_current += 1
         external_links_manager.save()
 
@@ -219,3 +218,45 @@ def get_external_links_progress(request, pk):
         'current': external_links_manager.progress_current,
         'target': external_links_manager.progress_target,
     }, 200)
+
+
+@api_view(['POST'])
+def add_note(request):
+    text = request.data['text']
+    site_id = request.data['site_id']
+    site = Site.objects.get(id=site_id)
+
+    note = Note(text=text, site=site)
+    note.save()
+
+    return Response('Added note', 200)
+
+
+@api_view(['GET'])
+def notes(request, site_id=None):
+    if not site_id:
+        site_id = get_value_or_none(request.session, 'current_site')
+    site = Site.objects.get(id=site_id)
+    notes = Note.objects.filter(site=site)
+    return render(request, 'base/notes.html', context={
+        'notes': notes,
+        'site_id': site_id
+    })
+
+@api_view(['GET'])
+def get_note(request, note_id):
+    note = Note.objects.get(id=note_id)
+    return Response(note.as_json(), 200)
+
+@api_view(['PUT'])
+def update_note(request):
+    text = request.data['text']
+    title = request.data['title']
+    note_id = request.data['note_id']
+    note = Note.objects.get(id=note_id)
+
+    note.title = title
+    note.text = text
+    note.save()
+
+    return Response('Updated note', 200)

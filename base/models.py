@@ -59,3 +59,19 @@ class ExternalLinksManager(models.Model):
     date = models.DateField(auto_now=True)
     progress_current = models.IntegerField(default=0)
     progress_target = models.IntegerField(default=1)
+
+
+class Note(models.Model):
+    text = models.CharField(max_length=1000)
+    site = models.ForeignKey(Site, on_delete=models.CASCADE, related_name='notes')
+    date = models.DateField(auto_now=True)
+    title = models.CharField(max_length=100)
+
+
+    def as_json(self):
+        return {
+            'title': self.title,
+            'text': self.text,
+            'date': self.date,
+            'id': self.id,
+        }

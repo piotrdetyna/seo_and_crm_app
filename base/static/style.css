@@ -421,7 +421,7 @@ textarea {
 
 textarea:focus {
   border: 1px solid #5a3be6;
-  box-shadow: 6px 6px 0px #7157f6;
+  box-shadow: 4px 4px 0px #7157f6;
 }
 
 #toggleButton {
@@ -475,4 +475,40 @@ table caption {
 
 #find-links {
   min-width: 100px;
+}
+
+.note-content textarea {
+  box-sizing: border-box; 
+  height: 500px;
+  width: 100%;
+  border-radius: 0 0 10px 10px;
+}
+
+.notes-list-item {
+  cursor: pointer;
+}
+
+.note-title {
+  border-radius: 10px 10px 0 0;
+  box-sizing: border-box; 
+  padding: 5px 10px;
+  color: white;
+  background: #7157f6;
+  font-weight: bold;
+}
+
+.note-title input {
+  border: none;
+  display: inline;
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+  padding: none;
+  width: auto;
+  background: none;
+}
+
+.current-note-options {
+  float: right;
+  cursor: pointer;
 }

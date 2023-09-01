@@ -16,4 +16,9 @@ urlpatterns = [
     path('set-current-site/', views.set_current_site, name="set_current_site"),
     path('check-linked-page-availability/', views.check_linked_pages_availability, name="check_linked_pages_availability"),
     path('external-links-progress/<int:pk>/', views.get_external_links_progress, name="get_external_links_progress"),
+    path('notes/', views.notes, name="notes"),
+    path('notes/<int:site_id>', views.notes, name="notes"),
+    path('add-note/', views.add_note, name="add_note"), 
+    path('get-note/<int:note_id>/', views.get_note, name="get_note"), 
+    path('update-note/', views.update_note, name="update_note"),
 ]
