@@ -223,13 +223,14 @@ def get_external_links_progress(request, pk):
 @api_view(['POST'])
 def add_note(request):
     text = request.data['text']
+    title = request.data['title']
     site_id = request.data['site_id']
     site = Site.objects.get(id=site_id)
 
-    note = Note(text=text, site=site)
+    note = Note(title=title, text=text, site=site)
     note.save()
 
-    return Response('Added note', 200)
+    return Response(note.as_json(), 200)
 
 
 @api_view(['GET'])
@@ -248,15 +249,20 @@ def get_note(request, note_id):
     note = Note.objects.get(id=note_id)
     return Response(note.as_json(), 200)
 
-@api_view(['PUT'])
+@api_view(['PUT', 'DELETE'])
 def update_note(request):
-    text = request.data['text']
-    title = request.data['title']
     note_id = request.data['note_id']
     note = Note.objects.get(id=note_id)
+    if request.method == 'PUT':
+        text = request.data['text']
+        title = request.data['title']
+        
 
-    note.title = title
-    note.text = text
-    note.save()
-
-    return Response('Updated note', 200)
+        note.title = title
+        note.text = text
+        note.save()
+        return Response('Updated note', 200)
+    
+    elif request.method == 'DELETE':
+        note.delete()
+        return Response('Deleted note', 200)

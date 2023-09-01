@@ -484,8 +484,10 @@ table caption {
   border-radius: 0 0 10px 10px;
 }
 
+
 .notes-list-item {
   cursor: pointer;
+  margin: 5px;
 }
 
 .note-title {
@@ -511,4 +513,8 @@ table caption {
 .current-note-options {
   float: right;
   cursor: pointer;
+}
+
+.half-width {
+  width: 50% !important;
 }

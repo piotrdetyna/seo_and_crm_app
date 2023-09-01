@@ -64,7 +64,7 @@ class ExternalLinksManager(models.Model):
 class Note(models.Model):
     text = models.CharField(max_length=1000)
     site = models.ForeignKey(Site, on_delete=models.CASCADE, related_name='notes')
-    date = models.DateField(auto_now=True)
+    date = models.DateField(auto_now_add=True)
     title = models.CharField(max_length=100)
 
 

@@ -5,11 +5,10 @@ notes.js
 {% endblock %}
 
 {% block main %}
-    <div class="card-top">
+    <div class="card-top" id="info"  data-site-id="{{ site_id }}">
         <h1>Notatki</h1>
     </div>
     <div class="card-content">
-        <p>Dodaj nową stronę</p>
         <div class="row">
             <div class="column">
                 
@@ -20,7 +19,7 @@ notes.js
 
                         <span class="current-note-options">
                             <span id="save-current-note">💾</span>
-                            <span id="delete-current-note">🗑️</span>
+                            <span style="display: {% if not notes %}none;{% endif %}" id="delete-current-note">🗑️</span>
                         </span>
                     
                     </div>
@@ -29,11 +28,15 @@ notes.js
                 
             </div>
             <div class="column">
-                <div class="notes-list">
+                Wybierz notatkę
+                <ul class="notes-list">
                 {% for note in notes.all %}
-                    <p class="notes-list-item" data-note-id="{{ note.id }}"><strong>{{ note.title }}</strong> <small>{{ note.date }}</small></p>
+                    <li class="notes-list-item" data-note-id="{{ note.id }}"><strong>{{ note.title }}</strong> <small>{{ note.date }}</small></li>   
+
                 {% endfor %}
-                </div>
+                </ul>
+                <button class="button-purple half-width" id="add-note">Dodaj nową</button>
+                
             </div>
         </div>
     </div>
