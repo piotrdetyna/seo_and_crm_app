@@ -7,6 +7,21 @@ from .utils.find_external_links import get_external_links, get_pages_from_sitema
 from .utils.check_site_availability import is_site_available
 from .utils.utils import get_domain_from_url
 from django.core.exceptions import ObjectDoesNotExist
+from django.shortcuts import get_object_or_404
+from django.http import HttpResponseRedirect
+
+def site_required(view_func):
+    def _wrapped_view_func(request, *args, **kwargs):
+        site_id = kwargs.get('site_id', None)
+        if not site_id:
+            site_id = request.session.get('current_site', None)
+
+        if site_id:
+            return view_func(request, *args, **kwargs)
+        else:
+            return HttpResponseRedirect('/set-site/')
+    return _wrapped_view_func
+
 ACTION_TYPES = ['find_external_links', 'check_page_avilability']
 
 def get_object_or_none(model, **kwargs):
@@ -219,47 +234,49 @@ def get_external_links_progress(request, pk):
         'target': external_links_manager.progress_target,
     }, 200)
 
-
-@api_view(['POST'])
-def add_note(request):
-    text = request.data['text']
-    title = request.data['title']
-    site_id = request.data['site_id']
-    site = Site.objects.get(id=site_id)
-
-    note = Note(title=title, text=text, site=site)
-    note.save()
-
-    return Response(note.as_json(), 200)
-
-
 @api_view(['GET'])
+@site_required
 def notes(request, site_id=None):
-    if not site_id:
-        site_id = get_value_or_none(request.session, 'current_site')
-    site = Site.objects.get(id=site_id)
+    site_id = site_id or get_value_or_none(request.session, 'current_site')
+    site = get_object_or_404(Site, id=site_id)
     notes = Note.objects.filter(site=site)
+    
     return render(request, 'base/notes.html', context={
         'notes': notes,
         'site_id': site_id
     })
 
+@api_view(['POST'])
+def add_note(request):
+    text = request.data['text']
+    title = request.data['title']
+
+    site_id = request.data['site_id']
+    site = get_object_or_404(Site, id=site_id)
+
+    note = Note(title=title, text=text, site=site)
+    note.save()
+
+    return Response(note.as_json(), 201)
+
+
+
+
+
 @api_view(['GET'])
 def get_note(request, note_id):
-    note = Note.objects.get(id=note_id)
+    note = get_object_or_404(Note, id=note_id)
     return Response(note.as_json(), 200)
+
 
 @api_view(['PUT', 'DELETE'])
 def update_note(request):
     note_id = request.data['note_id']
-    note = Note.objects.get(id=note_id)
-    if request.method == 'PUT':
-        text = request.data['text']
-        title = request.data['title']
-        
+    note = get_object_or_404(Note, id=note_id)
 
-        note.title = title
-        note.text = text
+    if request.method == 'PUT':
+        note.title = request.data['title']
+        note.text = request.data['text']
         note.save()
         return Response('Updated note', 200)
     

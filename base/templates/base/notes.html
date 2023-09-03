@@ -15,7 +15,7 @@ notes.js
                 {% csrf_token %}
                 <div data-note-id="{{ notes.0.id }}" class="note">
                     <div class="note-title">
-                        <input id="current-note-title" value="{{ notes.0.title }}"></input>
+                        <input id="current-note-title" value="{{ notes.0.title }}" placeholder="Wprowadź tytuł"></input>
 
                         <span class="current-note-options">
                             <span id="save-current-note">💾</span>
@@ -23,7 +23,7 @@ notes.js
                         </span>
                     
                     </div>
-                    <div class="note-content"><textarea id="current-note-content">{{ notes.0.text }}</textarea></div>
+                    <div class="note-content"><textarea id="current-note-content" placeholder="Wprowadź treść">{{ notes.0.text }}</textarea></div>
                 </div>
                 
             </div>

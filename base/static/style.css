@@ -482,6 +482,7 @@ table caption {
   height: 500px;
   width: 100%;
   border-radius: 0 0 10px 10px;
+  resize: none;
 }
 
 
@@ -509,6 +510,20 @@ table caption {
   width: auto;
   background: none;
 }
+
+.note-title input::placeholder {
+  color: white;
+  opacity: 1;
+}
+
+.note-title input:-ms-input-placeholder {
+  color: white;
+}
+
+.note-title input::-ms-input-placeholder {
+  color: white;
+}
+
 
 .current-note-options {
   float: right;

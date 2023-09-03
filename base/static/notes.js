@@ -97,7 +97,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const notesListItem = event.target.closest('.notes-list-item');
         if (notesListItem) {
             console.log('clicked');
-            activeNotesListItem = notesListItem;
             getAndSetCurrentNote(notesListItem.dataset.noteId);
             deleteNoteButton.style.display = null;
         }
@@ -111,7 +110,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         else {
             newNoteInfo = await addNote()
-            console.log(newNoteInfo)
             
             const newNoteItem = document.createElement('li');
             newNoteItem.classList.add('notes-list-item');
@@ -140,5 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
         currentNoteTitle.value = ''
         currentNoteContent.value = ''
         deleteNoteButton.style.display = 'none'
+        currentNote.style.display = null
+
     }
 })
