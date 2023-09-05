@@ -20,7 +20,7 @@ def get_external_links(url, excluded):
     base_domain = get_domain_from_url(url)
     links = []
     excluded = excluded.copy()
-    excluded.extend(['tel:', 'mailto:'])
+    excluded.extend(['tel:', 'mailto:', 'javascript:void(0)'])
 
     for link in soup.find_all('a', href=True):
         absolute_url = urljoin(url, link['href'])
