@@ -17,7 +17,7 @@ site_details.js
             <div class="column">
                 {{ site.payment_date }}
                 <h2>Edytuj stronę</h2>
-                <form id="edit-site">
+                <form id="edit-site" data-site-id="{{ site.id }}">
                     {% csrf_token %}
                     <label>URL<input type="text" name="url" value="{{ site.url }}"></label>
                     <label>Data opłacenia hostingu<input type="date" name="payment_date" value="{{ site.payment_date }}"></label>

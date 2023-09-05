@@ -1,8 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
-    let siteId = 'TODO'
+    
 
 
     let siteForm = document.querySelector('form#edit-site')
+    let siteId = siteForm
     siteForm.onsubmit = (event) => {
         event.preventDefault()
         let siteFormData = new FormData(siteForm);  
@@ -24,8 +25,4 @@ document.addEventListener('DOMContentLoaded', () => {
         })
 
     }
-
-
-
-
 })
