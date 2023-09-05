@@ -19,10 +19,11 @@ def site_required(view_func):
         if site_id:
             return view_func(request, *args, **kwargs)
         else:
-            return HttpResponseRedirect('/set-site/')
+            original_url = request.get_full_path()
+            url = f"/site-choice/?next={original_url}"
+            return HttpResponseRedirect(url)
     return _wrapped_view_func
 
-ACTION_TYPES = ['find_external_links', 'check_page_avilability']
 
 def get_object_or_none(model, **kwargs):
     try:
@@ -140,6 +141,8 @@ def set_current_site(request):
     return Response('Successfully setted current site', 200)
 
 
+@api_view(['GET'])
+@site_required
 def external_links(request, site_id=None):
     if not site_id:
         site_id = get_value_or_none(request.session, 'current_site')
@@ -246,6 +249,7 @@ def notes(request, site_id=None):
         'site_id': site_id
     })
 
+
 @api_view(['POST'])
 def add_note(request):
     text = request.data['text']
@@ -258,9 +262,6 @@ def add_note(request):
     note.save()
 
     return Response(note.as_json(), 201)
-
-
-
 
 
 @api_view(['GET'])
@@ -283,3 +284,7 @@ def update_note(request):
     elif request.method == 'DELETE':
         note.delete()
         return Response('Deleted note', 200)
+    
+
+def site_choice(request):
+    return render(request, 'base/site-choice.html')

@@ -13,7 +13,19 @@ async function setCurrentSite(site_id) {
 		throw new Error(`Error while fetching sites list. Status: ${response.status}`);
 	}
 	const data = await response.json();
-    location.reload()
+
+    //if next parameter is present in URL, redirect to next page
+
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    console.log(urlParams)
+    const nextSite = urlParams.get('next')
+    if (nextSite) {
+        window.location.href = nextSite;
+    }
+    else {
+        location.reload()
+    }
 }
 
 async function getSite(site_id) {
@@ -32,31 +44,33 @@ async function getSite(site_id) {
 
 
 async function populateSitesList() {
-    let sitesList = document.querySelector('#sites-list')
+    let sitesLists = document.querySelectorAll('.sites-list');
     const response = await fetch('/get-sites/', {
         method: 'GET',
-    })
+    });
     if (!response.ok) {
-		throw new Error(`Error while fetching sites list. Status: ${response.status}`);
-	}
-	const data = await response.json();
+        throw new Error(`Error while fetching sites list. Status: ${response.status}`);
+    }
+    const data = await response.json();
 
-    data.forEach((site) => {
-        let siteElement = document.createElement("span");
-        siteElement.dataset.id = site.id
-        siteElement.textContent = site.url
-        siteElement.classList.add('site-list-element')
-        siteElement.onclick = () => {setCurrentSite(site.id)}
-        
-        let siteLogoElement = document.createElement("img");
-        siteLogoElement.src = site.logo
-        siteLogoElement.classList.add('miniature')
+    sitesLists.forEach(sitesList => {
+        data.forEach((site) => {
+            let siteElement = document.createElement("span");
+            siteElement.dataset.id = site.id;
+            siteElement.textContent = site.url;
+            siteElement.classList.add('site-list-element');
+            siteElement.onclick = () => { setCurrentSite(site.id) };
 
-        siteElement.insertBefore(siteLogoElement, siteElement.firstChild);
-        sitesList.appendChild(siteElement);
-        
-    })
+            let siteLogoElement = document.createElement("img");
+            siteLogoElement.src = site.logo;
+            siteLogoElement.classList.add('miniature');
+
+            siteElement.insertBefore(siteLogoElement, siteElement.firstChild);
+            sitesList.appendChild(siteElement);
+        });
+    });
 }
+
 
 
 document.addEventListener('DOMContentLoaded', () => {
