@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from .serializers import SiteSerializer, ClientSerializer
+from .serializers import SiteSerializer, ClientSerializer, NoteSerializer
 from .models import User, Client, Site, ExternalLinksManager, ExternalLink, Note
 from .utils.find_external_links import get_external_links, get_pages_from_sitemap
 from .utils.check_site_availability import is_site_available
@@ -250,12 +250,18 @@ def notes(request, site_id=None):
     })
 
 
+@api_view(['GET'])
+def get_note(request, note_id):
+    note = get_object_or_404(Note, id=note_id)
+    return Response(note.as_json(), 200)
+
+
 @api_view(['POST'])
 def add_note(request):
-    text = request.data['text']
-    title = request.data['title']
+    text = request.data.get('text')
+    title = request.data.get('title')
 
-    site_id = request.data['site_id']
+    site_id = request.data.get('site_id')
     site = get_object_or_404(Site, id=site_id)
 
     note = Note(title=title, text=text, site=site)
@@ -264,21 +270,16 @@ def add_note(request):
     return Response(note.as_json(), 201)
 
 
-@api_view(['GET'])
-def get_note(request, note_id):
-    note = get_object_or_404(Note, id=note_id)
-    return Response(note.as_json(), 200)
-
-
 @api_view(['PUT', 'DELETE'])
 def update_note(request):
-    note_id = request.data['note_id']
+    note_id = request.data.get('note_id')
     note = get_object_or_404(Note, id=note_id)
 
     if request.method == 'PUT':
-        note.title = request.data['title']
-        note.text = request.data['text']
-        note.save()
+        serializer = NoteSerializer(note, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+
         return Response('Updated note', 200)
     
     elif request.method == 'DELETE':

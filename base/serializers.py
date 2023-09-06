@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Client, Site
+from .models import Client, Site, Note
 
 class SiteSerializer(serializers.ModelSerializer):
     client_id = serializers.IntegerField(required=False)
@@ -17,4 +17,10 @@ class ClientSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Client
-        fields = '__all__'  # Możesz też wymienić pola, które chcesz uwzględnić
+        fields = '__all__'
+
+class NoteSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Note
+        fields = ['id', 'title', 'text']
