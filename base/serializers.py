@@ -23,4 +23,18 @@ class NoteSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Note
-        fields = ['id', 'title', 'text']
+        fields = ['title', 'text']
+
+
+class AddNoteSerializer(serializers.ModelSerializer):
+    site_id = serializers.PrimaryKeyRelatedField(queryset=Site.objects.all(), write_only=True)
+    site = serializers.PrimaryKeyRelatedField(queryset=Site.objects.all(), required=False)
+
+    class Meta:
+        model = Note
+        fields = ['id', 'text', 'title', 'site', 'date', 'site_id']
+
+    def create(self, validated_data):
+        site = validated_data.pop('site_id')
+        note = Note.objects.create(site=site, **validated_data)
+        return note

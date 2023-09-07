@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from .serializers import SiteSerializer, ClientSerializer, NoteSerializer
+from .serializers import SiteSerializer, ClientSerializer, NoteSerializer, AddNoteSerializer
 from .models import User, Client, Site, ExternalLinksManager, ExternalLink, Note
 from .utils.find_external_links import get_external_links, get_pages_from_sitemap
 from .utils.check_site_availability import is_site_available
@@ -241,6 +241,7 @@ def get_external_links_progress(request, pk):
 @site_required
 def notes(request, site_id=None):
     site_id = site_id or get_value_or_none(request.session, 'current_site')
+    
     site = get_object_or_404(Site, id=site_id)
     notes = Note.objects.filter(site=site)
     
@@ -258,33 +259,34 @@ def get_note(request, note_id):
 
 @api_view(['POST'])
 def add_note(request):
-    text = request.data.get('text')
-    title = request.data.get('title')
 
-    site_id = request.data.get('site_id')
-    site = get_object_or_404(Site, id=site_id)
-
-    note = Note(title=title, text=text, site=site)
-    note.save()
-
-    return Response(note.as_json(), 201)
+    serializer = AddNoteSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, 201)
+    return Response(serializer.errors, 400)
 
 
-@api_view(['PUT', 'DELETE'])
+@api_view(['PUT'])
 def update_note(request):
     note_id = request.data.get('note_id')
     note = get_object_or_404(Note, id=note_id)
-
-    if request.method == 'PUT':
-        serializer = NoteSerializer(note, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-
+    serializer = NoteSerializer(note, data=request.data)
+    
+    if serializer.is_valid():
+        serializer.save()
         return Response('Updated note', 200)
     
-    elif request.method == 'DELETE':
-        note.delete()
-        return Response('Deleted note', 200)
+    return Response(serializer.errors, 200)
+
+
+@api_view(['DELETE'])
+def delete_note(request):
+    note_id = request.data.get('note_id')
+    note = get_object_or_404(Note, id=note_id)
+    note.delete()
+
+    return Response('Deleted note', 200)
     
 
 def site_choice(request):

@@ -64,7 +64,7 @@ async function saveNote() {
 }
 
 async function deleteNote() {
-    const response = await fetch('/update-note/', {
+    const response = await fetch('/delete-note/', {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',
