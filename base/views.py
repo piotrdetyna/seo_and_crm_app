@@ -235,10 +235,9 @@ def get_external_links_progress(request, pk):
         'target': external_links_manager.progress_target,
     }, 200)
 
-@api_view(['GET'])
 @site_required
 def notes(request, site_id=None):
-    
+
     site = get_object_or_404(Site, id=site_id)
     notes = Note.objects.filter(site=site)
     
@@ -247,22 +246,18 @@ def notes(request, site_id=None):
         'site_id': site_id
     })
 
-
 @api_view(['POST'])
 def add_note(request):
-
     serializer = AddNoteSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
         return Response(serializer.data, 201)
     return Response(serializer.errors, 400)
 
-
 @api_view(['GET'])
 def get_note(request, note_id):
     note = get_object_or_404(Note, id=note_id)
     return Response(note.as_json(), 200)
-
 
 @api_view(['PUT'])
 def update_note(request):
@@ -272,18 +267,16 @@ def update_note(request):
     
     if serializer.is_valid():
         serializer.save()
-        return Response('Updated note', 200)
+        return Response({'message': 'Note updated successfully'}, 200)
     
-    return Response(serializer.errors, 200)
-
+    return Response(serializer.errors, 400)
 
 @api_view(['DELETE'])
 def delete_note(request):
     note_id = request.data.get('note_id')
     note = get_object_or_404(Note, id=note_id)
     note.delete()
-
-    return Response('Deleted note', 200)
+    return Response({'message': 'Note deleted successfully'}, 200)
     
 
 def site_choice(request):
