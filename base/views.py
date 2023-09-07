@@ -12,16 +12,18 @@ from django.http import HttpResponseRedirect
 
 def site_required(view_func):
     def _wrapped_view_func(request, *args, **kwargs):
-        site_id = kwargs.get('site_id', None)
+        site_id = kwargs.pop('site_id', None)
+        
         if not site_id:
             site_id = request.session.get('current_site', None)
-
+        
         if site_id:
-            return view_func(request, *args, **kwargs)
+            return view_func(request, site_id, *args, **kwargs)
         else:
             original_url = request.get_full_path()
             url = f"/site-choice/?next={original_url}"
             return HttpResponseRedirect(url)
+    
     return _wrapped_view_func
 
 
@@ -69,10 +71,8 @@ def add_site(request):
 
 
 @api_view(['GET'])
-def site_details(request, site_id=None):
-    if not site_id:
-        site_id = get_value_or_none(request.session, 'current_site')
-    
+@site_required
+def site_details(request, site_id=None):  
     site = Site.objects.get(id=site_id)
 
     site.payment_date = site.payment_date.strftime('%Y-%m-%d')       
@@ -144,8 +144,6 @@ def set_current_site(request):
 @api_view(['GET'])
 @site_required
 def external_links(request, site_id=None):
-    if not site_id:
-        site_id = get_value_or_none(request.session, 'current_site')
 
     site = get_object_or_none(Site, id=site_id)
     external_links_manager = get_object_or_none(ExternalLinksManager, site=site)
@@ -240,7 +238,6 @@ def get_external_links_progress(request, pk):
 @api_view(['GET'])
 @site_required
 def notes(request, site_id=None):
-    site_id = site_id or get_value_or_none(request.session, 'current_site')
     
     site = get_object_or_404(Site, id=site_id)
     notes = Note.objects.filter(site=site)
