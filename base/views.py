@@ -251,12 +251,6 @@ def notes(request, site_id=None):
     })
 
 
-@api_view(['GET'])
-def get_note(request, note_id):
-    note = get_object_or_404(Note, id=note_id)
-    return Response(note.as_json(), 200)
-
-
 @api_view(['POST'])
 def add_note(request):
 
@@ -265,6 +259,12 @@ def add_note(request):
         serializer.save()
         return Response(serializer.data, 201)
     return Response(serializer.errors, 400)
+
+
+@api_view(['GET'])
+def get_note(request, note_id):
+    note = get_object_or_404(Note, id=note_id)
+    return Response(note.as_json(), 200)
 
 
 @api_view(['PUT'])

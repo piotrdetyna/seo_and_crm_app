@@ -32,7 +32,7 @@ class AddNoteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Note
-        fields = ['id', 'text', 'title', 'site', 'date', 'site_id']
+        fields = ['text', 'title', 'site', 'site_id']
 
     def create(self, validated_data):
         site = validated_data.pop('site_id')
