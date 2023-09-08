@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let siteFormData = new FormData(siteForm);  
         siteFormData.append('site_id', siteId)
       
-        fetch('/edit-site/', {
+        fetch('/api/edit-site/', {
             method: 'PUT',
             headers: {
                 'X-CSRFToken': document.querySelector('[name="csrfmiddlewaretoken"]').value,

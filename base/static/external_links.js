@@ -68,10 +68,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         const toExclude = getExcludedDomains();
 
-        sendPUTRequest('/find-external/', {'site_id': siteId, 'to_exclude': toExclude }, () => {
+        sendPUTRequest('/api/find-external/', {'site_id': siteId, 'to_exclude': toExclude }, () => {
             location.reload();
         });
-        setInterval(updateProgress, 500, `/external-links-progress/${siteId}/`, findLinksButton);
+        setInterval(updateProgress, 500, `/api/external-links-progress/${siteId}/`, findLinksButton);
     };
 
     
@@ -80,9 +80,9 @@ document.addEventListener('DOMContentLoaded', () => {
         checkAvailabilityButton.classList.add('disabled');
         findLinksButton.classList.add('disabled');
 
-        sendPUTRequest('/check-linked-page-availability/', { external_links_id: externalLinksId }, () => {
+        sendPUTRequest('/api/check-linked-page-availability/', { external_links_id: externalLinksId }, () => {
             location.reload();
         });
-        setInterval(updateProgress, 500, `/external-links-progress/${siteId}/`, progressTracker);
+        setInterval(updateProgress, 500, `/api/external-links-progress/${siteId}/`, progressTracker);
     };
 });

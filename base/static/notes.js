@@ -7,7 +7,7 @@ let deleteNoteButton = null
 let siteId = null
 
 async function addNote() {
-    const response = await fetch('/add-note/', {
+    const response = await fetch('/api/add-note/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -27,7 +27,7 @@ async function addNote() {
 }
 
 async function getAndSetCurrentNote(noteId) {
-    const response = await fetch(`/get-note/${noteId}/`, {
+    const response = await fetch(`/api/get-note/${noteId}/`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -44,7 +44,7 @@ async function getAndSetCurrentNote(noteId) {
 }
 
 async function saveNote() {
-    const response = await fetch('/update-note/', {
+    const response = await fetch('/api/update-note/', {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
@@ -64,7 +64,7 @@ async function saveNote() {
 }
 
 async function deleteNote() {
-    const response = await fetch('/delete-note/', {
+    const response = await fetch('/api/delete-note/', {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',

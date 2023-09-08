@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         let clientName = data['name'];
 
-        fetch('/add-client/', {
+        fetch('/api/add-client/', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -108,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
         siteFormData.append('client_id', getSelectedCheckboxValue())
         console.log(siteFormData)
 
-        fetch('/add-site/', {
+        fetch('api//add-site/', {
             method: 'POST',
             headers: {
                 'X-CSRFToken': document.querySelector('[name="csrfmiddlewaretoken"]').value,

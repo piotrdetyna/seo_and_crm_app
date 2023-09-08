@@ -1,5 +1,5 @@
 async function setCurrentSite(site_id) {
-    const response = await fetch('/set-current-site/', {
+    const response = await fetch('/api/set-current-site/', {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
@@ -29,7 +29,7 @@ async function setCurrentSite(site_id) {
 }
 
 async function getSite(site_id) {
-    const response = await fetch(`/get-sites/${site_id}/`, {
+    const response = await fetch(`/api/get-sites/${site_id}/`, {
         method: 'GET',
     })
 
@@ -45,7 +45,7 @@ async function getSite(site_id) {
 
 async function populateSitesList() {
     let sitesLists = document.querySelectorAll('.sites-list');
-    const response = await fetch('/get-sites/', {
+    const response = await fetch('/api/get-sites/', {
         method: 'GET',
     });
     if (!response.ok) {
