@@ -33,13 +33,6 @@ def get_object_or_none(model, **kwargs):
     except ObjectDoesNotExist:
         return None
 
-def get_value_or_none(dictionary, key):
-    try:
-        return dictionary[key]
-    except KeyError:
-        return None
-
-    
 def index(request):
     return render(request, 'base/index.html')
 
