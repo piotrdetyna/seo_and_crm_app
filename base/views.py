@@ -132,20 +132,17 @@ def get_sites(request, site_id=None):
 
 @api_view(['PUT'])
 def set_current_site(request):
-    site_id = request.data['site_id']
-    try:
-        site = Site.objects.get(id=site_id)
-        request.session['current_site'] = site_id
-    except ObjectDoesNotExist:
-        return Response('Site is not valid', 400)
+    site_id = request.data.get('site_id')
+    _ = get_object_or_404(Site, id=site_id)
+    request.session['current_site'] = site_id
     return Response('Successfully setted current site', 200)
 
 
-@api_view(['GET'])
+''' ============ external links views ============ '''
+
 @site_required
 def external_links(request, site_id=None):
-
-    site = get_object_or_none(Site, id=site_id)
+    site = get_object_or_404(Site, id=site_id)
     external_links_manager = get_object_or_none(ExternalLinksManager, site=site)
 
     return render(request, 'base/external-links.html', context={
@@ -156,8 +153,8 @@ def external_links(request, site_id=None):
 
 @api_view(['PUT'])
 def check_linked_pages_availability(request):
-    external_links_id = request.data['external_links_id']
-    external_links_manager = ExternalLinksManager.objects.get(id=external_links_id)
+    external_links_id = request.data.get('external_links_id')
+    external_links_manager = get_object_or_404(ExternalLinksManager, id=external_links_id)
 
     #get rid of the same urls
     unique_linked_pages = set()
@@ -186,25 +183,26 @@ def check_linked_pages_availability(request):
     external_links_manager.progress_current = 0
     external_links_manager.save()
 
-    return Response('Successfully checked linked pages availability', 200)
+    return Response({'message': 'Successfully checked linked pages availability'}, 200)
 
 
 @api_view(['PUT'])
 def find_external_links(request):
-    site = Site.objects.get(id=request.data['site_id'])
+    site = get_object_or_404(Site, id=request.data.get('site_id'))
     external_links_manager, _ = ExternalLinksManager.objects.get_or_create(site=site)
     pages = get_pages_from_sitemap(site.url)
+    to_exclude = request.data.get('to_exclude')
 
     #prepare external_links_manager
     external_links_manager.progress_current = 0
     external_links_manager.progress_target = len(pages)
-    external_links_manager.excluded = request.data['to_exclude']
+    external_links_manager.excluded = to_exclude
     external_links_manager.links.all().delete()
     external_links_manager.save()
 
     #iterates over all pages in site
     for page in pages:
-        links = get_external_links(page, request.data['to_exclude'])
+        links = get_external_links(page, to_exclude)
 
         #iterates over all links in page, creates ExternalLink object and adds it to ExternalLinksManager
         for link in links:
@@ -222,12 +220,12 @@ def find_external_links(request):
     external_links_manager.progress_current = 0
     external_links_manager.save()
 
-    return Response('Successfully found links', status=200)
+    return Response({'message': 'Successfully found links'}, status=200)
 
 
 @api_view(['GET'])
 def get_external_links_progress(request, pk):
-    site = Site.objects.get(id=pk)
+    site = get_object_or_404(Site, id=pk)
     external_links_manager = ExternalLinksManager.objects.get(site=site)
         
     return Response({
@@ -235,9 +233,11 @@ def get_external_links_progress(request, pk):
         'target': external_links_manager.progress_target,
     }, 200)
 
+
+''' ============ notes views ============ '''
+
 @site_required
 def notes(request, site_id=None):
-
     site = get_object_or_404(Site, id=site_id)
     notes = Note.objects.filter(site=site)
     
@@ -245,6 +245,7 @@ def notes(request, site_id=None):
         'notes': notes,
         'site_id': site_id
     })
+
 
 @api_view(['POST'])
 def add_note(request):
@@ -254,10 +255,12 @@ def add_note(request):
         return Response(serializer.data, 201)
     return Response(serializer.errors, 400)
 
+
 @api_view(['GET'])
 def get_note(request, note_id):
     note = get_object_or_404(Note, id=note_id)
     return Response(note.as_json(), 200)
+
 
 @api_view(['PUT'])
 def update_note(request):
@@ -270,6 +273,7 @@ def update_note(request):
         return Response({'message': 'Note updated successfully'}, 200)
     
     return Response(serializer.errors, 400)
+
 
 @api_view(['DELETE'])
 def delete_note(request):
