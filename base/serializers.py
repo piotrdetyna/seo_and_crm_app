@@ -1,19 +1,43 @@
 from rest_framework import serializers
 from .models import Client, Site, Note
 
-class SiteSerializer(serializers.ModelSerializer):
-    client_id = serializers.IntegerField(required=False)
-    site_id = serializers.IntegerField(required=False)
-    logo = serializers.ImageField(required=False)
-    url = serializers.CharField(max_length=50)
+class AddSiteSerializer(serializers.ModelSerializer):
+    client_id = serializers.IntegerField(write_only=True)
 
     class Meta:
         model = Site
-        fields = ['url', 'payment_date', 'logo', 'client_id', 'site_id']
+        fields = ('url', 'payment_date', 'client_id', 'logo', 'date')
+
+    def create(self, validated_data):
+        client_id = validated_data.pop('client_id')
+        client = Client.objects.get(pk=client_id)
+        site = Site.objects.create(client=client, **validated_data)
+        return site
+    
+
+class UpdateSiteSerializer(serializers.ModelSerializer):
+    site_id = serializers.IntegerField(write_only=True, required=True)
+
+    class Meta:
+        model = Site
+        fields = ('url', 'payment_date', 'logo', 'site_id')
+        extra_kwargs = {
+            'logo': {'required': False}
+        }
+
+    def update(self, instance, validated_data):
+        instance.url = validated_data.get('url', instance.url)
+        instance.payment_date = validated_data.get('payment_date', instance.payment_date)
+
+        if validated_data.get('logo'):
+            instance.logo = validated_data['logo']
+
+        instance.save()
+        return instance
 
 
 class ClientSerializer(serializers.ModelSerializer):
-    sites = SiteSerializer(many=True, read_only=True)
+    sites = AddSiteSerializer(many=True, read_only=True)
 
     class Meta:
         model = Client

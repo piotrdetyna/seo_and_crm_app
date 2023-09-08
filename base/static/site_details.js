@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     let siteForm = document.querySelector('form#edit-site')
-    let siteId = siteForm
+    let siteId = siteForm.dataset.siteId
     siteForm.onsubmit = (event) => {
         event.preventDefault()
         let siteFormData = new FormData(siteForm);  

@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from .serializers import SiteSerializer, ClientSerializer, NoteSerializer, AddNoteSerializer
+from .serializers import AddSiteSerializer, ClientSerializer, NoteSerializer, AddNoteSerializer, UpdateSiteSerializer
 from .models import User, Client, Site, ExternalLinksManager, ExternalLink, Note
 from .utils.find_external_links import get_external_links, get_pages_from_sitemap
 from .utils.check_site_availability import is_site_available
@@ -33,8 +33,19 @@ def get_object_or_none(model, **kwargs):
     except ObjectDoesNotExist:
         return None
 
+
 def index(request):
     return render(request, 'base/index.html')
+
+
+@site_required
+def site_details(request, site_id=None):  
+    site = Site.objects.get(id=site_id)
+
+    site.payment_date = site.payment_date.strftime('%Y-%m-%d')       
+    return render(request, 'base/site-details.html', context={
+        'site': site,
+    })
 
 
 @api_view(['GET', 'POST'])
@@ -46,53 +57,25 @@ def add_site(request):
         })
     
     elif request.method == 'POST':
-        serializer = SiteSerializer(data=request.data)
-
+        serializer = AddSiteSerializer(data=request.data)
         if serializer.is_valid():
-            client_id = serializer.validated_data['client_id']
-            client = Client.objects.get(id=client_id)
-            url = get_domain_from_url(serializer.validated_data['url'])
-            site = Site(
-                url=url,
-                payment_date=serializer.validated_data['payment_date'],
-                client=client,
-                logo=serializer.validated_data['logo'],
-            )
-            site.save()
-            return Response('Successfully added site', 200)
-        return Response('Submitted data is incorrect.', 400)
+            serializer.save()
+            return Response({'message': 'Successfully added site'}, 200)
+        return Response({'message': 'Submitted data is incorrect.'}, 400)
 
 
-@api_view(['GET'])
-@site_required
-def site_details(request, site_id=None):  
-    site = Site.objects.get(id=site_id)
-
-    site.payment_date = site.payment_date.strftime('%Y-%m-%d')       
-    return render(request, 'base/site-details.html', context={
-        'site': site,
-    })
-
-
-@api_view(['PUT', 'DELETE'])
+@api_view(['PUT'])
 def edit_site(request):
-    if request.method == 'PUT':
-        serializer = SiteSerializer(data=request.data)
-        if serializer.is_valid():
-            url = get_domain_from_url(serializer.validated_data['url'])
-            site = Site.objects.get(id=serializer.validated_data['site_id'])
+    site_id = request.data.get('site_id')
+    site = get_object_or_404(Site, id=site_id)
+    serializer = UpdateSiteSerializer(site, data=request.data, partial=True)
 
-            site.url = url
-            site.payment_date = serializer.validated_data['payment_date']
-
-            if 'logo' in serializer.validated_data:
-                site.logo=serializer.validated_data['logo']
-
-            site.save()
-
-            return Response('Successfully edited site', 200)
-        return Response('Submitted data is incorrect.', 400)
+    if serializer.is_valid():
+        serializer.save()
+        return Response({'message': 'Successfully edited site'}, 200)
+    return Response({'message': 'Submitted data is incorrect.'}, 400)
     
+
 @api_view(['POST'])
 def add_client(request):
     serializer = ClientSerializer(data=request.data)
