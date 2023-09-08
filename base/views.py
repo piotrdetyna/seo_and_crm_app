@@ -41,8 +41,8 @@ def index(request):
 @site_required
 def site_details(request, site_id=None):  
     site = Site.objects.get(id=site_id)
+    site.payment_date = site.payment_date.strftime('%Y-%m-%d')     
 
-    site.payment_date = site.payment_date.strftime('%Y-%m-%d')       
     return render(request, 'base/site-details.html', context={
         'site': site,
     })
@@ -50,6 +50,7 @@ def site_details(request, site_id=None):
 
 def add_site_form(request):
     clients = Client.objects.all()
+
     return render(request, 'base/add-site.html', context={
         'clients': clients,
     })
@@ -57,8 +58,8 @@ def add_site_form(request):
 
 @api_view(['POST'])
 def add_site(request):
-
     serializer = AddSiteSerializer(data=request.data)
+    
     if serializer.is_valid():
         serializer.save()
         return Response({'message': 'Successfully added site'}, 200)
@@ -80,17 +81,10 @@ def edit_site(request):
 @api_view(['POST'])
 def add_client(request):
     serializer = ClientSerializer(data=request.data)
-    if serializer.is_valid():
-        client = Client(
-            name=serializer.validated_data['name'],
-            nip=serializer.validated_data['nip'],
-            email=serializer.validated_data['email'],
-        )
-        client.save()
 
-        return Response({
-            'client_id': client.id,
-        }, 200)
+    if serializer.is_valid():
+        client = serializer.save()
+        return Response({'client_id': client.id}, 200)
     return Response('Submitted data is incorrect.', 400)
 
 

@@ -37,11 +37,10 @@ class UpdateSiteSerializer(serializers.ModelSerializer):
 
 
 class ClientSerializer(serializers.ModelSerializer):
-    sites = AddSiteSerializer(many=True, read_only=True)
 
     class Meta:
         model = Client
-        fields = '__all__'
+        fields = ['name', 'nip', 'email']
 
 class NoteSerializer(serializers.ModelSerializer):
     
