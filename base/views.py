@@ -48,20 +48,21 @@ def site_details(request, site_id=None):
     })
 
 
-@api_view(['GET', 'POST'])
+def add_site_form(request):
+    clients = Client.objects.all()
+    return render(request, 'base/add-site.html', context={
+        'clients': clients,
+    })
+
+
+@api_view(['POST'])
 def add_site(request):
-    if request.method == 'GET':
-        clients = Client.objects.all()
-        return render(request, 'base/add-site.html', context={
-            'clients': clients,
-        })
-    
-    elif request.method == 'POST':
-        serializer = AddSiteSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response({'message': 'Successfully added site'}, 200)
-        return Response({'message': 'Submitted data is incorrect.'}, 400)
+
+    serializer = AddSiteSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response({'message': 'Successfully added site'}, 200)
+    return Response({'message': 'Submitted data is incorrect.'}, 400)
 
 
 @api_view(['PUT'])

@@ -20,7 +20,7 @@ api_url_patterns = [
 
 urlpatterns = [
     path('', views.index, name="index"),
-    path('add-site/', views.add_site, name="add_site"),
+    path('add-site/', views.add_site_form, name="add_site_form"),
 
     path('external/<int:site_id>/', views.external_links, name="external_links"),
     path('external/', views.external_links, name="external_links"),

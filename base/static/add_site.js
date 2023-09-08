@@ -108,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
         siteFormData.append('client_id', getSelectedCheckboxValue())
         console.log(siteFormData)
 
-        fetch('api//add-site/', {
+        fetch('/api/add-site/', {
             method: 'POST',
             headers: {
                 'X-CSRFToken': document.querySelector('[name="csrfmiddlewaretoken"]').value,
