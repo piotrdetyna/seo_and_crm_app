@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Client, Site, Note
+from ..models import Client, Site, Note
 
 class AddSiteSerializer(serializers.ModelSerializer):
     client_id = serializers.IntegerField(write_only=True)
