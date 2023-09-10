@@ -1,10 +1,10 @@
-from .serializers import AddSiteSerializer, ClientSerializer, NoteSerializer, AddNoteSerializer, UpdateSiteSerializer
+from .serializers import AddSiteSerializer, ClientSerializer, NoteSerializer, AddNoteSerializer, UpdateSiteSerializer, LoginSerializer
 from .utils import get_external_links, get_pages_from_sitemap, is_site_available
 from ..models import Site, ExternalLinksManager, ExternalLink, Note
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from django.shortcuts import get_object_or_404
-
+from django.contrib.auth import authenticate, login
 
 
 @api_view(['POST'])

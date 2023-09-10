@@ -5,6 +5,10 @@ from .models import User, Client, Site, ExternalLinksManager, ExternalLink, Note
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponseRedirect
+from django.contrib.auth.decorators import login_required, user_passes_test
+
+ALLOWED_USERS = ['admin']
+
 
 def site_required(view_func):
     def _wrapped_view_func(request, *args, **kwargs):
@@ -23,17 +27,28 @@ def site_required(view_func):
     return _wrapped_view_func
 
 
+def is_allowed_user(user):
+    return user.username in ALLOWED_USERS
+
+
 def get_object_or_none(model, **kwargs):
     try:
         return model.objects.get(**kwargs)
     except ObjectDoesNotExist:
         return None
+    
+
+def login(request):
+    return render(request, 'base/login.html')
 
 
+@login_required
+@user_passes_test(is_allowed_user)
 def index(request):
     return render(request, 'base/index.html')
 
-
+@login_required
+@user_passes_test(is_allowed_user)
 @site_required
 def notes(request, site_id=None):
     site = get_object_or_404(Site, id=site_id)
@@ -44,7 +59,8 @@ def notes(request, site_id=None):
         'site_id': site_id
     })
 
-
+@login_required
+@user_passes_test(is_allowed_user)
 @site_required
 def external_links(request, site_id=None):
     site = get_object_or_404(Site, id=site_id)
@@ -55,7 +71,8 @@ def external_links(request, site_id=None):
         'site_id': site_id,
     })
 
-
+@login_required
+@user_passes_test(is_allowed_user)
 @site_required
 def site_details(request, site_id=None):  
     site = Site.objects.get(id=site_id)
@@ -65,11 +82,13 @@ def site_details(request, site_id=None):
         'site': site,
     })
 
-
+@login_required
+@user_passes_test(is_allowed_user)
 def site_choice(request):
     return render(request, 'base/site-choice.html')
 
-
+@login_required
+@user_passes_test(is_allowed_user)
 def add_site_form(request):
     clients = Client.objects.all()
 

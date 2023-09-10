@@ -63,3 +63,8 @@ class AddNoteSerializer(serializers.ModelSerializer):
         site = validated_data.pop('site_id')
         note = Note.objects.create(site=site, **validated_data)
         return note
+    
+
+class LoginSerializer(serializers.Serializer):
+    username = serializers.CharField(max_length=150)
+    password = serializers.CharField(max_length=150)
