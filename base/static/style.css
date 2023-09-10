@@ -533,3 +533,12 @@ table caption {
 .half-width {
   width: 50% !important;
 }
+
+#delete-site-button {
+  color: red;
+  cursor: pointer;
+}
+
+#delete-site-button:hover {
+  color: black;
+}

@@ -76,7 +76,16 @@ def edit_site(request):
         serializer.save()
         return Response({'message': 'Successfully edited site'}, 200)
     return Response({'message': 'Submitted data is incorrect.'}, 400)
+
+@api_view(['DELETE'])
+def delete_site(request):
+    site_id = int(request.data.get('site_id'))
+    site = get_object_or_404(Site, id=site_id)
     
+    if site_id == request.session['current_site']:
+        del request.session['current_site']
+    site.delete()
+    return Response({'message': 'Successfully deleted site'}, 200)
 
 @api_view(['POST'])
 def add_client(request):

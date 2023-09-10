@@ -4,6 +4,7 @@ from . import views
 api_url_patterns = [
     path('add-site/', views.add_site, name="add_site"),
     path('edit-site/', views.edit_site, name="edit_site"),
+    path('delete-site/', views.delete_site, name="delete_site"),
     path('add-client/', views.add_client, name="add_client"),
     path('find-external/', views.find_external_links, name="find_external_links"),
     path('get-sites/', views.get_sites, name="get_sites"),
@@ -15,7 +16,7 @@ api_url_patterns = [
     path('get-note/<int:note_id>/', views.get_note, name="get_note"), 
     path('update-note/', views.update_note, name="update_note"),
     path('delete-note/', views.delete_note, name="delete_note"),
-    path('site-choice/', views.site_choice, name="site_choice"),
+    
 ]
 
 urlpatterns = [
@@ -30,6 +31,8 @@ urlpatterns = [
     
     path('notes/', views.notes, name="notes"),
     path('notes/<int:site_id>', views.notes, name="notes"),
+
+    path('site-choice/', views.site_choice, name="site_choice"),
 
     path('api/', include(api_url_patterns))
 ]

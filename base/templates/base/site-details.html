@@ -13,16 +13,18 @@ site_details.js
             <div class="column">
                 
                 <img src="{{ site.logo.url }}" class="client-image-big">
+                <p id="delete-site-button">Usuń stronę</p>
+                <span id="delete-site-message"></span>
             </div>
             <div class="column">
-                {{ site.payment_date }}
+                <p>ID strony: {{ site.id }}</p>
                 <h2>Edytuj stronę</h2>
                 <form id="edit-site" data-site-id="{{ site.id }}">
                     {% csrf_token %}
                     <label>URL<input type="text" name="url" value="{{ site.url }}"></label>
                     <label>Data opłacenia hostingu<input type="date" name="payment_date" value="{{ site.payment_date }}"></label>
                     <label class="file-input">Logo<input type="file" name="logo" value="{{ site.logo }}"><div class="file-input-button">Zmień</div></label>
-                    <input type="submit" class="button-purple" value="Dodaj">
+                    <input type="submit" class="button-purple" value="Edytuj">
                 </form>
                 <span id="add-site-message"></span>
             </div>
