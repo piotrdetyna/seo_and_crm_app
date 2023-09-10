@@ -2,12 +2,20 @@ from .serializers import AddSiteSerializer, ClientSerializer, NoteSerializer, Ad
 from .utils import get_external_links, get_pages_from_sitemap, is_site_available
 from ..models import Site, ExternalLinksManager, ExternalLink, Note
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import authenticate, login
+from rest_framework.permissions import IsAuthenticated, BasePermission
+from crm.settings import ALLOWED_USERS
+
+class IsAllowedUser(BasePermission):
+
+    def has_permission(self, request, view):
+        return request.user.username in ALLOWED_USERS
 
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated, IsAllowedUser])
 def add_site(request):
     serializer = AddSiteSerializer(data=request.data)
     
@@ -18,6 +26,7 @@ def add_site(request):
 
 
 @api_view(['PUT'])
+@permission_classes([IsAuthenticated, IsAllowedUser])
 def edit_site(request):
     site_id = request.data.get('site_id')
     site = get_object_or_404(Site, id=site_id)
@@ -30,6 +39,7 @@ def edit_site(request):
 
 
 @api_view(['DELETE'])
+@permission_classes([IsAuthenticated, IsAllowedUser])
 def delete_site(request):
     site_id = int(request.data.get('site_id'))
     site = get_object_or_404(Site, id=site_id)
@@ -41,6 +51,7 @@ def delete_site(request):
 
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated, IsAllowedUser])
 def add_client(request):
     serializer = ClientSerializer(data=request.data)
 
@@ -51,6 +62,7 @@ def add_client(request):
 
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated, IsAllowedUser])
 def get_sites(request, site_id=None):
     if site_id:
         return Response(Site.objects.get(id=site_id).as_json(), 200)
@@ -64,6 +76,7 @@ def get_sites(request, site_id=None):
 
 
 @api_view(['PUT'])
+@permission_classes([IsAuthenticated, IsAllowedUser])
 def set_current_site(request):
     site_id = request.data.get('site_id')
     _ = get_object_or_404(Site, id=site_id)
@@ -72,6 +85,7 @@ def set_current_site(request):
 
 
 @api_view(['PUT'])
+@permission_classes([IsAuthenticated, IsAllowedUser])
 def check_linked_pages_availability(request):
     external_links_id = request.data.get('external_links_id')
     external_links_manager = get_object_or_404(ExternalLinksManager, id=external_links_id)
@@ -107,6 +121,7 @@ def check_linked_pages_availability(request):
 
 
 @api_view(['PUT'])
+@permission_classes([IsAuthenticated, IsAllowedUser])
 def find_external_links(request):
     site = get_object_or_404(Site, id=request.data.get('site_id'))
     external_links_manager, _ = ExternalLinksManager.objects.get_or_create(site=site)
@@ -144,6 +159,7 @@ def find_external_links(request):
 
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated, IsAllowedUser])
 def get_external_links_progress(request, pk):
     site = get_object_or_404(Site, id=pk)
     external_links_manager = ExternalLinksManager.objects.get(site=site)
@@ -155,6 +171,7 @@ def get_external_links_progress(request, pk):
 
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated, IsAllowedUser])
 def add_note(request):
     serializer = AddNoteSerializer(data=request.data)
     if serializer.is_valid():
@@ -164,12 +181,14 @@ def add_note(request):
 
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated, IsAllowedUser])
 def get_note(request, note_id):
     note = get_object_or_404(Note, id=note_id)
     return Response(note.as_json(), 200)
 
 
 @api_view(['PUT'])
+@permission_classes([IsAuthenticated, IsAllowedUser])
 def update_note(request):
     note_id = request.data.get('note_id')
     note = get_object_or_404(Note, id=note_id)
@@ -183,6 +202,7 @@ def update_note(request):
 
 
 @api_view(['DELETE'])
+@permission_classes([IsAuthenticated, IsAllowedUser])
 def delete_note(request):
     note_id = request.data.get('note_id')
     note = get_object_or_404(Note, id=note_id)
@@ -191,6 +211,7 @@ def delete_note(request):
     
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated, IsAllowedUser])
 def login_view(request):
     serializer = LoginSerializer(data=request.data)
     if not serializer.is_valid():
@@ -199,7 +220,7 @@ def login_view(request):
     user = authenticate(
         request._request, 
         username=serializer.validated_data['username'], 
-        password=serializer.validated_data['password']
+        password=serializer.validated_data['password'],
     )
 
     if user is not None:

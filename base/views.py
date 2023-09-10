@@ -6,8 +6,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required, user_passes_test
-
-ALLOWED_USERS = ['admin']
+from crm.settings import ALLOWED_USERS
 
 
 def site_required(view_func):
