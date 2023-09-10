@@ -13,9 +13,11 @@
 <body>
   <main>
     <img src="/static/logo.svg" class="logo">
+    {% csrf_token %}
     <input type="text" name="username" id="username" placeholder="Nazwa użytkownika">
     <input type="password" name="password" id="password" placeholder="Hasło">
     <button id="send-form">Zaloguj się</button>
+    <p id="login-message"></p>
   </main>
 </body>
 </html>

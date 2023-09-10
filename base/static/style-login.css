@@ -7,12 +7,13 @@ body {
     justify-content: center; /* Wyśrodkowanie w poziomie */
     align-items: center;     /* Wyśrodkowanie w pionie */
     height: 100vh;   
+    font-family: 'Quicksand';
 }
 
 main {
     background-color: #00000015;
     backdrop-filter: blur(1px);
-    padding: 40px 40px 60px 40px;
+    padding: 40px;
     border-radius: 10px;
     box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.041);
 }
@@ -66,4 +67,10 @@ button:hover{
 button a {
     text-decoration: none;
     color: inherit;
+}
+
+#login-message {
+    color: white;
+    text-align: center;
+    height: 20px;
 }

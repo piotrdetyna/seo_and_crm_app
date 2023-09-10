@@ -190,3 +190,20 @@ def delete_note(request):
     return Response({'message': 'Note deleted successfully'}, 200)
     
 
+@api_view(['POST'])
+def login_view(request):
+    serializer = LoginSerializer(data=request.data)
+    if not serializer.is_valid():
+        return Response({'message': 'Submitted data is not valid'}, 400)
+    
+    user = authenticate(
+        request._request, 
+        username=serializer.validated_data['username'], 
+        password=serializer.validated_data['password']
+    )
+
+    if user is not None:
+        login(request._request, user)
+        return Response({'message': 'Successfully logged in'}, 200)
+    else:
+        return Response({'message': 'Incorrect username or password'}, 400)

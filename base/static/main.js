@@ -18,7 +18,6 @@ async function setCurrentSite(site_id) {
 
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
-    console.log(urlParams)
     const nextSite = urlParams.get('next')
     if (nextSite) {
         window.location.href = nextSite;
