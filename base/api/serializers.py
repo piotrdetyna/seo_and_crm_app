@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from ..models import Client, Site, Note
+from .utils import get_domain_from_url
 
 class AddSiteSerializer(serializers.ModelSerializer):
     client_id = serializers.IntegerField(write_only=True)
@@ -11,6 +12,7 @@ class AddSiteSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         client_id = validated_data.pop('client_id')
         client = Client.objects.get(pk=client_id)
+        validated_data['url'] = get_domain_from_url(validated_data['url'])
         site = Site.objects.create(client=client, **validated_data)
         return site
     

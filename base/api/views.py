@@ -1,6 +1,5 @@
 from .serializers import AddSiteSerializer, ClientSerializer, NoteSerializer, AddNoteSerializer, UpdateSiteSerializer
-from ..utils.find_external_links import get_external_links, get_pages_from_sitemap
-from ..utils.check_site_availability import is_site_available
+from .utils import get_external_links, get_pages_from_sitemap, is_site_available
 from ..models import Site, ExternalLinksManager, ExternalLink, Note
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
@@ -70,11 +69,6 @@ def set_current_site(request):
     _ = get_object_or_404(Site, id=site_id)
     request.session['current_site'] = site_id
     return Response('Successfully setted current site', 200)
-
-
-''' ============ external links views ============ '''
-
-
 
 
 @api_view(['PUT'])

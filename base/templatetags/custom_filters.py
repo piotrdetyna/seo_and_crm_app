@@ -1,5 +1,5 @@
 from django import template
-from ..utils.utils import get_domain_from_url
+from ..api.utils import get_domain_from_url
 register = template.Library()
 
 @register.filter(name='extract_path')
