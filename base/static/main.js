@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
             currentSiteSpan.innerHTML = `Aktualna strona: <a href="/site/"> ${current_site.url}✏️</a>`
         } 
         else {
-            currentSiteSpan.innerText = 'Wybierz stronę'
+            currentSiteSpan.innerText = 'Brak wybranej strony'
         }
         document.querySelector('#logout-button').onclick = () => { logout() }
     })();
