@@ -41,6 +41,21 @@ async function getSite(site_id) {
 }
 
 
+async function logout() {
+    const response = await fetch(`/api/logout/`, {
+        method: 'DELETE',
+        headers: {'X-CSRFToken': document.querySelector('[name="csrfmiddlewaretoken"]').value},
+    })
+
+    if (!response.ok) {
+        throw new Error(`Error while logging out. Status: ${response.status}`);
+    }
+    else {
+        location.reload()
+    }
+}
+
+
 
 async function populateSitesList() {
     let sitesLists = document.querySelectorAll('.sites-list');
@@ -83,6 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
         else {
             currentSiteSpan.innerText = 'Wybierz stronę'
         }
+        document.querySelector('#logout-button').onclick = () => { logout() }
     })();
     
     

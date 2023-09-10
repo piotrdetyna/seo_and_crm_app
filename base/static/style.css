@@ -542,3 +542,11 @@ table caption {
 #delete-site-button:hover {
   color: black;
 }
+
+#logout-button {
+  cursor: pointer;
+}
+
+#logout-button:hover {
+  color: #e4dffc;
+}

@@ -4,7 +4,7 @@ from ..models import Site, ExternalLinksManager, ExternalLink, Note
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from django.shortcuts import get_object_or_404
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from rest_framework.permissions import IsAuthenticated, BasePermission
 from crm.settings import ALLOWED_USERS
 
@@ -211,7 +211,6 @@ def delete_note(request):
     
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated, IsAllowedUser])
 def login_view(request):
     serializer = LoginSerializer(data=request.data)
     if not serializer.is_valid():
@@ -228,3 +227,10 @@ def login_view(request):
         return Response({'message': 'Successfully logged in'}, 200)
     else:
         return Response({'message': 'Incorrect username or password'}, 400)
+    
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def logout_view(request):
+    logout(request._request)
+    return Response({'message': 'Successfully logged out'}, 200)

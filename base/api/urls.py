@@ -17,4 +17,5 @@ urlpatterns = [
     path('update-note/', views.update_note, name="update_note"),
     path('delete-note/', views.delete_note, name="delete_note"),
     path('login/', views.login_view, name="login_view"),
+    path('logout/', views.logout_view, name="logout_view"),
 ]
