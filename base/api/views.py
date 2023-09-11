@@ -1,6 +1,6 @@
 from .serializers import AddSiteSerializer, ClientSerializer, NoteSerializer, AddNoteSerializer, UpdateSiteSerializer, LoginSerializer, AddBacklinkSerializer
 from .utils import get_external_links, get_pages_from_sitemap, is_site_available
-from ..models import Site, ExternalLinksManager, ExternalLink, Note
+from ..models import Site, ExternalLinksManager, ExternalLink, Note, Backlink
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from django.shortcuts import get_object_or_404
@@ -244,3 +244,12 @@ def add_backlink(request):
         serializer.save()
         return Response({'message': 'Added backlink'}, 201)
     return Response(serializer.errors, 400)
+
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated, IsAllowedUser])
+def delete_backlink(request):
+    backlink_id = request.data.get('backlink_id')
+    backlink = get_object_or_404(Backlink, id=backlink_id)
+    backlink.delete()
+    return Response({'message': 'Deleted backlink'}, 20)

@@ -18,5 +18,6 @@ urlpatterns = [
     path('delete-note/', views.delete_note, name="delete_note"),
     path('login/', views.login_view, name="login_view"),
     path('logout/', views.logout_view, name="logout_view"),
-    path('add-backlink/', views.add_backlink, name="add_backlink")
+    path('add-backlink/', views.add_backlink, name="add_backlink"),
+    path('delete-backlink/', views.delete_backlink, name="delete_backlink"),
 ]
