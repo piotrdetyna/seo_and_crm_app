@@ -18,7 +18,9 @@ backlinks.js
                 <button id="add-backlink" class="button-purple" value="{{ site.id }}">Dodaj backlink</button>
                 
             </div>
-            <div class="column"></div>
+            <div class="column">
+                <p id="add-backlink-message"></p>
+            </div>
         </div>
         
         <table>
@@ -28,8 +30,9 @@ backlinks.js
             <thead>
                 <tr>
                     <th width="50%">Strona linkująca</th>
-                    <th width="25%">Rel</th>
-                    <th width="25%">Aktywny</th>
+                    <th width="20%">Rel</th>
+                    <th width="20%">Aktywny</th>
+                    <th width="10%">🗑️</th>
                 </tr>
             </thead>
             <tbody>
@@ -38,6 +41,7 @@ backlinks.js
                     <td><a href="{{ link.linking_page }}" target="_blank">{{ link.linking_page|extract_domain }}</a></td>
                     <td class="{{ link.rel|color_class_from_rel_attribute }}">{{ link.rel|none_to_default }}</td>
                     <td class="{{ link.rel|color_class_from_bool }}">{{ link.active|availability_from_bool }}</td>
+                    <td class="delete-backlink-button clickable" data-id="{{ link.id }}">Usuń</td>
                 </tr>
                 {% endfor %}
             </tbody>

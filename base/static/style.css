@@ -564,3 +564,7 @@ input.big-input {
 input.big-input:hover {
   box-shadow: 6px 6px 0px #7157f6;
 }
+
+.clickable {
+  cursor: pointer;
+}

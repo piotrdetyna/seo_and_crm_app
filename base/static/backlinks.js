@@ -1,6 +1,6 @@
 let siteId = null
 
-async function addBacklinks(linking_page) {
+async function addBacklink(linking_page) {
     const response = await fetch('/api/add-backlink/', {
         method: 'POST',
         headers: {
@@ -12,11 +12,21 @@ async function addBacklinks(linking_page) {
             'site_id': siteId,
         })
     })
-    if (!response.ok) {
-		throw new Error(`Error while adding backlink. Status: ${response.status}`);
-	}
-	const data = await response.json();
-    return data
+    return response.ok
+}
+
+async function deleteBacklink(backlink_id) {
+    const response = await fetch('/api/delete-backlink/', {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('[name="csrfmiddlewaretoken"]').value,
+        },
+        body: JSON.stringify({
+            'backlink_id': backlink_id,
+        })
+    })
+    return response.ok
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -25,6 +35,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
     addBacklinkButton.onclick = async () => {
         let linking_page = document.querySelector('#linking-page').value
-        console.log(addBacklinks(linking_page))
+        response = await addBacklink(linking_page)
+
+        if (response) {
+            location.reload()
+        }
+        else {
+            document.querySelector('#add-backlink-message').innerHTML = 'Coś poszło nie tak'
+        }
     }
+
+    deleteBacklinkButtons = document.querySelectorAll('.delete-backlink-button')
+    deleteBacklinkButtons.forEach(button => {
+        button.onclick = async () => {
+            response = await deleteBacklink(button.dataset.id)
+            if (response) {
+                location.reload()
+            }
+            else {
+                button.innerHTML = 'Coś poszło nie tak'
+            }
+        }
+    })
 })
