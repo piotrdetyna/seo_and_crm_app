@@ -252,4 +252,4 @@ def delete_backlink(request):
     backlink_id = request.data.get('backlink_id')
     backlink = get_object_or_404(Backlink, id=backlink_id)
     backlink.delete()
-    return Response({'message': 'Deleted backlink'}, 20)
+    return Response({'message': 'Deleted backlink'}, 200)
