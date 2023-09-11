@@ -18,6 +18,9 @@ urlpatterns = [
 
     path('site-choice/', views.site_choice, name="site_choice"),
 
+    path('backlinks/', views.backlinks, name="backlinks"),
+    path('backlinks/<int:site_id>', views.backlinks, name="backlinks"),
+
     path('api/', include('base.api.urls')),
     path('login/', views.login, name='login'),
 ]

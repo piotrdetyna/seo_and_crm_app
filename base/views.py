@@ -94,3 +94,13 @@ def add_site_form(request):
     return render(request, 'base/add-site.html', context={
         'clients': clients,
     })
+
+
+@login_required
+@user_passes_test(is_allowed_user)
+@site_required
+def backlinks(request, site_id):
+    site = get_object_or_404(Site, id=site_id)
+    return render(request, 'base/backlinks.html', context={
+        'site': site,
+    })

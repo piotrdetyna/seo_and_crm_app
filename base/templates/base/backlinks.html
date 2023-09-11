@@ -1,0 +1,43 @@
+{% extends "base/layout.html" %}
+{% load custom_filters %}
+{% block script %}
+external_links.js
+{% endblock %}
+
+{% block main %}
+    <div class="card-top">
+        <h1>Linki przychodzące do strony <span class="purple-text">{{ site.url }}</span></h1>
+    </div>
+    <div class="card-content">        
+        
+        {% csrf_token %}
+        <div class="row">
+            <div class="column top">
+                <input class="big-input" type="text" id="linking-page" placeholder="Wprowadź URL linkujący">
+                <button id="Dodaj nowy" class="button-purple" value="{{ site_id }}">Dodaj backlink</button>
+                
+            </div>
+            <div class="column">
+            </div>
+        </div>
+        <table>
+            <caption>
+                Placeholder
+            </caption>
+            <thead>
+                <tr>
+                    <th width="50%">Strona linkująca</th>
+                    <th width="25%">Rel</th>
+                    <th width="25%">Aktywny</th>
+                </tr>
+            </thead>
+            <tbody>
+                    <tr>
+                        <td>URL placeholder</td>
+                        <td>Nofollow/doffollow placeholder</td>
+                        <td>Tak/Nie placeholder</td>
+                    </tr>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

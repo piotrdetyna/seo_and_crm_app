@@ -548,3 +548,19 @@ table caption {
 #logout-button:hover {
   color: #e4dffc;
 }
+
+input.big-input {
+  font-size: 16px;
+  padding: 5px 10px;
+  height: 62px;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  transition: 0.5s;
+  border-radius: 10px;
+  width: 100%;
+}
+
+
+input.big-input:hover {
+  box-shadow: 6px 6px 0px #7157f6;
+}
