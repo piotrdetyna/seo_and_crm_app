@@ -16,6 +16,12 @@ def get_domain_from_url(url):
         return domain
     else:
         return None
+    
+
+def add_https(url):
+    if not url.startswith("http://") and not url.startswith("https://"):
+        return f"https://{url}"
+    return url
 
 
 def is_site_available(url):

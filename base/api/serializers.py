@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from ..models import Client, Site, Note, Backlink
-from .utils import get_domain_from_url
+from .utils import get_domain_from_url, add_https
 
 class AddSiteSerializer(serializers.ModelSerializer):
     client_id = serializers.IntegerField(write_only=True)
@@ -80,5 +80,6 @@ class AddBacklinkSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         site_id = validated_data.pop('site_id')
         site = Site.objects.get(id=site_id)
+        validated_data['linking_page'] = add_https(validated_data['linking_page'])
         backlink = Backlink.objects.create(site=site, **validated_data)
         return backlink
