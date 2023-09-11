@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from ..models import Client, Site, Note
+from ..models import Client, Site, Note, Backlink
 from .utils import get_domain_from_url
 
 class AddSiteSerializer(serializers.ModelSerializer):
@@ -68,3 +68,17 @@ class AddNoteSerializer(serializers.ModelSerializer):
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=150)
     password = serializers.CharField(max_length=150)
+
+
+class AddBacklinkSerializer(serializers.ModelSerializer):
+    site_id = serializers.IntegerField(write_only=True)
+
+    class Meta:
+        model = Backlink
+        fields = ['linking_page', 'site_id']
+
+    def create(self, validated_data):
+        site_id = validated_data.pop('site_id')
+        site = Site.objects.get(id=site_id)
+        backlink = Backlink.objects.create(site=site, **validated_data)
+        return backlink
