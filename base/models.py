@@ -75,3 +75,10 @@ class Note(models.Model):
             'date': self.date,
             'id': self.id,
         }
+
+
+class Backlink(models.Model):
+    site = models.ForeignKey(Site, on_delete=models.CASCADE, related_name='backlinks')
+    linking_page = models.CharField(max_length=150)
+    active = models.BooleanField(blank=True, null=True)
+    rel = models.CharField(max_length=10)
