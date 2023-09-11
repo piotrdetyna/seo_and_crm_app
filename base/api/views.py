@@ -1,4 +1,4 @@
-from .serializers import AddSiteSerializer, ClientSerializer, NoteSerializer, AddNoteSerializer, UpdateSiteSerializer, LoginSerializer
+from .serializers import AddSiteSerializer, ClientSerializer, NoteSerializer, AddNoteSerializer, UpdateSiteSerializer, LoginSerializer, AddBacklinkSerializer
 from .utils import get_external_links, get_pages_from_sitemap, is_site_available
 from ..models import Site, ExternalLinksManager, ExternalLink, Note
 from rest_framework.response import Response
@@ -176,7 +176,7 @@ def add_note(request):
     serializer = AddNoteSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
-        return Response(serializer.data, 201)
+        return Response({'message': 'Added backlink'}, 201)
     return Response(serializer.errors, 400)
 
 
@@ -234,3 +234,13 @@ def login_view(request):
 def logout_view(request):
     logout(request._request)
     return Response({'message': 'Successfully logged out'}, 200)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated, IsAllowedUser])
+def add_backlink(request):
+    serializer = AddBacklinkSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response({'message': 'Added backlink'}, 201)
+    return Response(serializer.errors, 400)

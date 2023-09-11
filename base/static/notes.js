@@ -139,6 +139,5 @@ document.addEventListener('DOMContentLoaded', () => {
         currentNoteContent.value = ''
         deleteNoteButton.style.display = 'none'
         currentNote.style.display = null
-
     }
 })

@@ -1,7 +1,6 @@
 {% extends "base/layout.html" %}
-{% load custom_filters %}
 {% block script %}
-external_links.js
+backlinks.js
 {% endblock %}
 
 {% block main %}
@@ -14,7 +13,7 @@ external_links.js
         <div class="row">
             <div class="column top">
                 <input class="big-input" type="text" id="linking-page" placeholder="Wprowadź URL linkujący">
-                <button id="Dodaj nowy" class="button-purple" value="{{ site_id }}">Dodaj backlink</button>
+                <button id="add-backlink" class="button-purple" value="{{ site.id }}">Dodaj backlink</button>
                 
             </div>
             <div class="column">
