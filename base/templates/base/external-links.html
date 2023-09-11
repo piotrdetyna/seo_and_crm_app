@@ -44,7 +44,7 @@ external_links.js
                             {% for link in link_list %}
                                 <td><a href="{{ link.linked_page }}" rel="nofollow" target="_blank">{{ link.linked_page|extract_domain }}</a></td>
                                 <td class="{{ link.rel | color_class_from_rel_attribute}}">{{ link.rel }}</td>
-                                <td class="{{ link.is_linked_page_available | color_class_from_bool }}">{{ link.is_linked_page_available | page_availability_from_bool }}</td>
+                                <td class="{{ link.is_linked_page_available | color_class_from_bool }}">{{ link.is_linked_page_available | availability_from_bool }}</td>
                             </tr>
                             {% if not forloop.last %}
                                 <tr>

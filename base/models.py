@@ -82,3 +82,6 @@ class Backlink(models.Model):
     linking_page = models.CharField(max_length=150)
     active = models.BooleanField(blank=True, null=True)
     rel = models.CharField(max_length=10, blank=True, null=True)
+
+    def __str__(self):
+        return f'Backlink from {self.linking_page} to {self.site.url}'

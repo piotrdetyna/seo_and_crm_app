@@ -1,4 +1,6 @@
 {% extends "base/layout.html" %}
+{% load custom_filters %}
+
 {% block script %}
 backlinks.js
 {% endblock %}
@@ -8,7 +10,7 @@ backlinks.js
         <h1>Linki przychodzące do strony <span class="purple-text">{{ site.url }}</span></h1>
     </div>
     <div class="card-content">        
-        
+        <p>Sprawdź backlinki</p>        
         {% csrf_token %}
         <div class="row">
             <div class="column top">
@@ -16,9 +18,9 @@ backlinks.js
                 <button id="add-backlink" class="button-purple" value="{{ site.id }}">Dodaj backlink</button>
                 
             </div>
-            <div class="column">
-            </div>
+            <div class="column"></div>
         </div>
+        
         <table>
             <caption>
                 Placeholder
@@ -31,11 +33,13 @@ backlinks.js
                 </tr>
             </thead>
             <tbody>
-                    <tr>
-                        <td>URL placeholder</td>
-                        <td>Nofollow/doffollow placeholder</td>
-                        <td>Tak/Nie placeholder</td>
-                    </tr>
+                {% for link in backlinks.all %}
+                <tr>
+                    <td><a href="{{ link.linking_page }}" target="_blank">{{ link.linking_page|extract_domain }}</a></td>
+                    <td class="{{ link.rel|color_class_from_rel_attribute }}">{{ link.rel|none_to_default }}</td>
+                    <td class="{{ link.rel|color_class_from_bool }}">{{ link.active|availability_from_bool }}</td>
+                </tr>
+                {% endfor %}
             </tbody>
         </table>
     </div>
