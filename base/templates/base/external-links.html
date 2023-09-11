@@ -6,14 +6,14 @@ external_links.js
 
 {% block main %}
     <div class="card-top">
-        <h1>Linki wychodzące</h1>
+        <h1>Linki wychodzące ze strony <span class="purple-text">{{ site.url }}</span></h1>
     </div>
     <div class="card-content">        
         
         {% csrf_token %}
         <div class="row">
             <div class="column top">
-                    <button id="find-links" class="button-purple" value="{{ site_id }}">Znajdź linki</button>
+                    <button id="find-links" class="button-purple" value="{{ site.id }}">Znajdź linki</button>
                     <textarea id="to-exclude" placeholder="Wprowadź słowa do wykluczenia">{% for keyword in external_links.excluded %}{{ keyword }}{% if not forloop.last %}, {% endif %}{% endfor %}</textarea>
                 </div>
             <div class="column">

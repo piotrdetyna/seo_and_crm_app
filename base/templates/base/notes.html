@@ -5,8 +5,8 @@ notes.js
 {% endblock %}
 
 {% block main %}
-    <div class="card-top" id="info"  data-site-id="{{ site_id }}">
-        <h1>Notatki</h1>
+    <div class="card-top" id="info"  data-site-id="{{ site.id }}">
+        <h1>Notatki dla strony <span class="purple-text">{{ site.url }}</span></h1>
     </div>
     <div class="card-content">
         <div class="row">

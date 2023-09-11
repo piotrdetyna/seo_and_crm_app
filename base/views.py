@@ -55,7 +55,7 @@ def notes(request, site_id=None):
     
     return render(request, 'base/notes.html', context={
         'notes': notes,
-        'site_id': site_id
+        'site': site
     })
 
 @login_required
@@ -67,7 +67,7 @@ def external_links(request, site_id=None):
 
     return render(request, 'base/external-links.html', context={
         'external_links': external_links_manager,
-        'site_id': site_id,
+        'site': site,
     })
 
 @login_required
