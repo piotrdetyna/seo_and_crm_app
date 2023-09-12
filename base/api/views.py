@@ -253,3 +253,26 @@ def delete_backlink(request):
     backlink = get_object_or_404(Backlink, id=backlink_id)
     backlink.delete()
     return Response({'message': 'Deleted backlink'}, 200)
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated, IsAllowedUser])
+def check_backlinks_status(request):
+    site_id = request.data.get('site_id')
+    site = get_object_or_404(Site, id=site_id)
+    backlinks = site.backlinks
+
+    for backlink in backlinks.all():
+        linking_page = link.linking_page
+        links_from_linking_page = get_external_links(linking_page)
+
+        is_active, rel = False, None
+        for link in links_from_linking_page:
+            if site.url in link['href']:
+                is_active = True
+                rel = link['rel']
+        
+        backlink.active = is_active
+        backlink.rel = rel
+        backlink.save()
+    
+    return Response({'message': 'Updated backlinks statuses'}, 200)
