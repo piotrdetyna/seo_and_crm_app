@@ -254,6 +254,7 @@ def delete_backlink(request):
     backlink.delete()
     return Response({'message': 'Deleted backlink'}, 200)
 
+
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated, IsAllowedUser])
 def check_backlinks_status(request):
