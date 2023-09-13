@@ -25,7 +25,7 @@ backlinks.js
         
         <table>
             <caption>
-                Placeholder
+                <span class="purple-text clickable" id="check-status-button">Sprawdź status linków</span>
             </caption>
             <thead>
                 <tr>
@@ -40,7 +40,7 @@ backlinks.js
                 <tr>
                     <td><a href="{{ link.linking_page }}" target="_blank">{{ link.linking_page|extract_domain }}</a></td>
                     <td class="{{ link.rel|color_class_from_rel_attribute }}">{{ link.rel|none_to_default }}</td>
-                    <td class="{{ link.rel|color_class_from_bool }}">{{ link.active|availability_from_bool }}</td>
+                    <td class="{{ link.active|color_class_from_bool }}">{{ link.active|availability_from_bool }}</td>
                     <td class="delete-backlink-button clickable" data-id="{{ link.id }}">Usuń</td>
                 </tr>
                 {% endfor %}

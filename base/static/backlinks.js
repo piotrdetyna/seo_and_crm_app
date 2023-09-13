@@ -29,6 +29,20 @@ async function deleteBacklink(backlink_id) {
     return response.ok
 }
 
+async function checkBacklinksStatus() {
+    const response = await fetch('/api/check-backlinks-status/', {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('[name="csrfmiddlewaretoken"]').value,
+        },
+        body: JSON.stringify({
+            'site_id': siteId,
+        })
+    })
+    return response.ok
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     let addBacklinkButton = document.querySelector('#add-backlink')
     siteId = addBacklinkButton.value
@@ -57,4 +71,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     })
+
+
+    checkStatusButton = document.querySelector('#check-status-button')
+    checkStatusButton.onclick = async () => {
+        checkBacklinksStatus()
+    }
 })
