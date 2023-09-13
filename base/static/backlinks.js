@@ -74,7 +74,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     checkStatusButton = document.querySelector('#check-status-button')
+    checkStatusMessage = document.querySelector('#check-status-message')
     checkStatusButton.onclick = async () => {
-        checkBacklinksStatus()
+        checkStatusButton.classList.add('disabled')
+        checkStatusMessage.innerHTML = 'Proszę czekać... | '
+        if (checkBacklinksStatus()) {
+            setTimeout(() => {
+                location.reload();
+            }, 4000);
+            
+        }
+        else {
+            checkStatusMessage.innerHTML = 'Coś poszło nie tak | '
+        }
     }
 })
