@@ -137,7 +137,7 @@ def find_external_links(request):
 
     #iterates over all pages in site
     for page in pages:
-        links = get_external_links(page, to_exclude)
+        links = get_external_links(page, excluded=to_exclude)
 
         #iterates over all links in page, creates ExternalLink object and adds it to ExternalLinksManager
         for link in links:
@@ -263,7 +263,7 @@ def check_backlinks_status(request):
     backlinks = site.backlinks
 
     for backlink in backlinks.all():
-        linking_page = link.linking_page
+        linking_page = backlink.linking_page
         links_from_linking_page = get_external_links(linking_page)
 
         is_active, rel = False, None

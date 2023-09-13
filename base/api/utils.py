@@ -51,7 +51,7 @@ def is_site_available(url):
         return False
 
 
-def get_external_links(url, excluded):
+def get_external_links(url, excluded=[]):
     try:
         headers = {
             'Cache-Control': 'no-cache, no-store, must-revalidate',
