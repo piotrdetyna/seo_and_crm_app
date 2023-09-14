@@ -39,7 +39,7 @@ def edit_site(request, site_id):
         return Response({
             'message': 'Successfully edited site', 
             'site': serializer.data,           
-            }, 204)
+            }, 200)
     return Response({'message': 'Submitted data is incorrect.'}, 400)
 
 
@@ -51,7 +51,7 @@ def delete_site(request, site_id):
     if site_id == request.session['current_site']:
         del request.session['current_site']
     site.delete()
-    return Response({'message': 'Successfully deleted site'}, 204)
+    return Response(status=204)
 
 
 @api_view(['GET'])
@@ -70,8 +70,9 @@ def get_sites(request, site_id=None):
 def set_current_site(request):
     site_id = request.data.get('site_id')
     _ = get_object_or_404(Site, id=site_id)
+
     request.session['current_site'] = site_id
-    return Response('Successfully setted current site', 200)
+    return Response({'message': 'Successfully set current site'}, 200)
 
 
 @api_view(['POST'])
@@ -81,11 +82,11 @@ def add_client(request):
 
     if serializer.is_valid():
         client = serializer.save()
-        return Response({'client_id': client.id}, 200)
+        return Response({
+            'message': 'Successfully added client',
+            'client_id': client.id
+            }, 201)
     return Response('Submitted data is incorrect.', 400)
-
-
-
 
 
 @api_view(['PUT'])
