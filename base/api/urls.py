@@ -3,8 +3,9 @@ from . import views
 
 urlpatterns = [
     path('add-site/', views.add_site, name="add_site"),
-    path('edit-site/', views.edit_site, name="edit_site"),
-    path('delete-site/', views.delete_site, name="delete_site"),
+    path('edit-site/<int:site_id>/', views.edit_site, name="edit_site"),
+    path('delete-site/<int:site_id>/', views.delete_site, name="delete_site"),
+
     path('add-client/', views.add_client, name="add_client"),
     path('find-external/', views.find_external_links, name="find_external_links"),
     path('get-sites/', views.get_sites, name="get_sites"),

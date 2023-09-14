@@ -106,7 +106,6 @@ document.addEventListener('DOMContentLoaded', () => {
         event.preventDefault()
         let siteFormData = new FormData(siteForm);        
         siteFormData.append('client_id', getSelectedCheckboxValue())
-        console.log(siteFormData)
 
         fetch('/api/add-site/', {
             method: 'POST',

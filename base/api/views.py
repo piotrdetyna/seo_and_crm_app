@@ -21,33 +21,37 @@ def add_site(request):
     
     if serializer.is_valid():
         serializer.save()
-        return Response({'message': 'Successfully added site'}, 200)
+        return Response({
+            'message': 'Successfully added site', 
+            'site': serializer.data,
+        }, 201)
     return Response({'message': 'Submitted data is incorrect.'}, 400)
 
 
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated, IsAllowedUser])
-def edit_site(request):
-    site_id = request.data.get('site_id')
+def edit_site(request, site_id):
     site = get_object_or_404(Site, id=site_id)
     serializer = UpdateSiteSerializer(site, data=request.data, partial=True)
 
     if serializer.is_valid():
         serializer.save()
-        return Response({'message': 'Successfully edited site'}, 200)
+        return Response({
+            'message': 'Successfully edited site', 
+            'site': serializer.data,           
+            }, 204)
     return Response({'message': 'Submitted data is incorrect.'}, 400)
 
 
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated, IsAllowedUser])
-def delete_site(request):
-    site_id = int(request.data.get('site_id'))
+def delete_site(request, site_id):
     site = get_object_or_404(Site, id=site_id)
 
     if site_id == request.session['current_site']:
         del request.session['current_site']
     site.delete()
-    return Response({'message': 'Successfully deleted site'}, 200)
+    return Response({'message': 'Successfully deleted site'}, 204)
 
 
 @api_view(['POST'])
@@ -225,8 +229,7 @@ def login_view(request):
     if user is not None:
         login(request._request, user)
         return Response({'message': 'Successfully logged in'}, 200)
-    else:
-        return Response({'message': 'Incorrect username or password'}, 400)
+    return Response({'message': 'Incorrect username or password'}, 400)
     
 
 @api_view(['DELETE'])

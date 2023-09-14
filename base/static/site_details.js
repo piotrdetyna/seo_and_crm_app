@@ -2,9 +2,8 @@ var siteId = null
 
 function editSite(siteForm) {
     let siteFormData = new FormData(siteForm);  
-    siteFormData.append('site_id', siteId)
-  
-    fetch('/api/edit-site/', {
+ 
+    fetch(`/api/edit-site/${siteId}/`, {
         method: 'PUT',
         headers: {
             'X-CSRFToken': document.querySelector('[name="csrfmiddlewaretoken"]').value,
@@ -22,13 +21,12 @@ function editSite(siteForm) {
 
 function deleteSite() {
   
-    fetch('/api/delete-site/', {
+    fetch(`/api/delete-site/${siteId}/`, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',
             'X-CSRFToken': document.querySelector('[name="csrfmiddlewaretoken"]').value,
         },
-        body: JSON.stringify({'site_id': siteId})
     })
     .then(response => {
         if (response.ok) {
