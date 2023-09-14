@@ -5,12 +5,13 @@ urlpatterns = [
     path('add-site/', views.add_site, name="add_site"),
     path('edit-site/<int:site_id>/', views.edit_site, name="edit_site"),
     path('delete-site/<int:site_id>/', views.delete_site, name="delete_site"),
+    path('set-current-site/<int:site_id>', views.set_current_site, name="set_current_site"),
+    path('get-sites/', views.get_sites, name="get_sites"),
+    path('get-sites/<int:site_id>/', views.get_sites, name="get_sites"),
+
 
     path('add-client/', views.add_client, name="add_client"),
     path('find-external/', views.find_external_links, name="find_external_links"),
-    path('get-sites/', views.get_sites, name="get_sites"),
-    path('get-sites/<int:site_id>/', views.get_sites, name="get_sites"),
-    path('set-current-site/', views.set_current_site, name="set_current_site"),
     path('check-linked-page-availability/', views.check_linked_pages_availability, name="check_linked_pages_availability"),
     path('external-links-progress/<int:pk>/', views.get_external_links_progress, name="get_external_links_progress"),
     path('add-note/', views.add_note, name="add_note"), 

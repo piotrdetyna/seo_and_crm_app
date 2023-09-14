@@ -67,8 +67,7 @@ def get_sites(request, site_id=None):
 
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated, IsAllowedUser])
-def set_current_site(request):
-    site_id = request.data.get('site_id')
+def set_current_site(request, site_id):
     _ = get_object_or_404(Site, id=site_id)
 
     request.session['current_site'] = site_id
@@ -85,7 +84,7 @@ def add_client(request):
         return Response({
             'message': 'Successfully added client',
             'client_id': client.id
-            }, 201)
+        }, 201)
     return Response('Submitted data is incorrect.', 400)
 
 

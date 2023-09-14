@@ -1,13 +1,10 @@
 async function setCurrentSite(site_id) {
-    const response = await fetch('/api/set-current-site/', {
+    const response = await fetch(`/api/set-current-site/${site_id}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
             'X-CSRFToken': document.querySelector('[name="csrfmiddlewaretoken"]').value,
         },
-        body: JSON.stringify({
-            'site_id': site_id,
-        })
     })
     if (!response.ok) {
 		throw new Error(`Error while fetching sites list. Status: ${response.status}`);
