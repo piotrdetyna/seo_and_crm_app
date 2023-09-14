@@ -18,7 +18,7 @@ class IsAllowedUser(BasePermission):
 @permission_classes([IsAuthenticated, IsAllowedUser])
 def add_site(request):
     serializer = AddSiteSerializer(data=request.data)
-    
+
     if serializer.is_valid():
         serializer.save()
         return Response({
@@ -54,6 +54,26 @@ def delete_site(request, site_id):
     return Response({'message': 'Successfully deleted site'}, 204)
 
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated, IsAllowedUser])
+def get_sites(request, site_id=None):
+    if site_id:
+        site = Site.objects.get(id=site_id).as_json()
+        return Response({'site': site}, 200)
+    
+    sites = [site.as_json() for site in Site.objects.all()]            
+    return Response({'sites': sites}, 200)
+
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated, IsAllowedUser])
+def set_current_site(request):
+    site_id = request.data.get('site_id')
+    _ = get_object_or_404(Site, id=site_id)
+    request.session['current_site'] = site_id
+    return Response('Successfully setted current site', 200)
+
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated, IsAllowedUser])
 def add_client(request):
@@ -65,27 +85,7 @@ def add_client(request):
     return Response('Submitted data is incorrect.', 400)
 
 
-@api_view(['GET'])
-@permission_classes([IsAuthenticated, IsAllowedUser])
-def get_sites(request, site_id=None):
-    if site_id:
-        return Response(Site.objects.get(id=site_id).as_json(), 200)
-    
-    sites = Site.objects.all()
-    new_sites = []
-    for site in sites:
-        new_sites.append(site.as_json())
-            
-    return Response(new_sites, 200)
 
-
-@api_view(['PUT'])
-@permission_classes([IsAuthenticated, IsAllowedUser])
-def set_current_site(request):
-    site_id = request.data.get('site_id')
-    _ = get_object_or_404(Site, id=site_id)
-    request.session['current_site'] = site_id
-    return Response('Successfully setted current site', 200)
 
 
 @api_view(['PUT'])

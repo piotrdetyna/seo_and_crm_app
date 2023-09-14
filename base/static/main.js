@@ -35,9 +35,8 @@ async function getSite(site_id) {
     if (!response.ok) {
         throw new Error(`Error while fetching site ${site_id}. Status: ${response.status}`);
     }
-    const data = await response.json();
-    return data
-
+    let data = await response.json();
+    return data['site']
 }
 
 
@@ -65,7 +64,8 @@ async function populateSitesList() {
     if (!response.ok) {
         throw new Error(`Error while fetching sites list. Status: ${response.status}`);
     }
-    const data = await response.json();
+    let data = await response.json();
+    data = data['sites']
 
     sitesLists.forEach(sitesList => {
         data.forEach((site) => {
