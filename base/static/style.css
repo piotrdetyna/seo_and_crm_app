@@ -568,3 +568,12 @@ input.big-input:hover {
 .clickable {
   cursor: pointer;
 }
+
+
+.purple-background {
+  background-color: #e2ddff;
+}
+
+.pass {
+  margin: inherit;
+}

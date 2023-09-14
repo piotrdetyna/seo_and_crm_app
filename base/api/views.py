@@ -176,7 +176,7 @@ def add_note(request):
     serializer = AddNoteSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
-        return Response({'message': 'Added backlink'}, 201)
+        return Response(serializer.data, 201)
     return Response(serializer.errors, 400)
 
 
@@ -196,7 +196,7 @@ def update_note(request):
     
     if serializer.is_valid():
         serializer.save()
-        return Response({'message': 'Note updated successfully'}, 200)
+        return Response(serializer.data, 200)
     
     return Response(serializer.errors, 400)
 
@@ -271,8 +271,11 @@ def check_backlinks_status(request):
             if site.url in link['href']:
                 is_active = True
                 rel = link['rel']
-        
+
+        backlink.status_changed = is_active != backlink.active
         backlink.active = is_active
+
+        backlink.rel_changed = rel != backlink.rel
         backlink.rel = rel
         backlink.save()
     

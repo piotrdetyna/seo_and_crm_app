@@ -44,8 +44,18 @@ def color_class_from_rel_attribute(value):
     }
     return rel_to_text[value]
 
+
 @register.filter(name="none_to_default")
-def color_class_from_rel_attribute(value):
+def none_to_default(value):
     if value == None:
         return 'Brak danych'
     return value
+
+
+@register.filter(name="background_color_class_from_change_attribute")
+def background_color_class_from_change_attribute(value):
+    bool_to_text = {
+        True: "purple-background",
+        False: "pass",
+    }
+    return bool_to_text[value]

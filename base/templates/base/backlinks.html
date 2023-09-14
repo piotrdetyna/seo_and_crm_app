@@ -40,8 +40,8 @@ backlinks.js
                 {% for link in backlinks.all %}
                 <tr>
                     <td><a href="{{ link.linking_page }}" target="_blank">{{ link.linking_page|extract_domain }}</a></td>
-                    <td class="{{ link.rel|color_class_from_rel_attribute }}">{{ link.rel|none_to_default }}</td>
-                    <td class="{{ link.active|color_class_from_bool }}">{{ link.active|availability_from_bool }}</td>
+                    <td class="{{ link.rel|color_class_from_rel_attribute }} {{ link.rel_changed|background_color_class_from_change_attribute}}">{{ link.rel|none_to_default }}</td>
+                    <td class="{{ link.active|color_class_from_bool }} {{ link.status_changed|background_color_class_from_change_attribute}}">{{ link.active|availability_from_bool }}</td>
                     <td class="delete-backlink-button clickable" data-id="{{ link.id }}">Usuń</td>
                 </tr>
                 {% endfor %}
