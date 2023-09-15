@@ -1,9 +1,9 @@
 let csrfToken = null;
 let siteId = null;
 
-function sendPUTRequest(url, requestData, onSuccess) {
+function findExternalLinks(requestData) {
     try {
-        fetch(url, {
+        fetch(`/api/find-external/${siteId}/`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -13,7 +13,7 @@ function sendPUTRequest(url, requestData, onSuccess) {
         }).then(response => {
 
             if (response.ok) {
-                onSuccess();
+                location.reload()
             } else {
                 console.error('Request failed with status:', response.status);
             }
@@ -22,6 +22,29 @@ function sendPUTRequest(url, requestData, onSuccess) {
         console.error('An error occurred:', error);
     }
 }
+
+
+function checkLinkedPagesAvaliability() {
+    try {
+        fetch(`/api/check-linked-page-availability/${siteId}/`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken,
+            },
+        }).then(response => {
+
+            if (response.ok) {
+                location.reload()
+            } else {
+                console.error('Request failed with status:', response.status);
+            }
+        })
+    } catch (error) {
+        console.error('An error occurred:', error);
+    }
+}
+
 
 function updateProgress(url, progressElement) {
     try {
@@ -68,9 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         const toExclude = getExcludedDomains();
 
-        sendPUTRequest('/api/find-external/', {'site_id': siteId, 'to_exclude': toExclude }, () => {
-            location.reload();
-        });
+        findExternalLinks({'site_id': siteId, 'to_exclude': toExclude })
         setInterval(updateProgress, 500, `/api/external-links-progress/${siteId}/`, findLinksButton);
     };
 
@@ -80,9 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
         checkAvailabilityButton.classList.add('disabled');
         findLinksButton.classList.add('disabled');
 
-        sendPUTRequest('/api/check-linked-page-availability/', { external_links_id: externalLinksId }, () => {
-            location.reload();
-        });
+        checkLinkedPagesAvaliability();
         setInterval(updateProgress, 500, `/api/external-links-progress/${siteId}/`, progressTracker);
     };
 });

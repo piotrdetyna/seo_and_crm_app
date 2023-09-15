@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from ..models import Client, Site, Note, Backlink
+from ..models import Client, Site, Note, Backlink, ExternalLinksManager
 from .utils import get_domain_from_url, add_https
 
 class AddSiteSerializer(serializers.ModelSerializer):
@@ -83,3 +83,9 @@ class AddBacklinkSerializer(serializers.ModelSerializer):
         validated_data['linking_page'] = add_https(validated_data['linking_page'])
         backlink = Backlink.objects.create(site=site, **validated_data)
         return backlink
+    
+
+class ExternalLinksManagerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ExternalLinksManager
+        fields = '__all__'

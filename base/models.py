@@ -51,6 +51,13 @@ class ExternalLink(models.Model):
     def __str__(self):
         return f'link {self.rel} from {self.linking_page} to {self.linked_page}'
 
+    def update(self, **kwargs):
+        for attr, value in kwargs.items():
+            setattr(self, attr, value)
+        self.save()
+
+
+
 
 class ExternalLinksManager(models.Model):
     site = models.OneToOneField(Site, on_delete=models.CASCADE, related_name="external_links")
@@ -59,6 +66,31 @@ class ExternalLinksManager(models.Model):
     date = models.DateField(auto_now=True)
     progress_current = models.IntegerField(default=0)
     progress_target = models.IntegerField(default=1)
+
+    def update(self, **kwargs):
+        for attr, value in kwargs.items():
+            setattr(self, attr, value)
+        self.save()
+
+    def delete_links(self):
+        self.links.all().delete()
+        self.save()
+    
+    def clear_progress(self):
+        self.progress_current = 0
+        self.progress_target = 1
+        self.save()
+
+    def get_unique_linked_pages(self):
+        unique_linked_pages = set()
+        for external_link in self.links.all():
+            unique_linked_pages.add(external_link.linked_page)
+        return unique_linked_pages
+    
+    def increase_progress(self):
+        self.progress_current +=1
+        self.save()
+        
 
 
 class Note(models.Model):

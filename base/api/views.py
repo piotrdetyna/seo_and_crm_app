@@ -1,4 +1,4 @@
-from .serializers import AddSiteSerializer, ClientSerializer, NoteSerializer, AddNoteSerializer, UpdateSiteSerializer, LoginSerializer, AddBacklinkSerializer
+from .serializers import AddSiteSerializer, ClientSerializer, NoteSerializer, AddNoteSerializer, UpdateSiteSerializer, LoginSerializer, AddBacklinkSerializer, ExternalLinksManagerSerializer
 from .utils import get_external_links, get_pages_from_sitemap, is_site_available
 from ..models import Site, ExternalLinksManager, ExternalLink, Note, Backlink
 from rest_framework.response import Response
@@ -90,76 +90,53 @@ def add_client(request):
 
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated, IsAllowedUser])
-def check_linked_pages_availability(request):
-    external_links_id = request.data.get('external_links_id')
-    external_links_manager = get_object_or_404(ExternalLinksManager, id=external_links_id)
+def check_linked_pages_availability(request, site_id):
+    site = get_object_or_404(Site, id=site_id)
+    external_links_manager = get_object_or_404(ExternalLinksManager, site=site)
+    external_links_manager.clear_progress()
 
-    #get rid of the same urls
-    unique_linked_pages = set()
-    for external_link in external_links_manager.links.all():
-        unique_linked_pages.add(external_link.linked_page)
+    unique_linked_pages = external_links_manager.get_unique_linked_pages()
+    external_links_manager.update(progress_target=len(unique_linked_pages))
 
-    #prepare external_links_manager progress
-    external_links_manager.progress_target = len(unique_linked_pages)
-    external_links_manager.progress_current = 0
-    external_links_manager.save()
-
-    #check availability for every unique linked page
     for linked_page in unique_linked_pages:
-        is_available = is_site_available(linked_page)
-
-        #update every ExternalLink object with checked URL
         objects_to_update = external_links_manager.links.filter(linked_page=linked_page)
         for object_to_update in objects_to_update:
-            object_to_update.is_linked_page_available = is_available
-            object_to_update.save()
+            object_to_update.update(is_linked_page_available=is_site_available(linked_page))
         
-        external_links_manager.progress_current += 1
-        external_links_manager.save()
+        external_links_manager.increase_progress()
+    external_links_manager.clear_progress()
     
-    #clear progress
-    external_links_manager.progress_current = 0
-    external_links_manager.save()
-
     return Response({'message': 'Successfully checked linked pages availability'}, 200)
 
 
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated, IsAllowedUser])
-def find_external_links(request):
-    site = get_object_or_404(Site, id=request.data.get('site_id'))
+def find_external_links(request, site_id):
+    site = get_object_or_404(Site, id=site_id)
     external_links_manager, _ = ExternalLinksManager.objects.get_or_create(site=site)
-    pages = get_pages_from_sitemap(site.url)
     to_exclude = request.data.get('to_exclude')
 
-    #prepare external_links_manager
-    external_links_manager.progress_current = 0
-    external_links_manager.progress_target = len(pages)
-    external_links_manager.excluded = to_exclude
-    external_links_manager.links.all().delete()
-    external_links_manager.save()
-
-    #iterates over all pages in site
+    pages = get_pages_from_sitemap(site.url)
+    external_links_manager.clear_progress()
+    external_links_manager.delete_links()
+    external_links_manager.update(progress_target=len(pages), excluded=to_exclude)
+    
     for page in pages:
         links = get_external_links(page, excluded=to_exclude)
 
-        #iterates over all links in page, creates ExternalLink object and adds it to ExternalLinksManager
         for link in links:
             external_link_object = ExternalLink(
-                linking_page=page,
-                linked_page=link['href'],
-                rel=link['rel'],
+                linking_page=page, linked_page=link['href'], rel=link['rel'],
             )
             external_link_object.save()
+            
             external_links_manager.links.add(external_link_object)
-        external_links_manager.progress_current += 1
-        external_links_manager.save()
+        external_links_manager.increase_progress()
 
-    #clear progress
-    external_links_manager.progress_current = 0
     external_links_manager.save()
+    external_links_manager.clear_progress()
 
-    return Response({'message': 'Successfully found links'}, status=200)
+    return Response({'links': ExternalLinksManagerSerializer(external_links_manager).data, 'message': 'Successfully found links'}, 200)
 
 
 @api_view(['GET'])
