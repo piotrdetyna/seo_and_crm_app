@@ -12,6 +12,7 @@ urlpatterns = [
 
     path('add-client/', views.add_client, name="add_client"),
     path('edit-client/<int:client_id>/', views.edit_client, name="edit_client"),
+    path('delete-client/<int:client_id>/', views.delete_client, name="delete_client"),
 
     path('find-external/<int:site_id>/', views.find_external_links, name="find_external_links"),
     path('check-linked-page-availability/<int:site_id>/', views.check_linked_pages_availability, name="check_linked_pages_availability"),

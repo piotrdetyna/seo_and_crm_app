@@ -43,21 +43,6 @@ def edit_site(request, site_id):
     return Response({'message': 'Submitted data is incorrect.'}, 400)
 
 
-@api_view(['PUT'])
-@permission_classes([IsAuthenticated, IsAllowedUser])
-def edit_client(request, client_id):
-    client = get_object_or_404(Client, id=client_id)
-    serializer = ClientSerializer(client, data=request.data, partial=True)
-
-    if serializer.is_valid():
-        serializer.save()
-        return Response({
-            'message': 'Successfully edited site', 
-            'site': serializer.data,           
-            }, 200)
-    return Response({'message': 'Submitted data is incorrect.'}, 400)
-
-
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated, IsAllowedUser])
 def delete_site(request, site_id):
@@ -101,6 +86,34 @@ def add_client(request):
             'client': serializer.data,
         }, 201)
     return Response(serializer.errors, 400)
+
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated, IsAllowedUser])
+def edit_client(request, client_id):
+    client = get_object_or_404(Client, id=client_id)
+    serializer = ClientSerializer(client, data=request.data, partial=True)
+
+    if serializer.is_valid():
+        serializer.save()
+        return Response({
+            'message': 'Successfully edited site', 
+            'site': serializer.data,           
+            }, 200)
+    return Response({'message': 'Submitted data is incorrect.'}, 400)
+
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated, IsAllowedUser])
+def delete_client(request, client_id):
+    client = get_object_or_404(Client, id=client_id)
+    current_site = request.session.get('current_site')
+
+    #delete current site from session, if it is related to deleted client
+    if current_site and any(site.id == current_site for site in client.sites.all()):
+        del request.session['current_site']
+    client.delete()
+    return Response(status=204)
 
 
 @api_view(['PUT'])
