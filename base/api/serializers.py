@@ -14,7 +14,7 @@ class AddSiteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Site
-        fields = ('url', 'payment_date', 'client_id', 'logo', 'date')
+        fields = ('url', 'client_id', 'logo', 'date')
 
     def create(self, validated_data):
         client_id = validated_data.pop('client_id')
@@ -29,15 +29,13 @@ class UpdateSiteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Site
-        fields = ('url', 'payment_date', 'logo', 'site_id')
+        fields = ('url', 'logo', 'site_id')
         extra_kwargs = {
             'logo': {'required': False}
         }
 
     def update(self, instance, validated_data):
         instance.url = validated_data.get('url', instance.url)
-        instance.payment_date = validated_data.get('payment_date', instance.payment_date)
-
         if validated_data.get('logo'):
             instance.logo = validated_data['logo']
 

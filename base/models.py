@@ -23,7 +23,6 @@ class Client(models.Model):
 
 class Site(models.Model):
     url = models.CharField(max_length=150, unique=True)
-    payment_date = models.DateField(blank=True, null=True)
     client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name="sites")
     logo = models.ImageField(upload_to=logo_file_name)
     date = models.DateField(auto_now_add=True)

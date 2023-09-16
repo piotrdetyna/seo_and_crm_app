@@ -22,7 +22,6 @@ site_details.js
                 <form id="edit-site" data-site-id="{{ site.id }}">
                     {% csrf_token %}
                     <label>URL<input type="text" name="url" value="{{ site.url }}"></label>
-                    <label>Data opłacenia hostingu<input type="date" name="payment_date" value="{{ site.payment_date }}"></label>
                     <label class="file-input">Logo<input type="file" name="logo" value="{{ site.logo }}"><div class="file-input-button">Zmień</div></label>
                     <input type="submit" class="button-purple" value="Edytuj">
                 </form>

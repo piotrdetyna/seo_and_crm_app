@@ -75,7 +75,6 @@ def external_links(request, site_id=None):
 @site_required
 def site_details(request, site_id=None):  
     site = Site.objects.get(id=site_id)
-    site.payment_date = site.payment_date.strftime('%Y-%m-%d')     
 
     return render(request, 'base/site-details.html', context={
         'site': site,
