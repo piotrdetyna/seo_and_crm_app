@@ -1,4 +1,25 @@
+function handleSwitch() {
+    if (this.checked) {
+        document.querySelector('#client-type').innerHTML = 'Osoba prywatna'
+        document.querySelector('#nip').style.display = 'none'
+        document.querySelector('#address').style.display = null
+        document.querySelector('#full-name').style.display = null
+    } else {
+        document.querySelector('#client-type').innerHTML = 'Firma'
+        document.querySelector('#nip').style.display = null
+        document.querySelector('#address').style.display = 'none'
+        document.querySelector('#full-name').style.display = 'none'
+    }
+}
+
+
+
 document.addEventListener('DOMContentLoaded', () => {
+
+    document.querySelector('#address').style.display = 'none'
+    document.querySelector('#full-name').style.display = 'none'
+    document.getElementById("switchInput").addEventListener("change", handleSwitch)
+
     let form = document.querySelector('form#add-client')
     form.onsubmit = (event) => {
         event.preventDefault()
@@ -21,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (response.ok) {
                 console.log(response)
                 response.json().then(data => {
-                    clientId = data.client_id
+                    clientId = data.client.id
                     console.log(clientName, clientId)
                     form.style.pointerEvents = 'none';
                     document.querySelector('#add-client-message').innerHTML =  '<p>Dodano klienta. Teraz możesz dodać stronę.</p>'

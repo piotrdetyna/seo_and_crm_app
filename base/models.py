@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from slugify import slugify
 from django.contrib.contenttypes.fields import GenericForeignKey, ContentType
+from django.core.exceptions import ValidationError
 
 
 def logo_file_name(instance, filename):
@@ -14,8 +15,24 @@ class User(AbstractUser):
 
 class Client(models.Model):
     name = models.CharField(max_length=100)
-    nip = models.IntegerField()
+    nip = models.CharField(max_length=10, null=True, blank=True)
     email = models.CharField(max_length=100)
+    address = models.CharField(max_length=200, null=True, blank=True)
+    full_name = models.CharField(max_length=200, null=True, blank=True)
+
+    def clean(self):
+        #when client is a company
+        if self.nip:
+            if self.address or self.full_name:
+                raise ValidationError('If "nip" field is filled, "address" and "full_name" fields must not be filled.')
+        #when client is a private person
+        else:
+            if not self.address or not self.full_name:
+                raise ValidationError("If 'nip' field is not filled, both 'address' and 'full_name' must be filled.")
+
+    def save(self, *args, **kwargs):
+        self.clean()
+        super(Client, self).save(*args, **kwargs)
 
     def __str__(self):
         return self.name
@@ -99,3 +116,5 @@ class Backlink(models.Model):
 
     def __str__(self):
         return f'Backlink from {self.linking_page} to {self.site.url}'
+
+

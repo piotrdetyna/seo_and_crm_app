@@ -14,7 +14,7 @@ class AddSiteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Site
-        fields = ('url', 'client_id', 'logo', 'date')
+        fields = ('url', 'client_id', 'logo', 'date',)
 
     def create(self, validated_data):
         client_id = validated_data.pop('client_id')
@@ -44,11 +44,10 @@ class UpdateSiteSerializer(serializers.ModelSerializer):
 
 
 class ClientSerializer(serializers.ModelSerializer):
-
+    id = serializers.IntegerField(read_only=True)
     class Meta:
         model = Client
-        fields = ['name', 'nip', 'email']
-
+        fields = ['name', 'nip', 'email', 'full_name', 'address', 'id']
 
 class UpdateNoteSerializer(serializers.ModelSerializer):
     

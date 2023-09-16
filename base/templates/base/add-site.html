@@ -26,10 +26,20 @@ add_site.js
                     <h2>Dodaj klienta <small id="choice-client-button">Lub wybierz z listy</small></h2>
                     <form id="add-client">
                         {% csrf_token %}
-                        <label>Nazwa firmy<input type="text" name="name"></label>
-                        <label>NIP<input type="number" name="nip"></label>
-                        <label>E-mail<input type="email" name="email"></label>
+                        <label>Nazwa<input type="text" name="name" required></label>
+                        <label>E-mail<input type="email" name="email" required></label>
+
+                        <div class="switch-description" id="client-type">Firma</div>
+                        <label class="switch">  
+                            <input type="checkbox" id="switchInput">
+                            <span class="slider round"></span>
+                        </label><br>
+                        
+                        <label id="nip">NIP<input type="number" name="nip"></label>
+                        <label id="full-name">Imię i nazwisko<input type="text" name="full_name"></label>
+                        <label id="address">Adres<input type="text" name="address"></label>
                         <input type="submit" class="button-purple" value="Dodaj">
+                        
                     </form>
                     <span id="add-client-message"></span>
                 </div>

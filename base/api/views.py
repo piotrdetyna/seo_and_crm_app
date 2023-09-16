@@ -78,14 +78,14 @@ def set_current_site(request, site_id):
 @permission_classes([IsAuthenticated, IsAllowedUser])
 def add_client(request):
     serializer = ClientSerializer(data=request.data)
-
     if serializer.is_valid():
-        client = serializer.save()
+        
+        serializer.save()
         return Response({
             'message': 'Successfully added client',
-            'client_id': client.id
+            'client': serializer.data,
         }, 201)
-    return Response('Submitted data is incorrect.', 400)
+    return Response(serializer.errors, 400)
 
 
 @api_view(['PUT'])
