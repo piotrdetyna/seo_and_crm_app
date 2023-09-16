@@ -30,17 +30,7 @@ class Site(models.Model):
 
     def __str__(self):
         return self.url
-    
-    def as_json(self):
-        return {
-            'url': self.url,
-            'payment_date': self.payment_date,
-            'client': self.client.name,
-            'logo': self.logo.url,
-            'date': self.date,
-            'id': self.id,
-        }
-    
+
 
 class ExternalLink(models.Model):
     linking_page = models.CharField(max_length=150)
@@ -55,8 +45,6 @@ class ExternalLink(models.Model):
         for attr, value in kwargs.items():
             setattr(self, attr, value)
         self.save()
-
-
 
 
 class ExternalLinksManager(models.Model):
@@ -88,7 +76,7 @@ class ExternalLinksManager(models.Model):
         return unique_linked_pages
     
     def increase_progress(self):
-        self.progress_current +=1
+        self.progress_current += 1
         self.save()
         
 
@@ -99,14 +87,6 @@ class Note(models.Model):
     date = models.DateField(auto_now_add=True)
     title = models.CharField(max_length=100)
 
-
-    def as_json(self):
-        return {
-            'title': self.title,
-            'text': self.text,
-            'date': self.date,
-            'id': self.id,
-        }
 
 
 class Backlink(models.Model):

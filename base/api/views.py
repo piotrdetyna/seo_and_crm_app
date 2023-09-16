@@ -1,4 +1,4 @@
-from .serializers import AddSiteSerializer, ClientSerializer, NoteSerializer, AddNoteSerializer, UpdateSiteSerializer, LoginSerializer, AddBacklinkSerializer, ExternalLinksManagerSerializer
+from .serializers import AddSiteSerializer, BacklinkSerializer, UpdateNoteSerializer, ClientSerializer, SiteSerializer, NoteSerializer, AddNoteSerializer, UpdateSiteSerializer, LoginSerializer, AddBacklinkSerializer, ExternalLinksManagerSerializer
 from .utils import get_external_links, get_pages_from_sitemap, is_site_available
 from ..models import Site, ExternalLinksManager, ExternalLink, Note, Backlink
 from rest_framework.response import Response
@@ -58,10 +58,10 @@ def delete_site(request, site_id):
 @permission_classes([IsAuthenticated, IsAllowedUser])
 def get_sites(request, site_id=None):
     if site_id:
-        site = Site.objects.get(id=site_id).as_json()
+        site = SiteSerializer(Site.objects.get(id=site_id)).data
         return Response({'site': site}, 200)
     
-    sites = [site.as_json() for site in Site.objects.all()]            
+    sites = [SiteSerializer(site).data for site in Site.objects.all()]            
     return Response({'sites': sites}, 200)
 
 
@@ -123,13 +123,12 @@ def find_external_links(request, site_id):
     
     for page in pages:
         links = get_external_links(page, excluded=to_exclude)
-
         for link in links:
             external_link_object = ExternalLink(
                 linking_page=page, linked_page=link['href'], rel=link['rel'],
             )
             external_link_object.save()
-            
+
             external_links_manager.links.add(external_link_object)
         external_links_manager.increase_progress()
 
@@ -141,8 +140,8 @@ def find_external_links(request, site_id):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated, IsAllowedUser])
-def get_external_links_progress(request, pk):
-    site = get_object_or_404(Site, id=pk)
+def get_external_links_progress(request, site_id):
+    site = get_object_or_404(Site, id=site_id)
     external_links_manager = ExternalLinksManager.objects.get(site=site)
         
     return Response({
@@ -165,7 +164,7 @@ def add_note(request):
 @permission_classes([IsAuthenticated, IsAllowedUser])
 def get_note(request, note_id):
     note = get_object_or_404(Note, id=note_id)
-    return Response(note.as_json(), 200)
+    return Response(NoteSerializer(note).data, 200)
 
 
 @api_view(['PUT'])
@@ -173,7 +172,7 @@ def get_note(request, note_id):
 def update_note(request):
     note_id = request.data.get('note_id')
     note = get_object_or_404(Note, id=note_id)
-    serializer = NoteSerializer(note, data=request.data)
+    serializer = UpdateNoteSerializer(note, data=request.data)
     
     if serializer.is_valid():
         serializer.save()
@@ -222,7 +221,7 @@ def add_backlink(request):
     serializer = AddBacklinkSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
-        return Response({'message': 'Added backlink'}, 201)
+        return Response({'message': 'Added backlink'} | serializer.data, 201)
     return Response(serializer.errors, 400)
 
 
@@ -238,25 +237,17 @@ def delete_backlink(request):
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated, IsAllowedUser])
 def check_backlinks_status(request):
-    site_id = request.data.get('site_id')
-    site = get_object_or_404(Site, id=site_id)
-    backlinks = site.backlinks
+    site = get_object_or_404(Site, id=request.data.get('site_id'))
+    response = []
 
-    for backlink in backlinks.all():
-        linking_page = backlink.linking_page
-        links_from_linking_page = get_external_links(linking_page)
+    for backlink in site.backlinks.all():
+        links_from_page = get_external_links(backlink.linking_page)
+        is_active, rel = any(site.url in link['href'] for link in links_from_page), next((link['rel'] for link in links_from_page if site.url in link['href']), None)
 
-        is_active, rel = False, None
-        for link in links_from_linking_page:
-            if site.url in link['href']:
-                is_active = True
-                rel = link['rel']
-
-        backlink.status_changed = is_active != backlink.active
-        backlink.active = is_active
-
-        backlink.rel_changed = rel != backlink.rel
-        backlink.rel = rel
+        backlink.status_changed, backlink.active = is_active != backlink.active, is_active
+        backlink.rel_changed, backlink.rel = rel != backlink.rel, rel
         backlink.save()
-    
-    return Response({'message': 'Updated backlinks statuses'}, 200)
+        response.append(BacklinkSerializer(backlink).data)
+
+    return Response({'message': 'Updated backlinks statuses', 'links': response}, 200)
+

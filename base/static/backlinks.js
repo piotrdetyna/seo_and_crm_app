@@ -79,9 +79,9 @@ document.addEventListener('DOMContentLoaded', () => {
         checkStatusButton.classList.add('disabled')
         checkStatusMessage.innerHTML = 'Proszę czekać... | '
         if (checkBacklinksStatus()) {
-            setTimeout(() => {
+            /*setTimeout(() => {
                 location.reload();
-            }, 4000);
+            }, 4000);*/
             
         }
         else {

@@ -2,6 +2,13 @@ from rest_framework import serializers
 from ..models import Client, Site, Note, Backlink, ExternalLinksManager
 from .utils import get_domain_from_url, add_https
 
+
+class SiteSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Site
+        fields = '__all__'
+
 class AddSiteSerializer(serializers.ModelSerializer):
     client_id = serializers.IntegerField(write_only=True)
 
@@ -44,11 +51,19 @@ class ClientSerializer(serializers.ModelSerializer):
         model = Client
         fields = ['name', 'nip', 'email']
 
-class NoteSerializer(serializers.ModelSerializer):
+
+class UpdateNoteSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Note
         fields = ['title', 'text']
+
+
+class NoteSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Note
+        fields = '__all__'
 
 
 class AddNoteSerializer(serializers.ModelSerializer):
@@ -84,8 +99,15 @@ class AddBacklinkSerializer(serializers.ModelSerializer):
         backlink = Backlink.objects.create(site=site, **validated_data)
         return backlink
     
+class BacklinkSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Backlink
+        fields = '__all__'
+    
 
 class ExternalLinksManagerSerializer(serializers.ModelSerializer):
     class Meta:
         model = ExternalLinksManager
         fields = '__all__'
+ 
