@@ -1,14 +1,18 @@
+let isClientCompany = true
+
 function handleSwitch() {
     if (this.checked) {
         document.querySelector('#client-type').innerHTML = 'Osoba prywatna'
         document.querySelector('#nip').style.display = 'none'
         document.querySelector('#address').style.display = null
         document.querySelector('#full-name').style.display = null
+        isClientCompany = false
     } else {
         document.querySelector('#client-type').innerHTML = 'Firma'
         document.querySelector('#nip').style.display = null
         document.querySelector('#address').style.display = 'none'
         document.querySelector('#full-name').style.display = 'none'
+        isClientCompany = true
     }
 }
 
@@ -28,6 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
         formData.forEach((value, key) => {
             data[key] = value;
         });
+        data['is_company'] = isClientCompany
         let clientName = data['name'];
 
         fetch('/api/add-client/', {

@@ -15,20 +15,22 @@ class User(AbstractUser):
 
 class Client(models.Model):
     name = models.CharField(max_length=100)
-    nip = models.CharField(max_length=10, blank=True)
     email = models.CharField(max_length=100)
+
+    is_company = models.BooleanField()
+    nip = models.CharField(max_length=10, blank=True)
     address = models.CharField(max_length=200, blank=True)
     full_name = models.CharField(max_length=200, blank=True)
 
     def clean(self):
         #when client is a company
-        if self.nip:
+        if self.is_company:
             if self.address or self.full_name:
-                raise ValidationError('If "nip" field is filled, "address" and "full_name" fields must not be filled.')
+                raise ValidationError('If client is a company, "address" and "full_name" fields must not be filled.')
         #when client is a private person
         else:
             if not self.address or not self.full_name:
-                raise ValidationError("If 'nip' field is not filled, both 'address' and 'full_name' must be filled.")
+                raise ValidationError("If client is a private person, both 'address' and 'full_name' must be filled.")
 
     def save(self, *args, **kwargs):
         self.clean()

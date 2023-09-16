@@ -95,6 +95,17 @@ def clients(request):
 
 @login_required
 @user_passes_test(is_allowed_user)
+def client(request, client_id):  
+    client = get_object_or_404(Client, id=client_id)
+
+    return render(request, 'base/client.html', context={
+        'client': client,
+    })
+
+
+
+@login_required
+@user_passes_test(is_allowed_user)
 def site_choice(request):
     return render(request, 'base/site-choice.html')
 
