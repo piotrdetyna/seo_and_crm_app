@@ -1,0 +1,47 @@
+{% extends "base/layout.html" %}
+
+{% block script %}
+client.js
+{% endblock %}
+{% block main %}
+    <div class="card-top">
+        <h1>Szczegóły klienta <span class="purple-text">{{ client.name }}</span></h1>
+    </div>
+    <div class="card-content">
+        <div class="row">
+            <div class="column">
+                <h2>Strony klienta:</h2>
+                <div class="clients-list">
+                    {% for site in client.sites.all %}
+                        <p>{{ site.url }}</p>
+                    {% empty %}
+                        <p>Brak stron</p>
+                    {% endfor %}
+                </div>
+                <p id="delete-client-button">Usuń klienta</p>
+                <span id="delete-client-message"></span>
+            </div>
+            <div class="column">
+                <h2>Edytuj klienta</h2>
+                <form id="edit-client" data-client-id="{{ client.id }}">
+                    {% csrf_token %}
+                    <label>Nazwa<input type="text" name="name" value="{{ client.name }}"></label>
+                    <label>E-mail<input type="text" name="email" value="{{ client.email }}"></label>
+
+                    <div class="switch-description" id="client-type">Firma</div>
+                    <label class="switch">  
+                        <input type="checkbox" id="switchInput" {% if not client.is_company %} checked {% endif %}>
+                        <span class="slider round"></span>
+                    </label><br>
+
+                    <label id="nip">NIP<input type="number" name="nip" value="{{ client.nip }}"></label>
+                    <label id="full-name">Imię i nazwisko<input type="text" name="full_name" value="{{ client.full_name }}"></label>
+                    <label id="address">Adres<input type="text" name="address" value="{{ client.address }}"></label>
+                    
+                    <input type="submit" class="button-purple" value="Edytuj">
+                </form>
+                <span id="edit-client-message"></span>
+            </div>
+        </div>
+    </div>
+{% endblock %}
