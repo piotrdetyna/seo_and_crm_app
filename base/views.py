@@ -46,6 +46,7 @@ def login(request):
 def index(request):
     return render(request, 'base/index.html')
 
+
 @login_required
 @user_passes_test(is_allowed_user)
 @site_required
@@ -70,6 +71,7 @@ def external_links(request, site_id=None):
         'site': site,
     })
 
+
 @login_required
 @user_passes_test(is_allowed_user)
 @site_required
@@ -80,10 +82,22 @@ def site_details(request, site_id=None):
         'site': site,
     })
 
+
+@login_required
+@user_passes_test(is_allowed_user)
+def clients(request):  
+    clients = Client.objects.all()
+
+    return render(request, 'base/clients.html', context={
+        'clients': clients,
+    })
+
+
 @login_required
 @user_passes_test(is_allowed_user)
 def site_choice(request):
     return render(request, 'base/site-choice.html')
+
 
 @login_required
 @user_passes_test(is_allowed_user)

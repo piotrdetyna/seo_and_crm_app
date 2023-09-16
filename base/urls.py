@@ -23,5 +23,7 @@ urlpatterns = [
 
     path('api/', include('base.api.urls')),
     path('login/', views.login, name='login'),
+
+    path('clients/', views.clients, name="clients")
 ]
 

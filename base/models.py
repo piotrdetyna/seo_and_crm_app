@@ -15,10 +15,10 @@ class User(AbstractUser):
 
 class Client(models.Model):
     name = models.CharField(max_length=100)
-    nip = models.CharField(max_length=10, null=True, blank=True)
+    nip = models.CharField(max_length=10, blank=True)
     email = models.CharField(max_length=100)
-    address = models.CharField(max_length=200, null=True, blank=True)
-    full_name = models.CharField(max_length=200, null=True, blank=True)
+    address = models.CharField(max_length=200, blank=True)
+    full_name = models.CharField(max_length=200, blank=True)
 
     def clean(self):
         #when client is a company
