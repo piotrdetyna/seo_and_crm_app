@@ -11,6 +11,8 @@ urlpatterns = [
 
 
     path('add-client/', views.add_client, name="add_client"),
+    path('edit-client/<int:client_id>/', views.edit_client, name="edit_client"),
+
     path('find-external/<int:site_id>/', views.find_external_links, name="find_external_links"),
     path('check-linked-page-availability/<int:site_id>/', views.check_linked_pages_availability, name="check_linked_pages_availability"),
     path('external-links-progress/<int:site_id>/', views.get_external_links_progress, name="get_external_links_progress"),

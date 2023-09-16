@@ -1,6 +1,6 @@
 from .serializers import AddSiteSerializer, BacklinkSerializer, UpdateNoteSerializer, ClientSerializer, SiteSerializer, NoteSerializer, AddNoteSerializer, UpdateSiteSerializer, LoginSerializer, AddBacklinkSerializer, ExternalLinksManagerSerializer
 from .utils import get_external_links, get_pages_from_sitemap, is_site_available
-from ..models import Site, ExternalLinksManager, ExternalLink, Note, Backlink
+from ..models import Site, ExternalLinksManager, ExternalLink, Note, Backlink, Client
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from django.shortcuts import get_object_or_404
@@ -33,6 +33,21 @@ def add_site(request):
 def edit_site(request, site_id):
     site = get_object_or_404(Site, id=site_id)
     serializer = UpdateSiteSerializer(site, data=request.data, partial=True)
+
+    if serializer.is_valid():
+        serializer.save()
+        return Response({
+            'message': 'Successfully edited site', 
+            'site': serializer.data,           
+            }, 200)
+    return Response({'message': 'Submitted data is incorrect.'}, 400)
+
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated, IsAllowedUser])
+def edit_client(request, client_id):
+    client = get_object_or_404(Client, id=client_id)
+    serializer = ClientSerializer(client, data=request.data, partial=True)
 
     if serializer.is_valid():
         serializer.save()

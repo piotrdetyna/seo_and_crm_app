@@ -25,8 +25,8 @@ class Client(models.Model):
     def clean(self):
         #when client is a company
         if self.is_company:
-            if self.address or self.full_name:
-                raise ValidationError('If client is a company, "address" and "full_name" fields must not be filled.')
+            if not self.nip:
+                raise ValidationError('If client is a company, "nip" field must be filled.')
         #when client is a private person
         else:
             if not self.address or not self.full_name:

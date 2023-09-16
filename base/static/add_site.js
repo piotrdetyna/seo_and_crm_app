@@ -1,21 +1,13 @@
 let isClientCompany = true
 
 function handleSwitch() {
-    if (this.checked) {
-        document.querySelector('#client-type').innerHTML = 'Osoba prywatna'
-        document.querySelector('#nip').style.display = 'none'
-        document.querySelector('#address').style.display = null
-        document.querySelector('#full-name').style.display = null
-        isClientCompany = false
-    } else {
-        document.querySelector('#client-type').innerHTML = 'Firma'
-        document.querySelector('#nip').style.display = null
-        document.querySelector('#address').style.display = 'none'
-        document.querySelector('#full-name').style.display = 'none'
-        isClientCompany = true
-    }
+    const isPrivate = this.checked;
+    document.querySelector('#client-type').innerHTML = isPrivate ? 'Osoba prywatna' : 'Firma';
+    document.querySelector('#nip').style.display = isPrivate ? 'none' : null;
+    document.querySelector('#address').style.display = isPrivate ? null : 'none';
+    document.querySelector('#full-name').style.display = isPrivate ? null : 'none';
+    isClientCompany = !isPrivate;
 }
-
 
 
 document.addEventListener('DOMContentLoaded', () => {
