@@ -28,7 +28,6 @@ contracts.js
                 <p>Wprowadź dane</p>
                 <div class="row">
                     <div class="column">
-                        <input placeholder="Długość umowy [msc]" class="small-input" type="number" id="contract-duration" name="contract_duration">
                         <input placeholder="Częstotliwość płatności [msc]" class="small-input" type="number" id="payment-frequency" name="payment_frequency">
                         <input placeholder="Kwota na fakturze [pln]" class="small-input" type="number" id="value" name="value">
                     </div>
@@ -54,11 +53,10 @@ contracts.js
                 <tr>
                     <th width="20%">Strona</th>
                     <th width="20%">Kategoria</th>
-                    <th width="15%">Długość umowy</th>
-                    <th width="15%">Częstotliwość</th>
-                    <th width="10%">Cena</th>
-                    <th width="10%">Faktury</th>
-                    <th width="10%">Szczegóły</th>
+                    <th width="20%">Częstotliwość</th>
+                    <th width="20%">Cena</th>
+                    <th width="15%">Faktury</th>
+                    <th width="5%">Szczegóły</th>
                 </tr>
             </thead>
             <tbody>
@@ -66,7 +64,6 @@ contracts.js
                 <tr>
                     <td>{{ contract.site }}</td>
                     <td>{{ contract.get_category_display }}</td>
-                    <td>{{ contract.contract_duration }}</td>
                     <td>{{ contract.payment_frequency }}</td>
                     <td>{{ contract.value }}</td>
                     <td>ez</td>

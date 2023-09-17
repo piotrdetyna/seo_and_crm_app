@@ -162,7 +162,6 @@ class Backlink(models.Model):
 class Contract(models.Model):
     client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name="contracts")
     site = models.ForeignKey(Site, on_delete=models.CASCADE, related_name="contracts")
-    contract_duration = models.IntegerField()
     payment_frequency = models.IntegerField()
     value = models.IntegerField()
 

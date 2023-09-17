@@ -10,7 +10,6 @@ async function addContract() {
         },
         body: JSON.stringify({
             'site_id': selectedSite,
-            'contract_duration': document.querySelector('#contract-duration').value,
             'payment_frequency': document.querySelector('#payment-frequency').value,
             'value': document.querySelector('#value').value,
             'category': selectedCategory,
