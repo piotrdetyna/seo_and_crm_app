@@ -1,16 +1,35 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from slugify import slugify
-from django.contrib.contenttypes.fields import GenericForeignKey, ContentType
 from django.core.exceptions import ValidationError
+from django.core.files.storage import FileSystemStorage
+from crm.settings import PRIVATE_STORAGE_ROOT, MEDIA_ROOT
+from django.dispatch import receiver
+import os
+
+private_storage = FileSystemStorage(location=PRIVATE_STORAGE_ROOT)
+
 
 
 def logo_file_name(instance, filename):
-    return '/'.join(['sites', slugify(instance.url), 'logo.'+ filename.split('.')[-1]])
+    return '/'.join(['sites', str(instance.id), 'logo.'+ filename.split('.')[-1]])
+
+
+def pdf_save_to(instance, filename):
+    return '/'.join(['clients', slugify(instance.contract.client.id), 'invoices', ])
 
 
 class User(AbstractUser):
     pass
+
+
+
+class OverwriteStorage(FileSystemStorage):
+    def get_available_name(self, name, max_length=None):
+        # If the filename already exists, remove it as if it was a true file system
+        if self.exists(name):
+            os.remove(os.path.join(MEDIA_ROOT, name))
+        return name
 
 
 class Client(models.Model):
@@ -43,11 +62,30 @@ class Client(models.Model):
 class Site(models.Model):
     url = models.CharField(max_length=150, unique=True)
     client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name="sites")
-    logo = models.ImageField(upload_to=logo_file_name)
+    logo = models.ImageField(upload_to=logo_file_name, storage=OverwriteStorage, blank=True, null=True)
     date = models.DateField(auto_now_add=True)
+
+    #save object firstly without logo, and with logo at the second time to get object id after first save 
+    def save(self, *args, **kwargs):
+        if not self.id and self.logo:
+            logo_tmp = self.logo
+            self.logo = None
+            super(Site, self).save(*args, **kwargs)
+            self.logo = logo_tmp
+            self.save()
+        else:
+            super(Site, self).save(*args, **kwargs)
 
     def __str__(self):
         return self.url
+    
+@receiver(models.signals.post_delete, sender=Site)
+def auto_delete_file_on_delete(sender, instance, **kwargs):
+
+    if instance.logo:
+        if os.path.isfile(instance.logo.path):
+            os.remove(instance.logo.path)
+
 
 
 class ExternalLink(models.Model):

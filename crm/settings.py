@@ -125,6 +125,8 @@ AUTH_USER_MODEL = 'base.User'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR.joinpath('media/')
 
+PRIVATE_STORAGE_ROOT = BASE_DIR.joinpath('private/')
+
 LOGIN_URL = '/login'
 
 
