@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from slugify import slugify
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, ObjectDoesNotExist 
 from django.core.files.storage import FileSystemStorage
 from crm.settings import PRIVATE_STORAGE_ROOT, MEDIA_ROOT
 from django.dispatch import receiver
@@ -181,9 +181,14 @@ class Contract(models.Model):
             raise ValidationError("The site must belong to the same client as the contract.")
 
     def save(self, *args, **kwargs):
-        if not self.client_id:
-            self.client = self.site.client
-        self.full_clean()
+        try:
+            old_contract = Contract.objects.get(id=self.id)
+            if old_contract.site_id != self.site_id:
+                self.client = self.site.client
+        except ObjectDoesNotExist:
+            if not self.client_id:
+                self.client = self.site.client
+            self.full_clean()
         super(Contract, self).save(*args, **kwargs)
 
 

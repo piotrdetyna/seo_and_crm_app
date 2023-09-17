@@ -3,7 +3,7 @@ let selectedCategory = null
 let contractId = null
 
 async function editContract() {
-    const response = await fetch(`/api/edit-contract/${contractId}`, {
+    const response = await fetch(`/api/edit-contract/${contractId}/`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
@@ -22,9 +22,10 @@ async function editContract() {
 
 
 function handleCheckboxChange(event) {
+
     let clickedContainer = event.currentTarget
     const clickedCheckbox = event.target;
-    if (clickedContainer.classList.contains('#sites-list')) {
+    if (clickedContainer.id == 'sites-list') {
         selectedSite = clickedCheckbox.value
     } 
     else {
@@ -67,7 +68,6 @@ document.addEventListener('DOMContentLoaded', () => {
         let editContractMessage = document.querySelector('#edit-contract-message')
         if (response) {
             editContractMessage.innerHTML = 'Edytowano umowę.'
-            location.reload()
         }
         else {
             editContractMessage.innerHTML = 'Coś poszło nie tak.'

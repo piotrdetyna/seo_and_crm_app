@@ -290,6 +290,17 @@ def add_contract(request):
     return Response(serializer.errors, 400)
 
 
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated, IsAllowedUser])
+def edit_contract(request, contract_id):
+    contract = get_object_or_404(Contract, id=contract_id)
+    serializer = ContractSerializer(contract, data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, 200)
+    return Response(serializer.errors, 400)
+
+
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated, IsAllowedUser])
 def delete_contract(request, contract_id):

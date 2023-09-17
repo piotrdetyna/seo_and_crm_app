@@ -121,3 +121,12 @@ class ContractSerializer(serializers.ModelSerializer):
         site = Site.objects.get(id=site_id)
         contract = Contract.objects.create(site=site, **validated_data)
         return contract
+    
+    def update(self, instance, validated_data):
+        site_id = validated_data.pop('site_id')
+        site = Site.objects.get(id=site_id)
+        instance.site = site
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        return instance
