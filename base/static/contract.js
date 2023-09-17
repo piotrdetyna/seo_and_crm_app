@@ -20,6 +20,17 @@ async function editContract() {
     return response.ok
 }
 
+async function deleteContract() {
+    const response = await fetch(`/api/delete-contract/${contractId}/`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('[name="csrfmiddlewaretoken"]').value,
+        },
+    })
+    return response.ok
+}
+
 
 function handleCheckboxChange(event) {
 
@@ -71,6 +82,19 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         else {
             editContractMessage.innerHTML = 'Coś poszło nie tak.'
+        }
+    }
+
+    let deleteContractButton = document.querySelector('#delete-contract')
+    deleteContractButton.onclick = async () => {
+        let response = await deleteContract()
+        let deleteContractMessage = document.querySelector('#delete-contract-message')
+        if (response) {
+            deleteContractMessage.innerHTML = 'Usunięto umowę.'
+            window.location.replace("/contracts/");
+        }
+        else {
+            deleteContractMessage.innerHTML = 'Coś poszło nie tak.'
         }
     }
 })
