@@ -26,4 +26,6 @@ urlpatterns = [
     path('add-backlink/', views.add_backlink, name="add_backlink"),
     path('delete-backlink/', views.delete_backlink, name="delete_backlink"),
     path('check-backlinks-status/', views.check_backlinks_status, name="check_backlinks_status"),
+
+    path('add-contract/', views.add_contract, name="add_contract"),
 ]

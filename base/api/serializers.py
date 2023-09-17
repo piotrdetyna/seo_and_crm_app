@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from ..models import Client, Site, Note, Backlink, ExternalLinksManager
+from ..models import Client, Site, Note, Backlink, ExternalLinksManager, Contract
 from .utils import get_domain_from_url, add_https
 
 
@@ -108,3 +108,16 @@ class ExternalLinksManagerSerializer(serializers.ModelSerializer):
         model = ExternalLinksManager
         fields = '__all__'
  
+
+class AddContractSerializer(serializers.ModelSerializer):
+    site_id = serializers.IntegerField(write_only=True)
+
+    class Meta:
+        model = Contract
+        fields = ['contract_duration', 'payment_frequency', 'value', 'category', 'site_id']
+    
+    def create(self, validated_data):
+        site_id = validated_data.pop('site_id')
+        site = Site.objects.get(id=site_id)
+        contract = Contract.objects.create(site=site, **validated_data)
+        return contract

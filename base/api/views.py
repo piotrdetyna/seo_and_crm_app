@@ -1,4 +1,4 @@
-from .serializers import AddSiteSerializer, BacklinkSerializer, UpdateNoteSerializer, ClientSerializer, SiteSerializer, NoteSerializer, AddNoteSerializer, UpdateSiteSerializer, LoginSerializer, AddBacklinkSerializer, ExternalLinksManagerSerializer
+from .serializers import AddSiteSerializer, BacklinkSerializer, AddContractSerializer, UpdateNoteSerializer, ClientSerializer, SiteSerializer, NoteSerializer, AddNoteSerializer, UpdateSiteSerializer, LoginSerializer, AddBacklinkSerializer, ExternalLinksManagerSerializer
 from .utils import get_external_links, get_pages_from_sitemap, is_site_available
 from ..models import Site, ExternalLinksManager, ExternalLink, Note, Backlink, Client
 from rest_framework.response import Response
@@ -279,3 +279,12 @@ def check_backlinks_status(request):
 
     return Response({'message': 'Updated backlinks statuses', 'links': response}, 200)
 
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated, IsAllowedUser])
+def add_contract(request):
+    serializer = AddContractSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, 201)
+    return Response(serializer.errors, 400)

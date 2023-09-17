@@ -138,7 +138,7 @@ class ExternalLinksManager(models.Model):
 
 
 class Note(models.Model):
-    text = models.CharField(max_length=1000)
+    text = models.CharField(max_length=10_000)
     site = models.ForeignKey(Site, on_delete=models.CASCADE, related_name='notes')
     date = models.DateField(auto_now_add=True)
     title = models.CharField(max_length=100)
@@ -181,9 +181,9 @@ class Contract(models.Model):
             raise ValidationError("The site must belong to the same client as the contract.")
 
     def save(self, *args, **kwargs):
-        self.full_clean()
-        if not self.client:
+        if not self.client_id:
             self.client = self.site.client
+        self.full_clean()
         super(Contract, self).save(*args, **kwargs)
 
 
