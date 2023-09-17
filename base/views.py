@@ -118,6 +118,18 @@ def contracts(request):
 
 @login_required
 @user_passes_test(is_allowed_user)
+def contract(request, contract_id):  
+    contract = get_object_or_404(Contract, id=contract_id)
+    sites = Site.objects.all()
+    return render(request, 'base/contract.html', context={
+        'contract': contract,
+        'sites': sites,
+        'categories': Contract.CATEGORIES,
+    })
+
+
+@login_required
+@user_passes_test(is_allowed_user)
 def site_choice(request):
     return render(request, 'base/site-choice.html')
 

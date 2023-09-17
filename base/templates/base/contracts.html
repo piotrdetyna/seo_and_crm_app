@@ -54,21 +54,23 @@ contracts.js
                 <tr>
                     <th width="20%">Strona</th>
                     <th width="20%">Kategoria</th>
-                    <th width="20%">Długość umowy</th>
+                    <th width="15%">Długość umowy</th>
                     <th width="15%">Częstotliwość</th>
-                    <th width="15%">Cena</th>
+                    <th width="10%">Cena</th>
                     <th width="10%">Faktury</th>
+                    <th width="10%">Szczegóły</th>
                 </tr>
             </thead>
             <tbody>
                 {% for contract in contracts %}
                 <tr>
                     <td>{{ contract.site }}</td>
-                    <td>{{ contract.category }}</td>
+                    <td>{{ contract.get_category_display }}</td>
                     <td>{{ contract.contract_duration }}</td>
                     <td>{{ contract.payment_frequency }}</td>
                     <td>{{ contract.value }}</td>
                     <td>ez</td>
+                    <td><a href="/contract/{{ contract.id }}/">🔗</a></td>
                 </tr>
                 {% endfor %}
             </tbody>
