@@ -15,8 +15,8 @@ def logo_file_name(instance, filename):
     return '/'.join(['sites', str(instance.id), 'logo.'+ filename.split('.')[-1]])
 
 
-def pdf_save_to(instance, filename):
-    return '/'.join(['clients', slugify(instance.contract.client.id), 'invoices', ])
+def pdf_upload_to(instance, filename):
+    return '/'.join(['clients', str(instance.contract.client.id), 'invoices', str(instance.contract.id), str(instance.id) ])
 
 
 class User(AbstractUser):
@@ -156,5 +156,25 @@ class Backlink(models.Model):
 
     def __str__(self):
         return f'Backlink from {self.linking_page} to {self.site.url}'
+    
+
+class Contract(models.Model):
+    client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name="contracts")
+    contract_duration = models.IntegerField()
+    payment_frequency = models.IntegerField()
+
+    CATEGORIES = (
+        ('seo', 'Pozycjonowanie'),
+        ('hosting', 'Hosting'),
+        ('domain', 'Domena'),
+        ('site_care', 'Opieka nad stroną'),
+        ('other', 'Inne'),
+    )
+    category = models.CharField(max_length=9, choices=CATEGORIES)
 
 
+class Invoice(models.Model):
+    contract = models.OneToOneField(Contract, on_delete=models.CASCADE, related_name="invoices")
+    pdf = models.FileField(upload_to=pdf_upload_to)
+    date = models.DateField(auto_now_add=True)
+    update_date = models.DateField(auto_now=True)
