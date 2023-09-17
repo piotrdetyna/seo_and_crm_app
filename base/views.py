@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from .models import User, Client, Site, ExternalLinksManager, ExternalLink, Note
+from .models import User, Client, Site, ExternalLinksManager, ExternalLink, Note, Contract
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponseRedirect
@@ -102,6 +102,18 @@ def client(request, client_id):
         'client': client,
     })
 
+
+@login_required
+@user_passes_test(is_allowed_user)
+def contracts(request):  
+    contracts = Contract.objects.all()
+    sites = Site.objects.all()
+
+    return render(request, 'base/contracts.html', context={
+        'contracts': contracts,
+        'sites': sites,
+        'categories': Contract.CATEGORIES,
+    })
 
 
 @login_required

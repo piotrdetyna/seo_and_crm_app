@@ -52,7 +52,7 @@ header {
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: white;
+  background: rgb(243, 243, 243);
 }
 
 /* Handle on hover */
@@ -226,6 +226,7 @@ aside a {
 }
 
 .clients-list {
+  width: 100%;
   overflow: auto;
   height: 350px;
 }
@@ -637,4 +638,41 @@ input:checked + .slider:before {
 
 .switch-description {
   margin-left: 10px;
+}
+
+
+.categories-list {
+  width: 100%;
+}
+
+.categories-list label {
+  cursor: pointer;
+  display: block;
+  padding: 5px; 
+  margin-bottom: 2px;
+  transition: 0.5s;
+}
+
+.categories-list input {
+  width: 15px;
+  height: 15px;
+  margin-right: 10px;
+  accent-color: #5a3be6;
+}
+
+
+input.small-input {
+  font-size: 16px;
+  padding: 5px 10px;
+  height: 50px;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  transition: 0.5s;
+  border-radius: 10px;
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+input.small-input:hover {
+  box-shadow: 6px 6px 0px #7157f6;
 }

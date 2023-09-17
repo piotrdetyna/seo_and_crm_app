@@ -79,13 +79,13 @@ class Site(models.Model):
     def __str__(self):
         return self.url
     
+    
 @receiver(models.signals.post_delete, sender=Site)
 def auto_delete_file_on_delete(sender, instance, **kwargs):
 
     if instance.logo:
         if os.path.isfile(instance.logo.path):
             os.remove(instance.logo.path)
-
 
 
 class ExternalLink(models.Model):
@@ -158,10 +158,13 @@ class Backlink(models.Model):
         return f'Backlink from {self.linking_page} to {self.site.url}'
     
 
+
 class Contract(models.Model):
     client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name="contracts")
+    site = models.ForeignKey(Site, on_delete=models.CASCADE, related_name="contracts")
     contract_duration = models.IntegerField()
     payment_frequency = models.IntegerField()
+    value = models.IntegerField()
 
     CATEGORIES = (
         ('seo', 'Pozycjonowanie'),
@@ -172,9 +175,21 @@ class Contract(models.Model):
     )
     category = models.CharField(max_length=9, choices=CATEGORIES)
 
+    def clean(self):
+        # Ensure that the site is associated with the same client
+        if self.site.client != self.client:
+            raise ValidationError("The site must belong to the same client as the contract.")
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        if not self.client:
+            self.client = self.site.client
+        super(Contract, self).save(*args, **kwargs)
+
 
 class Invoice(models.Model):
     contract = models.OneToOneField(Contract, on_delete=models.CASCADE, related_name="invoices")
-    pdf = models.FileField(upload_to=pdf_upload_to)
+    pdf = models.FileField(upload_to=pdf_upload_to, blank=True)
     date = models.DateField(auto_now_add=True)
     update_date = models.DateField(auto_now=True)
+    

@@ -1,0 +1,77 @@
+{% extends "base/layout.html" %}
+{% load custom_filters %}
+
+{% block script %}
+contracts.js
+{% endblock %}
+
+{% block main %}
+    <div class="card-top">
+        <h1>Umowy</h1>
+    </div>
+    <div class="card-content">        
+        {% csrf_token %}
+        <p class="purple-text clickable" id="add-contract-container-toggle">Nowa umowa</p>
+        <div class="row" id="add-contract-container">
+            <div class="column top">
+                <div class="clients-list">
+                    {% for site in sites %}
+                    <label><input type="checkbox" value="{{ site.id }}"><span class="purple-text">{{ site.url }}</span> - {{ site.client.name }}</label>
+                    {% empty %}
+                        <p>Brak klientów</p>
+                    {% endfor %}
+                </div>
+                
+                
+            </div>
+            <div class="column">
+                <p>Wprowadź dane</p>
+                <div class="row">
+                    <div class="column">
+                        <input placeholder="Długość umowy [msc]" class="small-input" type="number" id="contract-duration" name="contract_duration" required>
+                        <input placeholder="Częstotliwość płatności [msc]" class="small-input" type="number" id="payment-frequency" name="payment_frequency" required>
+                        <input placeholder="Kwota na fakturze [pln]" class="small-input" type="number" id="value" name="value" required>
+                    </div>
+                    <div class="column">
+                        
+                        <div class="categories-list">
+                            {% for category in categories %}
+                                <label><input type="checkbox" value="{{ category.0 }}">{{ category.1 }}</label>
+                            {% empty %}
+                                <p>Brak kategorii</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    </div>
+                    <button id="add-contract" class="button-purple">Dodaj umowę</button>
+                    <p id="add-contract-message"></p>
+                
+            </div>
+        </div>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th width="20%">Strona</th>
+                    <th width="20%">Kategoria</th>
+                    <th width="20%">Długość umowy</th>
+                    <th width="15%">Częstotliwość</th>
+                    <th width="15%">Cena</th>
+                    <th width="10%">Faktury</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for contract in contracts %}
+                <tr>
+                    <td>{{ contract.site }}</td>
+                    <td>{{ contract.category }}</td>
+                    <td>{{ contract.contract_duration }}</td>
+                    <td>{{ contract.payment_frequency }}</td>
+                    <td>{{ contract.value }}</td>
+                    <td>ez</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
