@@ -109,7 +109,7 @@ class ExternalLinksManagerSerializer(serializers.ModelSerializer):
         fields = '__all__'
  
 
-class AddContractSerializer(serializers.ModelSerializer):
+class ContractSerializer(serializers.ModelSerializer):
     site_id = serializers.IntegerField(write_only=True)
 
     class Meta:

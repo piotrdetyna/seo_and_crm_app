@@ -60,6 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let addContractMessage = document.querySelector('#add-contract-message')
         if (response) {
             addContractMessage.innerHTML = 'Dodano umowę.'
+            location.reload()
         }
         else {
             addContractMessage.innerHTML = 'Coś poszło nie tak.'
