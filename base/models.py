@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from slugify import slugify
 from django.core.exceptions import ValidationError, ObjectDoesNotExist 
 from django.core.files.storage import FileSystemStorage
 from crm.settings import PRIVATE_STORAGE_ROOT, MEDIA_ROOT
@@ -184,11 +183,22 @@ class Contract(models.Model):
     category = models.CharField(max_length=9, choices=CATEGORIES)
 
 
+
+def validate_pdf_file_extension(value):
+    if not value.name.endswith('.pdf'):
+        raise ValidationError("Submitted file must have 'pdf' extension")
+
+def validate_file_size(value):
+    max_file_size = 5 * 1024 * 1024  # 5MB
+    if value.size > max_file_size:
+        raise ValidationError(f"Submitted file is too big. Max valid size is {max_file_size / (1024 * 1024)}MB")
+
+
 class Invoice(models.Model):
-    contract = models.OneToOneField(Contract, on_delete=models.CASCADE, related_name="invoices")
+    contract = models.ForeignKey(Contract, on_delete=models.CASCADE, related_name="invoices")
     is_paid = models.BooleanField(default=True)
-    invoice_file = models.FileField(upload_to=invoice_upload_to, blank=True)
-    report_file = models.FileField(upload_to=report_upload_to, blank=True)
+    invoice_file = models.FileField(upload_to=invoice_upload_to, blank=True, validators=[validate_pdf_file_extension, validate_file_size])
+    report_file = models.FileField(upload_to=report_upload_to, blank=True, validators=[validate_pdf_file_extension, validate_file_size])
     date = models.DateField(auto_now_add=True)
     update_date = models.DateField(auto_now=True)
     

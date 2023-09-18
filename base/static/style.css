@@ -210,8 +210,12 @@ aside a {
 
 .column {
   width: 50%;
-  padding: 20px;
   box-sizing: border-box;
+  padding: 20px;
+}
+
+.clear-left-padding {
+  padding-left: 0;
 }
 
 @media (max-width: 768px) {
@@ -228,12 +232,12 @@ aside a {
 .clients-list {
   width: 100%;
   overflow: auto;
-  height: 350px;
+  max-height: 250px;
 }
 
 .sites-list {
   overflow: auto;
-  height: 250px;
+  max-height: 250px;
 }
 
 .clients-list label{
@@ -282,19 +286,19 @@ form label {
 }
 
 
-form input[type="file"] {
+input[type="file"] {
   display: none;
 }
 
-form input[type="date"] {
+input[type="date"] {
   cursor: pointer;
 }
 
 
-form .file-input-button {
+.file-input-button {
   text-align:left;
   margin: 5px;
-  width: 97%;
+  width: 96%;
   margin-bottom: 25px;
   background-color: white;
   cursor: pointer;
@@ -307,7 +311,7 @@ form .file-input-button {
   transition: background 0.2s ease,color 0.2s ease,box-shadow 0.2s ease;
 }
 
-form .file-input-button:hover{
+.file-input-button:hover{
   box-shadow: 6px 6px 0px #7157f6;
 }
 
@@ -676,3 +680,8 @@ input.small-input {
 input.small-input:hover {
   box-shadow: 6px 6px 0px #7157f6;
 }
+
+.clear-bottom-padding {
+  padding-bottom: 0;
+}
+

@@ -309,3 +309,10 @@ def delete_contract(request, contract_id):
     return Response(status=204)
 
 
+@api_view(['POST'])
+def add_invoice(request):
+    serializer = InvoiceSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, 200)
+    return Response(serializer.errors, 400)

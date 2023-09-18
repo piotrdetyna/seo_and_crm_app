@@ -133,10 +133,16 @@ class ContractSerializer(serializers.ModelSerializer):
     
 
 class InvoiceSerializer(serializers.ModelSerializer):
-
+    contract_id = serializers.IntegerField(write_only=True)
 
     class Meta:
         model = Invoice
-        fields = ['pdf', ]
+        fields = ['invoice_file', 'report_file', 'contract_id']
+    
+    def create(self, validated_data):
+        contract_id = validated_data.pop('contract_id')
+        contract = Contract.objects.get(id=contract_id)
+        invoice = Invoice.objects.create(contract=contract, **validated_data)
+        return invoice
 
 

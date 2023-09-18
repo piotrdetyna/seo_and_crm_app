@@ -30,4 +30,8 @@ urlpatterns = [
     path('add-contract/', views.add_contract, name="add_contract"),
     path('delete-contract/<int:contract_id>/', views.delete_contract, name="delete_contract"),
     path('edit-contract/<int:contract_id>/', views.edit_contract, name="edit_contract"),
+
+    path('add-invoice/', views.add_invoice, name="add_invoice"),
+
+
 ]
