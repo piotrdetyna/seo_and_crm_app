@@ -17,7 +17,7 @@ def logo_file_name(instance, filename):
 
 
 def pdf_upload_to(instance, filename):
-    return '/'.join(['clients', str(instance.contract.client.id), 'invoices', str(instance.contract.id), str(instance.id) ])
+    return '/'.join(['clients', str(instance.contract.client.id), 'invoices', str(instance.contract.id), filename ])
 
 
 class User(AbstractUser):
@@ -161,7 +161,6 @@ class Backlink(models.Model):
 
 
 class Contract(models.Model):
-    client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name="contracts")
     site = models.ForeignKey(Site, on_delete=models.CASCADE, related_name="contracts")
     invoice_frequency = models.IntegerField()
     invoice_date = models.DateField()
@@ -181,25 +180,10 @@ class Contract(models.Model):
     )
     category = models.CharField(max_length=9, choices=CATEGORIES)
 
-    def clean(self):
-        # Ensure that the site is associated with the same client
-        if self.site.client != self.client:
-            raise ValidationError("The site must belong to the same client as the contract.")
-
-    def save(self, *args, **kwargs):
-        try:
-            old_contract = Contract.objects.get(id=self.id)
-            if old_contract.site_id != self.site_id:
-                self.client = self.site.client
-        except ObjectDoesNotExist:
-            if not self.client_id:
-                self.client = self.site.client
-        self.full_clean()
-        super(Contract, self).save(*args, **kwargs)
-
 
 class Invoice(models.Model):
     contract = models.OneToOneField(Contract, on_delete=models.CASCADE, related_name="invoices")
+    is_paid = models.BooleanField(default=True)
     pdf = models.FileField(upload_to=pdf_upload_to, blank=True)
     date = models.DateField(auto_now_add=True)
     update_date = models.DateField(auto_now=True)
