@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from ..models import Client, Site, Note, Backlink, ExternalLinksManager, Contract
+from ..models import Client, Site, Note, Backlink, ExternalLinksManager, Contract, Invoice
 from .utils import get_domain_from_url, add_https
 
 
@@ -130,3 +130,13 @@ class ContractSerializer(serializers.ModelSerializer):
             setattr(instance, attr, value)
         instance.save()
         return instance
+    
+
+class InvoiceSerializer(serializers.ModelSerializer):
+
+
+    class Meta:
+        model = Invoice
+        fields = ['pdf', ]
+
+

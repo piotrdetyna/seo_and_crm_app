@@ -16,9 +16,12 @@ def logo_file_name(instance, filename):
     return '/'.join(['sites', str(instance.id), 'logo.'+ filename.split('.')[-1]])
 
 
-def pdf_upload_to(instance, filename):
-    return '/'.join(['clients', str(instance.contract.client.id), 'invoices', str(instance.contract.id), filename ])
+def invoice_upload_to(instance, filename):
+    return '/'.join(['clients', str(instance.contract.site.client.id), 'contracts', str(instance.contract.id), 'invoices', filename ])
 
+
+def report_upload_to(instance, filename):
+    return '/'.join(['clients', str(instance.contract.site.client.id), 'contracts', str(instance.contract.id), 'reports', filename ])
 
 class User(AbstractUser):
     pass
@@ -184,7 +187,8 @@ class Contract(models.Model):
 class Invoice(models.Model):
     contract = models.OneToOneField(Contract, on_delete=models.CASCADE, related_name="invoices")
     is_paid = models.BooleanField(default=True)
-    pdf = models.FileField(upload_to=pdf_upload_to, blank=True)
+    invoice_file = models.FileField(upload_to=invoice_upload_to, blank=True)
+    report_file = models.FileField(upload_to=report_upload_to, blank=True)
     date = models.DateField(auto_now_add=True)
     update_date = models.DateField(auto_now=True)
     

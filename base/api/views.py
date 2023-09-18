@@ -1,6 +1,6 @@
-from .serializers import AddSiteSerializer, BacklinkSerializer, ContractSerializer, UpdateNoteSerializer, ClientSerializer, SiteSerializer, NoteSerializer, AddNoteSerializer, UpdateSiteSerializer, LoginSerializer, AddBacklinkSerializer, ExternalLinksManagerSerializer
+from .serializers import AddSiteSerializer, BacklinkSerializer, ContractSerializer, InvoiceSerializer, UpdateNoteSerializer, ClientSerializer, SiteSerializer, NoteSerializer, AddNoteSerializer, UpdateSiteSerializer, LoginSerializer, AddBacklinkSerializer, ExternalLinksManagerSerializer
 from .utils import get_external_links, get_pages_from_sitemap, is_site_available
-from ..models import Site, ExternalLinksManager, ExternalLink, Note, Backlink, Client, Contract
+from ..models import Site, ExternalLinksManager, ExternalLink, Note, Backlink, Client, Contract, Invoice
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from django.shortcuts import get_object_or_404
@@ -307,3 +307,5 @@ def delete_contract(request, contract_id):
     contract = get_object_or_404(Contract, id=contract_id)
     contract.delete()
     return Response(status=204)
+
+
