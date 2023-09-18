@@ -163,6 +163,7 @@ class Contract(models.Model):
     client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name="contracts")
     site = models.ForeignKey(Site, on_delete=models.CASCADE, related_name="contracts")
     payment_frequency = models.IntegerField()
+    payment_date = models.DateField()
     value = models.IntegerField()
 
     CATEGORIES = (
@@ -187,7 +188,7 @@ class Contract(models.Model):
         except ObjectDoesNotExist:
             if not self.client_id:
                 self.client = self.site.client
-            self.full_clean()
+        self.full_clean()
         super(Contract, self).save(*args, **kwargs)
 
 

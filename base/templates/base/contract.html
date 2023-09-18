@@ -38,6 +38,7 @@ contract.js
                     <div class="column">
                         <input placeholder="Częstotliwość płatności [msc]" class="small-input" type="number" id="payment-frequency" name="payment_frequency" value="{{ contract.payment_frequency }}">
                         <input placeholder="Kwota na fakturze [pln]" class="small-input" type="number" id="value" name="value" value="{{ contract.value }}">
+                        <input placeholder="Data pierwszej płatności" class="small-input" type="date" id="payment-date" name="payment_date" value="{{ contract.payment_date|date:"Y-m-d" }}">
                     </div>
                     <div class="column">
                         

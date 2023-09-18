@@ -13,6 +13,7 @@ async function addContract() {
             'payment_frequency': document.querySelector('#payment-frequency').value,
             'value': document.querySelector('#value').value,
             'category': selectedCategory,
+            'payment_date': document.querySelector('#payment-date').value,
         })
     })
     return response.ok
