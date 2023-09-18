@@ -62,7 +62,7 @@ class Client(models.Model):
 class Site(models.Model):
     url = models.CharField(max_length=150, unique=True)
     client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name="sites")
-    logo = models.ImageField(upload_to=logo_file_name, storage=OverwriteStorage, blank=True, null=True)
+    logo = models.ImageField(upload_to=logo_file_name, storage=OverwriteStorage)
     date = models.DateField(auto_now_add=True)
 
     #save object firstly without logo, and with logo at the second time to get object id after first save 
@@ -162,8 +162,8 @@ class Backlink(models.Model):
 class Contract(models.Model):
     client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name="contracts")
     site = models.ForeignKey(Site, on_delete=models.CASCADE, related_name="contracts")
-    payment_frequency = models.IntegerField()
-    payment_date = models.DateField()
+    invoice_frequency = models.IntegerField()
+    invoice_date = models.DateField()
     value = models.IntegerField()
 
     CATEGORIES = (

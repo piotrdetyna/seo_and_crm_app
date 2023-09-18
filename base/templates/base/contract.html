@@ -13,7 +13,7 @@ contract.js
         {% csrf_token %}
         <div class="row" id="edit-contract-container">
             <div class="column">
-                <h2>Faktury</h2>
+                <h2>Historia faktur</h2>
                 <div class="clients-list">
                     {% for invoice in contract.invoices %}
                         <p>{{ invoice.id }} - {{invoice.date }}</p>
@@ -36,9 +36,9 @@ contract.js
                 </div>
                 <div class="row">
                     <div class="column">
-                        <input placeholder="Częstotliwość płatności [msc]" class="small-input" type="number" id="payment-frequency" name="payment_frequency" value="{{ contract.payment_frequency }}">
+                        <input placeholder="Częstotliwość płatności [msc]" class="small-input" type="number" id="invoice-frequency" name="invoice_frequency" value="{{ contract.invoice_frequency }}">
                         <input placeholder="Kwota na fakturze [pln]" class="small-input" type="number" id="value" name="value" value="{{ contract.value }}">
-                        <input placeholder="Data pierwszej płatności" class="small-input" type="date" id="payment-date" name="payment_date" value="{{ contract.payment_date|date:"Y-m-d" }}">
+                        <input placeholder="Data pierwszej faktury" class="small-input" type="date" id="invoice-date" name="invoice_date" value="{{ contract.invoice_date|date:"Y-m-d" }}">
                     </div>
                     <div class="column">
                         

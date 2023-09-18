@@ -10,10 +10,10 @@ async function addContract() {
         },
         body: JSON.stringify({
             'site_id': selectedSite,
-            'payment_frequency': document.querySelector('#payment-frequency').value,
+            'invoice_frequency': document.querySelector('#invoice-frequency').value,
             'value': document.querySelector('#value').value,
             'category': selectedCategory,
-            'payment_date': document.querySelector('#payment-date').value,
+            'invoice_date': document.querySelector('#invoice-date').value,
         })
     })
     return response.ok

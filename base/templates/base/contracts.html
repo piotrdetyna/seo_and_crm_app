@@ -28,9 +28,9 @@ contracts.js
                 <p>Wprowadź dane</p>
                 <div class="row">
                     <div class="column">
-                        <input placeholder="Częstotliwość płatności [msc]" class="small-input" type="number" id="payment-frequency" name="payment_frequency">
+                        <input placeholder="Częstotliwość płatności [msc]" class="small-input" type="number" id="invoice-frequency" name="invoice_frequency">
                         <input placeholder="Kwota na fakturze [pln]" class="small-input" type="number" id="value" name="value">
-                        <input placeholder="Data pierwszej płatności" class="small-input" type="date" id="payment-date" name="payment_date">
+                        <input placeholder="Data pierwszej płatności" class="small-input" type="date" id="invoice-date" name="invoice_date">
                     </div>
                     <div class="column">
                         
@@ -66,8 +66,8 @@ contracts.js
                 <tr>
                     <td>{{ contract.site }}</td>
                     <td>{{ contract.get_category_display }}</td>
-                    <td>{{ contract.payment_date }}</td>
-                    <td>{{ contract.payment_frequency }}</td>
+                    <td>{{ contract.invoice_date|date:"Y-m-d" }}</td>
+                    <td>{{ contract.invoice_frequency }}</td>
                     <td>{{ contract.value }}</td>
                     <td>ez</td>
                     <td><a href="/contract/{{ contract.id }}/">🔗</a></td>

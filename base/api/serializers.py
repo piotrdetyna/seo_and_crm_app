@@ -114,7 +114,7 @@ class ContractSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Contract
-        fields = ['payment_frequency', 'value', 'category', 'site_id', 'payment_date']
+        fields = ['invoice_frequency', 'value', 'category', 'site_id', 'invoice_date']
     
     def create(self, validated_data):
         site_id = validated_data.pop('site_id')
