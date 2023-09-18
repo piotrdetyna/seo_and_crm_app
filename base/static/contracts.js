@@ -14,6 +14,7 @@ async function addContract() {
             'value': document.querySelector('#value').value,
             'category': selectedCategory,
             'invoice_date': document.querySelector('#invoice-date').value,
+            'days_before_invoice_date_to_mark_urgent': document.querySelector('#days-before-invoice-date-to-mark-urgent').value,
         })
     })
     return response.ok

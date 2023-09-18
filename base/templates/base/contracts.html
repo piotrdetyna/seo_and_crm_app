@@ -30,6 +30,7 @@ contracts.js
                     <div class="column">
                         <input placeholder="Częstotliwość płatności [msc]" class="small-input" type="number" id="invoice-frequency" name="invoice_frequency">
                         <input placeholder="Kwota na fakturze [pln]" class="small-input" type="number" id="value" name="value">
+                        <input placeholder="Poinformuj przed [dni]" class="small-input" type="number" id="days-before-invoice-date-to-mark-urgent" name="days_before_invoice_date_to_mark_urgent" value="{{ contract.days_before_invoice_date_to_mark_urgent }}">
                         <input placeholder="Data pierwszej płatności" class="small-input" type="date" id="invoice-date" name="invoice_date">
                     </div>
                     <div class="column">

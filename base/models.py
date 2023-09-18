@@ -6,6 +6,7 @@ from django.core.files.storage import FileSystemStorage
 from crm.settings import PRIVATE_STORAGE_ROOT, MEDIA_ROOT
 from django.dispatch import receiver
 import os
+from django.core.validators import MinValueValidator
 
 private_storage = FileSystemStorage(location=PRIVATE_STORAGE_ROOT)
 
@@ -164,6 +165,11 @@ class Contract(models.Model):
     site = models.ForeignKey(Site, on_delete=models.CASCADE, related_name="contracts")
     invoice_frequency = models.IntegerField()
     invoice_date = models.DateField()
+    days_before_invoice_date_to_mark_urgent = models.IntegerField(
+        default=0, 
+        validators=[MinValueValidator(0)]
+    )
+    is_urgent = models.BooleanField(default=False)
     value = models.IntegerField()
 
     CATEGORIES = (
