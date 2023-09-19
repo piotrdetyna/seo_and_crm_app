@@ -1,0 +1,35 @@
+{% extends "base/layout.html" %}
+{% load custom_filters %}
+
+{% block script %}
+invoices.js
+{% endblock %}
+
+{% block main %}
+    <div class="card-top">
+        <h1>Faktury</h1>
+    </div>
+    <div class="card-content">        
+        {% csrf_token %}    
+        <table>
+            <thead>
+                <tr>
+                    <th width="25%">Strona</th>
+                    <th width="25%">Umowa</th>
+                    <th width="25%">Status</th>
+                    <th width="25%">Data wystawienia</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for invoice in invoices %}
+                <tr>
+                    <td>{{ invoice.contract.site }}</td>
+                    <td>{{ invoice.contract.get_category_display }}</td>
+                    <td class="{{ invoice.is_paid|color_class_from_bool }}">{{ invoice.is_paid|is_invoice_paid_info_from_bool }}</td>
+                    <td>{{ invoice.date|date:"Y-m-d" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
