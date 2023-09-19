@@ -145,4 +145,9 @@ class InvoiceSerializer(serializers.ModelSerializer):
         invoice = Invoice.objects.create(contract=contract, **validated_data)
         return invoice
 
+    def to_internal_value(self, data):
+        if data['report_file'] == 'null':
+            data['report_file'] = None
+
+        return super(InvoiceSerializer, self).to_internal_value(data)
 

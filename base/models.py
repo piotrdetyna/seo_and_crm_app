@@ -197,8 +197,18 @@ def validate_file_size(value):
 class Invoice(models.Model):
     contract = models.ForeignKey(Contract, on_delete=models.CASCADE, related_name="invoices")
     is_paid = models.BooleanField(default=True)
-    invoice_file = models.FileField(upload_to=invoice_upload_to, blank=True, validators=[validate_pdf_file_extension, validate_file_size])
-    report_file = models.FileField(upload_to=report_upload_to, blank=True, validators=[validate_pdf_file_extension, validate_file_size])
+    invoice_file = models.FileField(
+        upload_to=invoice_upload_to, 
+        storage=private_storage, 
+        validators=[validate_pdf_file_extension, validate_file_size]
+    )
+    report_file = models.FileField(
+        upload_to=report_upload_to, 
+        storage=private_storage, 
+        validators=[validate_pdf_file_extension, validate_file_size],
+        blank=True,
+        null=True,
+    )
     date = models.DateField(auto_now_add=True)
     update_date = models.DateField(auto_now=True)
     

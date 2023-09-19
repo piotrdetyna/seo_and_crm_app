@@ -37,7 +37,11 @@ async function addInvoice() {
     let formData = new FormData();
     formData.append('contract_id', contractId);
     formData.append('invoice_file', document.querySelector('#invoice-file').files[0]);
-    formData.append('report_file', document.querySelector('#report-file').files[0]);
+    let report_file = document.querySelector('#report-file').files[0]
+    if (!report_file) {
+        report_file = null
+    }
+    formData.append('report_file', report_file);
 
     const response = await fetch('/api/add-invoice/', {
         method: 'POST',

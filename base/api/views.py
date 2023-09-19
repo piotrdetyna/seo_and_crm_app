@@ -315,6 +315,7 @@ def delete_contract(request, contract_id):
 @api_view(['POST'])
 def add_invoice(request):
     serializer = InvoiceSerializer(data=request.data)
+    print(request.data)
     if serializer.is_valid():
         contract_id = serializer.validated_data['contract_id']
         contract = get_object_or_404(Contract, id=contract_id)
