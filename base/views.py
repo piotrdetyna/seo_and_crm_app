@@ -162,6 +162,7 @@ def invoices(request, contract_id=None):
         invoices = contract.invoices.all()
     else:
         invoices = Invoice.objects.all()
+    invoices = invoices.order_by('is_paid')
     return render(request, 'base/invoices.html', context={
         'invoices': invoices,
     })
