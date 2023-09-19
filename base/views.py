@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from .models import User, Client, Site, ExternalLinksManager, ExternalLink, Note, Contract
+from .models import User, Client, Site, ExternalLinksManager, Invoice, Note, Contract
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponseRedirect
@@ -152,4 +152,16 @@ def backlinks(request, site_id):
     return render(request, 'base/backlinks.html', context={
         'site': site,
         'backlinks': site.backlinks,
+    })
+
+@login_required
+@user_passes_test(is_allowed_user)
+def invoices(request, contract_id=None):
+    if contract_id:
+        contract = get_object_or_404(Contract, id=contract_id) 
+        invoices = contract.invoices.all()
+    else:
+        invoices = Invoice.objects.all()
+    return render(request, 'base/invoices.html', context={
+        'invoices': invoices,
     })

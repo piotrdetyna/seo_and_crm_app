@@ -59,3 +59,12 @@ def background_color_class_from_change_attribute(value):
         False: "pass",
     }
     return bool_to_text[value]
+
+
+@register.filter(name="is_invoice_paid_info_from_bool")
+def is_invoice_paid_info_from_bool(value):
+    bool_to_text = {
+        True: "Opłacona",
+        False: "Nieopłacona",
+    }
+    return bool_to_text[value]

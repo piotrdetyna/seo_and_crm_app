@@ -29,5 +29,8 @@ urlpatterns = [
 
     path('contracts/', views.contracts, name="contracts"),
     path('contract/<int:contract_id>/', views.contract, name="contract"),
+
+    path('invoices/', views.invoices, name="invoices"),
+    path('invoices/<int:contract_id>/', views.invoices, name="invoices"),
 ]
 
