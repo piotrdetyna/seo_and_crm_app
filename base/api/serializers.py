@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from ..models import Client, Site, Note, Backlink, ExternalLinksManager, Contract, Invoice
 from .utils import get_domain_from_url, add_https
+from dateutil.relativedelta import relativedelta
+
 
 
 class SiteSerializer(serializers.ModelSerializer):
@@ -92,7 +94,7 @@ class AddBacklinkSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         site_id = validated_data.pop('site_id')
         site = Site.objects.get(id=site_id)
-        #validated_data['linking_page'] = add_https(validated_data['linking_page'])
+        validated_data['linking_page'] = add_https(validated_data['linking_page'])
         backlink = Backlink.objects.create(site=site, **validated_data)
         return backlink
     
@@ -142,6 +144,8 @@ class InvoiceSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         contract_id = validated_data.pop('contract_id')
         contract = Contract.objects.get(id=contract_id)
+        contract.invoice_date += relativedelta(months=+contract.invoice_frequency)
+        contract.save()
         invoice = Invoice.objects.create(contract=contract, **validated_data)
         return invoice
 
