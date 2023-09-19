@@ -92,7 +92,7 @@ class AddBacklinkSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         site_id = validated_data.pop('site_id')
         site = Site.objects.get(id=site_id)
-        validated_data['linking_page'] = add_https(validated_data['linking_page'])
+        #validated_data['linking_page'] = add_https(validated_data['linking_page'])
         backlink = Backlink.objects.create(site=site, **validated_data)
         return backlink
     

@@ -7,6 +7,9 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from rest_framework.permissions import IsAuthenticated, BasePermission
 from crm.settings import ALLOWED_USERS
+import datetime
+from dateutil.relativedelta import relativedelta
+
 
 class IsAllowedUser(BasePermission):
 
@@ -313,6 +316,12 @@ def delete_contract(request, contract_id):
 def add_invoice(request):
     serializer = InvoiceSerializer(data=request.data)
     if serializer.is_valid():
+        contract_id = serializer.validated_data['contract_id']
+        contract = get_object_or_404(Contract, id=contract_id)
+        contract.invoice_date += relativedelta(months=+contract.invoice_frequency)
+        contract.save()
         serializer.save()
+
+        
         return Response(serializer.data, 200)
     return Response(serializer.errors, 400)
