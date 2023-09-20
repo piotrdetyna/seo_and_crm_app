@@ -41,7 +41,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let changeIsPaidAttributeButtons = document.querySelectorAll('.change-is-paid')
     changeIsPaidAttributeButtons.forEach(button => {
         button.onclick = async () => {
-            response = await updateIsPaidAttribute(button.dataset.invoiceId)
+            let invoiceId = button.parentNode.parentNode.dataset.invoiceId
+            response = await updateIsPaidAttribute(invoiceId)
             if (response) {
                 location.reload()
             }
@@ -50,4 +51,5 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     })
+
 })

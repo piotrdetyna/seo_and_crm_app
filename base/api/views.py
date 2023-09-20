@@ -326,3 +326,10 @@ def change_invoice_is_paid(request, invoice_id):
     invoice.is_paid = not invoice.is_paid
     invoice.save()
     return Response({'invoice': InvoiceSerializer(invoice).data})
+
+
+@api_view(['DELETE'])
+def delete_invoice(request, invoice_id):
+    invoice = get_object_or_404(Invoice, id=invoice_id)
+    invoice.delete()
+    return Response(status=204)
