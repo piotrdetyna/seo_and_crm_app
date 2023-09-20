@@ -7,6 +7,7 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from rest_framework.permissions import IsAuthenticated, BasePermission
 from crm.settings import ALLOWED_USERS
+from datetime import date, timedelta
 
 
 class IsAllowedUser(BasePermission):
@@ -333,3 +334,20 @@ def delete_invoice(request, invoice_id):
     invoice = get_object_or_404(Invoice, id=invoice_id)
     invoice.delete()
     return Response(status=204)
+
+
+@api_view(['PUT'])
+def check_contracts_urgency(request):
+    contracts = Contract.objects.all()
+
+    contracts_list_response = []
+    for contract in contracts:
+        contract.is_urgent = False
+        if contract.invoice_date - timedelta(days=contract.days_before_invoice_date_to_mark_urgent) <= date.today():
+            contract.is_urgent = True
+        contract.save()
+
+        contracts_list_response.append(ContractSerializer(contract).data)
+    
+    return Response({'contracts': contracts_list_response}, 200)
+    

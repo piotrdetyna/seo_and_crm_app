@@ -51,20 +51,21 @@ contracts.js
         </div>
         
         <table>
+            <caption class="purple-text clickable" id="check-urgency-button">Sprawdź, czy umowy wymagają opłacenia</caption>
             <thead>
                 <tr>
                     <th width="20%">Strona</th>
                     <th width="20%">Kategoria</th>
                     <th width="20%">Data wystawienia FV</th>
                     <th width="10%">Częstotliwość</th>
-                    <th width="10%">Cena</th>
+                    <th width="10%">Kwota</th>
                     <th width="10%">Faktury</th>
                     <th width="5%">Szczegóły</th>
                 </tr>
             </thead>
             <tbody>
                 {% for contract in contracts %}
-                <tr>
+                <tr class="{{ contract.is_urgent|background_color_class_from_change_attribute }}">
                     <td>{{ contract.site }}</td>
                     <td>{{ contract.get_category_display }}</td>
                     <td>{{ contract.invoice_date|date:"Y-m-d" }}</td>

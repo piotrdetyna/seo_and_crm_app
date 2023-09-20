@@ -20,6 +20,20 @@ async function addContract() {
     return response.ok
 }
 
+
+async function checkUrgency() {
+    const response = await fetch('/api/check-contracts-urgency/', {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('[name="csrfmiddlewaretoken"]').value,
+        },
+    })
+    return response.ok
+}
+
+
+
 function handleCheckboxChange(event) {
     let clickedContainer = event.currentTarget
     const clickedCheckbox = event.target;
@@ -39,6 +53,8 @@ function handleCheckboxChange(event) {
         });
     }
 }
+
+
 
 function handleToggleAddContractContainer(addContractContainer) {
     addContractContainer.style.display = addContractContainer.style.display == 'none' ? null : 'none'
@@ -65,6 +81,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         else {
             addContractMessage.innerHTML = 'Coś poszło nie tak.'
+        }
+    }
+
+    let checkUrgencyButton = document.querySelector('#check-urgency-button')
+    checkUrgencyButton.onclick = () => {
+        let response = checkUrgency()
+        if (response) {
+            location.reload()
         }
     }
 })
