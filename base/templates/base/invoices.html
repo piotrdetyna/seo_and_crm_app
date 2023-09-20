@@ -25,7 +25,10 @@ invoices.js
                 <tr>
                     <td>{{ invoice.contract.site }}</td>
                     <td>{{ invoice.contract.get_category_display }}</td>
-                    <td class="{{ invoice.is_paid|color_class_from_bool }}">{{ invoice.is_paid|is_invoice_paid_info_from_bool }}</td>
+                    <td class="{{ invoice.is_paid|color_class_from_bool }}">
+                        {{ invoice.is_paid|is_invoice_paid_info_from_bool }} 
+                        <small data-invoice-id="{{ invoice.id }}" class="purple-text clickable change-is-paid">Zmień</small>
+                    </td>
                     <td>{{ invoice.date|date:"Y-m-d" }}</td>
                 </tr>
                 {% endfor %}

@@ -318,3 +318,11 @@ def add_invoice(request):
 
         return Response(serializer.data, 200)
     return Response(serializer.errors, 400)
+
+
+@api_view(['PUT'])
+def change_invoice_is_paid(request, invoice_id):
+    invoice = get_object_or_404(Invoice, id=invoice_id)
+    invoice.is_paid = not invoice.is_paid
+    invoice.save()
+    return Response({'invoice': InvoiceSerializer(invoice).data})
