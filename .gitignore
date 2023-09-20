@@ -164,3 +164,4 @@ media/
 migrations/
 private/
 base/secrets.py
+temp.py

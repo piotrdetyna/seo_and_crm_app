@@ -348,6 +348,6 @@ def check_contracts_urgency(request):
 
     
     return Response({
-        'contracts': ContractSerializer(Contract.objects.all(), many=True).data,
-    }, 200)
+        'contracts': ContractSerializer(Contract.objects.all(), many=True).data
+        }, 200)
     

@@ -2,7 +2,7 @@ from urllib.parse import urlparse
 import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlparse
-
+from ..secrets import REGON_API_KEY
 
 def get_domain_from_url(url):
     if not url.startswith('http'):
@@ -110,5 +110,22 @@ def get_pages_from_sitemap(domain):
     for sitemap in sitemaps:
         pages.extend(get_links_from_xml(domain + sitemap))
     pages.append(domain + '/')
-    print(pages)
     return set(pages)
+
+
+from litex.regon import REGONAPI
+from lxml import etree
+import xmltodict
+import json
+
+  
+
+
+def get_company_info(nip):
+    api = REGONAPI('https://wyszukiwarkaregon.stat.gov.pl/wsBIR/UslugaBIRzewnPubl.svc')
+    api.login(REGON_API_KEY)
+    company_info_data = api.search(nip=nip)[0]
+
+    company_info_xml = etree.tostring(company_info_data, pretty_print=True).decode('utf-8')
+    company_info_json = xmltodict.parse(company_info_xml)
+    return company_info_json
