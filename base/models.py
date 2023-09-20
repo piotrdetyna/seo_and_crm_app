@@ -6,6 +6,7 @@ from crm.settings import PRIVATE_STORAGE_ROOT, MEDIA_ROOT
 from django.dispatch import receiver
 import os
 from django.core.validators import MinValueValidator
+from datetime import date, timedelta
 
 private_storage = FileSystemStorage(location=PRIVATE_STORAGE_ROOT)
 
@@ -181,6 +182,12 @@ class Contract(models.Model):
         ('other', 'Inne'),
     )
     category = models.CharField(max_length=9, choices=CATEGORIES)
+
+    def check_urgency(self):
+        self.is_urgent = False
+        if self.invoice_date - timedelta(days=self.days_before_invoice_date_to_mark_urgent) <= date.today():
+            self.is_urgent = True
+        self.save()
 
 
 

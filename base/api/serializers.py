@@ -2,7 +2,6 @@ from rest_framework import serializers
 from ..models import Client, Site, Note, Backlink, ExternalLinksManager, Contract, Invoice
 from .utils import get_domain_from_url, add_https
 from dateutil.relativedelta import relativedelta
-from datetime import date, timedelta
 
 class SiteSerializer(serializers.ModelSerializer):
 
@@ -121,17 +120,17 @@ class ContractSerializer(serializers.ModelSerializer):
         site_id = validated_data.pop('site_id')
         site = Site.objects.get(id=site_id)
         contract = Contract.objects.create(site=site, **validated_data)
+        contract.check_urgency()
         return contract
     
     def update(self, instance, validated_data):
         site_id = validated_data.pop('site_id')
         site = Site.objects.get(id=site_id)
         instance.site = site
+        instance.check_urgency()
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
-        instance.is_urgent = False
-        if instance.invoice_date - timedelta(days=instance.days_before_invoice_date_to_mark_urgent) <= date.today():
-            instance.is_urgent = True
+        
         instance.save()
         return instance
     
@@ -147,9 +146,7 @@ class InvoiceSerializer(serializers.ModelSerializer):
         contract_id = validated_data.pop('contract_id')
         contract = Contract.objects.get(id=contract_id)
         contract.invoice_date += relativedelta(months=+contract.invoice_frequency)
-        contract.is_urgent = False
-        if contract.invoice_date - timedelta(days=contract.days_before_invoice_date_to_mark_urgent) <= date.today():
-            contract.is_urgent = True
+        contract.check_urgency()
         contract.save()
         invoice = Invoice.objects.create(contract=contract, **validated_data)
         return invoice

@@ -298,7 +298,8 @@ def edit_contract(request, contract_id):
     contract = get_object_or_404(Contract, id=contract_id)
     serializer = ContractSerializer(contract, data=request.data)
     if serializer.is_valid():
-        serializer.save()
+        contract = serializer.save()
+        contract.check_urgency()
         return Response(serializer.data, 200)
     return Response(serializer.errors, 400)
 
@@ -345,15 +346,13 @@ def check_contracts_urgency(request):
     contracts = Contract.objects.all()
 
     for contract in contracts:
-        contract.is_urgent = False
-        if contract.invoice_date - timedelta(days=contract.days_before_invoice_date_to_mark_urgent) <= date.today():
-            contract.is_urgent = True
-        contract.save()
+        contract.check_urgency()
 
     
     return Response({
         'contracts': ContractSerializer(Contract.objects.all(), many=True).data
         }, 200)
+
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated, IsAllowedUser])
