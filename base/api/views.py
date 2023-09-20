@@ -1,5 +1,5 @@
 from .serializers import AddSiteSerializer, BacklinkSerializer, ContractSerializer, InvoiceSerializer, UpdateNoteSerializer, ClientSerializer, SiteSerializer, NoteSerializer, AddNoteSerializer, UpdateSiteSerializer, LoginSerializer, AddBacklinkSerializer, ExternalLinksManagerSerializer
-from .utils import get_external_links, get_pages_from_sitemap, is_site_available
+from .utils import get_external_links, get_pages_from_sitemap, is_site_available, get_company_info
 from ..models import Site, ExternalLinksManager, ExternalLink, Note, Backlink, Client, Contract, Invoice
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
@@ -312,6 +312,7 @@ def delete_contract(request, contract_id):
 
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated, IsAllowedUser])
 def add_invoice(request):
     serializer = InvoiceSerializer(data=request.data)
     if serializer.is_valid():
@@ -322,6 +323,7 @@ def add_invoice(request):
 
 
 @api_view(['PUT'])
+@permission_classes([IsAuthenticated, IsAllowedUser])
 def change_invoice_is_paid(request, invoice_id):
     invoice = get_object_or_404(Invoice, id=invoice_id)
     invoice.is_paid = not invoice.is_paid
@@ -330,6 +332,7 @@ def change_invoice_is_paid(request, invoice_id):
 
 
 @api_view(['DELETE'])
+@permission_classes([IsAuthenticated, IsAllowedUser])
 def delete_invoice(request, invoice_id):
     invoice = get_object_or_404(Invoice, id=invoice_id)
     invoice.delete()
@@ -337,6 +340,7 @@ def delete_invoice(request, invoice_id):
 
 
 @api_view(['PUT'])
+@permission_classes([IsAuthenticated, IsAllowedUser])
 def check_contracts_urgency(request):
     contracts = Contract.objects.all()
 
@@ -350,4 +354,18 @@ def check_contracts_urgency(request):
     return Response({
         'contracts': ContractSerializer(Contract.objects.all(), many=True).data
         }, 200)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated, IsAllowedUser])
+def get_client_company_info(request, client_id):
+    client = get_object_or_404(Client, id=client_id)
+    if not client.is_company:
+        return Response({'message': 'Client must be a company'}, 400)
     
+    company_info = get_company_info(client.nip)
+    if not company_info['ok']:
+        return Response({
+            'message': company_info['message'],
+        }, 400)
+
+    return Response({'company_info': company_info['data']}, 200)
