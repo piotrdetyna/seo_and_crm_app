@@ -163,3 +163,4 @@ db.sqlite3
 media/
 migrations/
 private/
+base/secrets.py

@@ -340,14 +340,14 @@ def delete_invoice(request, invoice_id):
 def check_contracts_urgency(request):
     contracts = Contract.objects.all()
 
-    contracts_list_response = []
     for contract in contracts:
         contract.is_urgent = False
         if contract.invoice_date - timedelta(days=contract.days_before_invoice_date_to_mark_urgent) <= date.today():
             contract.is_urgent = True
         contract.save()
 
-        contracts_list_response.append(ContractSerializer(contract).data)
     
-    return Response({'contracts': contracts_list_response}, 200)
+    return Response({
+        'contracts': ContractSerializer(Contract.objects.all(), many=True).data,
+    }, 200)
     

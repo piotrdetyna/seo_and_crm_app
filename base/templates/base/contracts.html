@@ -51,7 +51,7 @@ contracts.js
         </div>
         
         <table>
-            <caption class="purple-text clickable" id="check-urgency-button">Sprawdź, czy umowy wymagają opłacenia</caption>
+            <caption class="purple-text clickable" id="check-urgency-button">Sprawdź, dla których umów należy wystawić fakturę</caption>
             <thead>
                 <tr>
                     <th width="20%">Strona</th>
@@ -71,7 +71,7 @@ contracts.js
                     <td>{{ contract.invoice_date|date:"Y-m-d" }}</td>
                     <td>{{ contract.invoice_frequency }}</td>
                     <td>{{ contract.value }}</td>
-                    <td>ez</td>
+                    <td><a href="/invoices/{{contract.id}}/">Zobacz</a></td>
                     <td><a href="/contract/{{ contract.id }}/">🔗</a></td>
                 </tr>
                 {% endfor %}
