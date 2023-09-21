@@ -354,10 +354,15 @@ def check_contracts_urgency(request):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated, IsAllowedUser])
-def get_client_company_info(request, client_id):
+def get_client_info(request, client_id):
     client = get_object_or_404(Client, id=client_id)
     if not client.is_company:
-        return Response({'message': 'Client must be a company'}, 400)
+        return Response({
+            'client_info': {
+                'name': client.full_name,
+                'address': client.address,
+            }
+        })
     
     company_info = get_company_info(client.nip)
     if not company_info['ok']:
@@ -365,4 +370,4 @@ def get_client_company_info(request, client_id):
             'message': company_info['message'],
         }, 400)
 
-    return Response({'company_info': company_info['data']}, 200)
+    return Response({'client_info': company_info['data']}, 200)

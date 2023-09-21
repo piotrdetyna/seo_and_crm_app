@@ -19,7 +19,7 @@ invoices.js
                         
                         {% for contract in contracts %}
                         <label>
-                            <input type="checkbox" value="{{ contract.id }}">
+                            <input type="checkbox" value="{{ contract.id }}" data-client-id="{{ contract.site.client.id }}">
                             {{ contract.get_category_display }} - {{ contract.site.url }}
                             {% if contract.is_urgent %}<span class="purple-text">| pilne</span>{% endif %}
                         </label>
@@ -29,9 +29,8 @@ invoices.js
                     </div>
                 {% else %}
                     <span id="info-contract-id" data-contract-id="{{ contracts.id }}"></span>
+                    <span id="info-client-id" data-client-id="{{ contracts.site.client.id }}"></span>
                 {% endif %}
-            </div>
-            <div class="column">
                 <div class="row">
                     <div class="column clear-left-padding clear-bottom-padding">
                         <label class="file-input">
@@ -50,7 +49,11 @@ invoices.js
                 </div>
                 <button id="add-invoice-button" class="button-purple">Dodaj fakturę</button>
                 <p id="add-invoice-message"></p>
-        </div>
+            </div>
+            <div class="column">
+                <p class="purple-text disabled clickable " id="get-client-info-button">Pobierz informacje o kliencie</p>
+                <div id="client-info-container"></div>
+            </div>
         </div>      
         {% csrf_token %}    
         <table>

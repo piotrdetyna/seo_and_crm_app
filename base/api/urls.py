@@ -36,7 +36,7 @@ urlpatterns = [
     path('delete-invoice/<int:invoice_id>', views.delete_invoice, name="delete_invoice"),
     path('change-invoice-is-paid/<int:invoice_id>/', views.change_invoice_is_paid, name="change_invoice_is_paid"),
     
-    path('get-client-info/<int:client_id>/', views.get_client_company_info, name="get_client_company_info"),
+    path('get-client-info/<int:client_id>/', views.get_client_info, name="get_client_info"),
     
 
 
