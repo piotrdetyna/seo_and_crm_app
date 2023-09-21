@@ -157,15 +157,22 @@ def backlinks(request, site_id):
 @login_required
 @user_passes_test(is_allowed_user)
 def invoices(request, contract_id=None):
+    
     if contract_id:
         contract = get_object_or_404(Contract, id=contract_id) 
         invoices = contract.invoices.all()
+        contracts = contract
+        single_contract = True
     else:
         invoices = Invoice.objects.all()
+        contracts = Contract.objects.all()
+        contracts = contracts.order_by('-is_urgent')
+        single_contract = False
+
     invoices = invoices.order_by('is_paid', '-date')
-    contracts = Contract.objects.all()
-    contracts = contracts.order_by('-is_urgent')
+    
     return render(request, 'base/invoices.html', context={
         'invoices': invoices,
         'contracts': contracts,
+        'single_contract': single_contract,
     })

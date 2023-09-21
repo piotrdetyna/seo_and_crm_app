@@ -9,21 +9,27 @@ invoices.js
     <div class="card-top">
         <h1>Faktury</h1>
     </div>
-    <div class="card-content">  
-        <p class="purple-text clickable" id="add-invoice-toggle-button"><strong>Nowa faktura</strong></p>
+    <div class="card-content" id="info">  
+        <p class="purple-text clickable" id="add-invoice-toggle-button">Nowa faktura</p>
         <div class="row" id="add-invoice-container">
             <div class="column">
-                <div class="clients-list max-height-150" id="contracts-list">
-                    {% for contract in contracts %}
-                    <label>
-                        <input type="checkbox" value="{{ contract.id }}">
-                        {{ contract.get_category_display }} - {{ contract.site.url }}
-                        {% if contract.is_urgent %}<span class="purple-text">| pilne</span>{% endif %}
-                    </label>
-                    {% empty %}
-                        <p>Brak Umów</p>
-                    {% endfor %}
-                </div>
+                {% if not single_contract %}
+                    <p><strong>Wybierz umowę:</strong></p>
+                    <div class="clients-list max-height-150" id="contracts-list">
+                        
+                        {% for contract in contracts %}
+                        <label>
+                            <input type="checkbox" value="{{ contract.id }}">
+                            {{ contract.get_category_display }} - {{ contract.site.url }}
+                            {% if contract.is_urgent %}<span class="purple-text">| pilne</span>{% endif %}
+                        </label>
+                        {% empty %}
+                            <p>Brak Umów</p>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <span id="info-contract-id" data-contract-id="{{ contracts.id }}"></span>
+                {% endif %}
             </div>
             <div class="column">
                 <div class="row">

@@ -689,3 +689,9 @@ input.small-input:hover {
   padding-bottom: 0;
 }
 
+.center-img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 80%;
+}

@@ -165,3 +165,4 @@ migrations/
 private/
 base/secrets.py
 temp.py
+base/static/contract.jpg

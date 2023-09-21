@@ -83,8 +83,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     })
 
-    let sitesList = document.querySelector('#contracts-list')
-    sitesList.addEventListener('change', handleCheckboxChange);
+    let contractsList = document.querySelector('#contracts-list')
+    if (contractsList) {
+        contractsList.addEventListener('change', handleCheckboxChange);
+    } else {
+        selectedContract = document.querySelector('#info-contract-id').dataset.contractId
+    }
 
     let addInvoiceContainer = document.querySelector('#add-invoice-container')
     addInvoiceContainer.style.display = 'none'
