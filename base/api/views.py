@@ -27,7 +27,10 @@ def add_site(request):
             'message': 'Successfully added site', 
             'site': serializer.data,
         }, 201)
-    return Response({'message': 'Submitted data is incorrect.'}, 400)
+    return Response({
+        'message': 'Submitted data is incorrect.', 
+        'errors': serializer.errors
+    }, 400)
 
 
 @api_view(['PUT'])
@@ -43,7 +46,10 @@ def edit_site(request, site_id):
             'site': serializer.data,           
         }, 200)
     
-    return Response({'message': 'Submitted data is incorrect.'}, 400)
+    return Response({
+        'message': 'Submitted data is incorrect.', 
+        'errors': serializer.errors
+    }, 400)
 
 
 @api_view(['DELETE'])
@@ -88,14 +94,18 @@ def add_client(request):
             'message': 'Successfully added client',
             'client': serializer.data,
         }, 201)
-    return Response(serializer.errors, 400)
+    
+    return Response({
+        'message': 'Submitted data is incorrect.', 
+        'errors': serializer.errors,
+    }, 400)
 
 
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated, IsAllowedUser])
 def edit_client(request, client_id):
     client = get_object_or_404(Client, id=client_id)
-    serializer = ClientSerializer(client, data=request.data, partial=True)
+    serializer = ClientSerializer(client, data=request.data)
 
     if serializer.is_valid():
         serializer.save()
@@ -103,7 +113,11 @@ def edit_client(request, client_id):
             'message': 'Successfully edited site', 
             'site': serializer.data,           
             }, 200)
-    return Response({'message': 'Submitted data is incorrect.'}, 400)
+    
+    return Response({
+        'message': 'Submitted data is incorrect.', 
+        'errors': serializer.errors,
+    }, 400)
 
 
 @api_view(['DELETE'])
@@ -113,7 +127,7 @@ def delete_client(request, client_id):
     current_site = request.session.get('current_site')
 
     #delete current site from session, if it is related to deleted client
-    if current_site and any(site.id == current_site for site in client.sites.all()):
+    if any(site.id == current_site for site in client.sites.all()):
         del request.session['current_site']
     client.delete()
     return Response(status=204)
@@ -130,6 +144,8 @@ def check_linked_pages_availability(request, site_id):
     external_links_manager.update(progress_target=len(unique_linked_pages))
 
     for linked_page in unique_linked_pages:
+
+        #update every ExternalLink object where linked_page is equal to current unique page
         objects_to_update = external_links_manager.links.filter(linked_page=linked_page)
         for object_to_update in objects_to_update:
             object_to_update.update(is_linked_page_available=is_site_available(linked_page))
@@ -156,17 +172,20 @@ def find_external_links(request, site_id):
         links = get_external_links(page, excluded=to_exclude)
         for link in links:
             external_link_object = ExternalLink(
-                linking_page=page, linked_page=link['href'], rel=link['rel'],
+                linking_page=page, 
+                linked_page=link['href'], 
+                rel=link['rel'],
             )
             external_link_object.save()
-
             external_links_manager.links.add(external_link_object)
-        external_links_manager.increase_progress()
 
-    external_links_manager.save()
+        external_links_manager.increase_progress()
     external_links_manager.clear_progress()
 
-    return Response({'links': ExternalLinksManagerSerializer(external_links_manager).data, 'message': 'Successfully found links'}, 200)
+    return Response({
+        'message': 'Successfully found links', 
+        'links': ExternalLinksManagerSerializer(external_links_manager).data,
+    }, 200)
 
 
 @api_view(['GET'])

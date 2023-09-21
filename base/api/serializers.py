@@ -34,11 +34,12 @@ class SiteSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
+
 class ClientSerializer(serializers.ModelSerializer):
-    id = serializers.IntegerField(read_only=True)
     class Meta:
         model = Client
         fields = ['name', 'nip', 'email', 'full_name', 'address', 'id', 'is_company']
+
 
 class UpdateNoteSerializer(serializers.ModelSerializer):
     
