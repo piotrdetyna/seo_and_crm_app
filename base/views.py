@@ -154,6 +154,7 @@ def backlinks(request, site_id):
         'backlinks': site.backlinks,
     })
 
+
 @login_required
 @user_passes_test(is_allowed_user)
 def invoices(request, contract_id=None):
@@ -175,4 +176,14 @@ def invoices(request, contract_id=None):
         'invoices': invoices,
         'contracts': contracts,
         'single_contract': single_contract,
+    })
+
+
+@login_required
+@user_passes_test(is_allowed_user)
+def sites(request):  
+    sites = Site.objects.all()
+
+    return render(request, 'base/sites.html', context={
+        'sites': sites,
     })

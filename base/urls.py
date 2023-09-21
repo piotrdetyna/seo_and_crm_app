@@ -32,5 +32,7 @@ urlpatterns = [
 
     path('invoices/', views.invoices, name="invoices"),
     path('invoices/<int:contract_id>/', views.invoices, name="invoices"),
+
+    path('sites/', views.sites, name="sites"),
 ]
 

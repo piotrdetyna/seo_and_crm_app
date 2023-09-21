@@ -387,6 +387,14 @@ img.miniature {
   margin-right: 5px;
 }
 
+img.miniature-bigger {
+  border-radius: 5px;
+  width: 40px; 
+  height: 40px; 
+  object-fit: cover;
+  margin-right: 5px;
+}
+
 .site-list-element {
   cursor: pointer;
   padding: 5px 0;

@@ -1,0 +1,35 @@
+{% extends "base/layout.html" %}
+{% load custom_filters %}
+
+{% block main %}
+    <div class="card-top">
+        <h1>Strony</h1>
+    </div>
+    <div class="card-content">        
+               
+        <table>
+            <thead>
+                <tr>
+                    <th width="5%">Logo</th>
+                    <th width="35%">URL</th>
+                    <th width="30%">Klient</th>
+                    <th width="30%">Data dodania</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for site in sites %}
+                <tr>
+                    <td>
+                        <a href="/site/{{ site.id }}">
+                            <img class="miniature-bigger" src="{{ site.logo.url }}">
+                        </a>
+                    </td>
+                    <td><a href="/site/{{ site.id }}">{{ site.url }}</a></td>
+                    <td><a href="/client/{{ site.client.id }}">{{ site.client }}</a></td>
+                    <td>{{ site.date }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
