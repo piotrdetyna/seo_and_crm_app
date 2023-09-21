@@ -16,7 +16,10 @@ contracts.js
             <div class="column top">
                 <div class="clients-list">
                     {% for site in sites %}
-                    <label><input type="checkbox" value="{{ site.id }}"><span class="purple-text">{{ site.url }}</span> - {{ site.client.name }}</label>
+                    <label>
+                        <input type="checkbox" value="{{ site.id }}">
+                        <span class="purple-text">{{ site.url }}</span> - {{ site.client.name }}
+                    </label>
                     {% empty %}
                         <p>Brak klientów</p>
                     {% endfor %}

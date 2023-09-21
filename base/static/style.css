@@ -235,6 +235,10 @@ aside a {
   max-height: 250px;
 }
 
+.max-height-150 {
+  max-height: 150px;
+}
+
 .sites-list {
   overflow: auto;
   max-height: 250px;

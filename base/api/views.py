@@ -344,10 +344,8 @@ def delete_invoice(request, invoice_id):
 @permission_classes([IsAuthenticated, IsAllowedUser])
 def check_contracts_urgency(request):
     contracts = Contract.objects.all()
-
     for contract in contracts:
         contract.check_urgency()
-
     
     return Response({
         'contracts': ContractSerializer(Contract.objects.all(), many=True).data

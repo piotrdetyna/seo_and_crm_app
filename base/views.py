@@ -163,6 +163,9 @@ def invoices(request, contract_id=None):
     else:
         invoices = Invoice.objects.all()
     invoices = invoices.order_by('is_paid', '-date')
+    contracts = Contract.objects.all()
+    contracts = contracts.order_by('-is_urgent')
     return render(request, 'base/invoices.html', context={
         'invoices': invoices,
+        'contracts': contracts,
     })
