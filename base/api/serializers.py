@@ -3,45 +3,36 @@ from ..models import Client, Site, Note, Backlink, ExternalLinksManager, Contrac
 from .utils import get_domain_from_url, add_https
 from dateutil.relativedelta import relativedelta
 
+
+
 class SiteSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Site
-        fields = '__all__'
-
-class AddSiteSerializer(serializers.ModelSerializer):
-    client_id = serializers.IntegerField(write_only=True)
-
-    class Meta:
-        model = Site
-        fields = ('url', 'client_id', 'logo', 'date',)
-
-    def create(self, validated_data):
-        client_id = validated_data.pop('client_id')
-        client = Client.objects.get(pk=client_id)
-        validated_data['url'] = get_domain_from_url(validated_data['url'])
-        site = Site.objects.create(client=client, **validated_data)
-        return site
+    client_id = serializers.IntegerField(write_only=True, required=False)
     
-
-class UpdateSiteSerializer(serializers.ModelSerializer):
-    site_id = serializers.IntegerField(write_only=True, required=True)
-
     class Meta:
         model = Site
-        fields = ('url', 'logo', 'site_id')
+        fields = ('url', 'client_id', 'logo', 'date', 'id')
         extra_kwargs = {
-            'logo': {'required': False}
+            'logo': {'required': False},
         }
+    
+    def create(self, validated_data):
+        client_id = validated_data.pop('client_id', None)
 
+        if client_id:
+            client = Client.objects.get(pk=client_id)
+            validated_data['url'] = get_domain_from_url(validated_data['url'])
+            site = Site.objects.create(client=client, **validated_data)
+            return site
+        else:
+            raise serializers.ValidationError("client_id is required for creating a Site")
+    
     def update(self, instance, validated_data):
+
         instance.url = validated_data.get('url', instance.url)
         if validated_data.get('logo'):
             instance.logo = validated_data['logo']
-
         instance.save()
         return instance
-
 
 class ClientSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)

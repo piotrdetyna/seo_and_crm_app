@@ -1,4 +1,4 @@
-from .serializers import AddSiteSerializer, BacklinkSerializer, ContractSerializer, InvoiceSerializer, UpdateNoteSerializer, ClientSerializer, SiteSerializer, NoteSerializer, AddNoteSerializer, UpdateSiteSerializer, LoginSerializer, AddBacklinkSerializer, ExternalLinksManagerSerializer
+from .serializers import BacklinkSerializer, ContractSerializer, InvoiceSerializer, UpdateNoteSerializer, ClientSerializer, SiteSerializer, NoteSerializer, AddNoteSerializer, LoginSerializer, AddBacklinkSerializer, ExternalLinksManagerSerializer
 from .utils import get_external_links, get_pages_from_sitemap, is_site_available, get_company_info
 from ..models import Site, ExternalLinksManager, ExternalLink, Note, Backlink, Client, Contract, Invoice
 from rest_framework.response import Response
@@ -19,7 +19,7 @@ class IsAllowedUser(BasePermission):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated, IsAllowedUser])
 def add_site(request):
-    serializer = AddSiteSerializer(data=request.data)
+    serializer = SiteSerializer(data=request.data)
 
     if serializer.is_valid():
         serializer.save()
@@ -34,14 +34,15 @@ def add_site(request):
 @permission_classes([IsAuthenticated, IsAllowedUser])
 def edit_site(request, site_id):
     site = get_object_or_404(Site, id=site_id)
-    serializer = UpdateSiteSerializer(site, data=request.data, partial=True)
+    serializer = SiteSerializer(site, data=request.data)
 
     if serializer.is_valid():
         serializer.save()
         return Response({
             'message': 'Successfully edited site', 
             'site': serializer.data,           
-            }, 200)
+        }, 200)
+    
     return Response({'message': 'Submitted data is incorrect.'}, 400)
 
 
@@ -50,7 +51,7 @@ def edit_site(request, site_id):
 def delete_site(request, site_id):
     site = get_object_or_404(Site, id=site_id)
 
-    if site_id == request.session['current_site']:
+    if site_id == request.session.get('current_site'):
         del request.session['current_site']
     site.delete()
     return Response(status=204)
@@ -60,10 +61,10 @@ def delete_site(request, site_id):
 @permission_classes([IsAuthenticated, IsAllowedUser])
 def get_sites(request, site_id=None):
     if site_id:
-        site = SiteSerializer(Site.objects.get(id=site_id)).data
+        site = SiteSerializer(get_object_or_404(Site, id=site_id)).data
         return Response({'site': site}, 200)
     
-    sites = [SiteSerializer(site).data for site in Site.objects.all()]            
+    sites = SiteSerializer(Site.objects.all(), many=True).data
     return Response({'sites': sites}, 200)
 
 

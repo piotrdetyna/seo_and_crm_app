@@ -66,7 +66,7 @@ class Client(models.Model):
 class Site(models.Model):
     url = models.CharField(max_length=150, unique=True)
     client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name="sites")
-    logo = models.ImageField(upload_to=logo_file_name, storage=OverwriteStorage)
+    logo = models.ImageField(upload_to=logo_file_name, storage=OverwriteStorage, default='default.jpg')
     date = models.DateField(auto_now_add=True)
 
     #save object firstly without logo, and with logo at the second time to get object id after first save 
