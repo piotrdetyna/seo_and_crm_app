@@ -1,4 +1,4 @@
-from .serializers import BacklinkSerializer, ContractSerializer, InvoiceSerializer, ClientSerializer, UserSerializer, SiteSerializer, NoteSerializer, LoginSerializer, AddBacklinkSerializer, ExternalLinksManagerSerializer
+from . import serializers
 from .utils import get_external_links, get_pages_from_sitemap, is_site_available, get_company_info
 from ..models import Site, ExternalLinksManager, ExternalLink, Note, Backlink, Client, Contract, Invoice
 from rest_framework.response import Response
@@ -18,7 +18,7 @@ class IsAllowedUser(BasePermission):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated, IsAllowedUser])
 def add_site(request):
-    serializer = SiteSerializer(data=request.data)
+    serializer = serializers.SiteSerializer(data=request.data)
 
     if serializer.is_valid():
         serializer.save()
@@ -36,7 +36,7 @@ def add_site(request):
 @permission_classes([IsAuthenticated, IsAllowedUser])
 def edit_site(request, site_id):
     site = get_object_or_404(Site, id=site_id)
-    serializer = SiteSerializer(site, data=request.data)
+    serializer = serializers.SiteSerializer(site, data=request.data)
 
     if serializer.is_valid():
         serializer.save()
@@ -66,10 +66,10 @@ def delete_site(request, site_id):
 @permission_classes([IsAuthenticated, IsAllowedUser])
 def get_sites(request, site_id=None):
     if site_id:
-        site = SiteSerializer(get_object_or_404(Site, id=site_id)).data
+        site = serializers.SiteSerializer(get_object_or_404(Site, id=site_id)).data
         return Response({'site': site}, 200)
     
-    sites = SiteSerializer(Site.objects.all(), many=True).data
+    sites = serializers.SiteSerializer(Site.objects.all(), many=True).data
     return Response({'sites': sites}, 200)
 
 
@@ -85,7 +85,7 @@ def set_current_site(request, site_id):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated, IsAllowedUser])
 def add_client(request):
-    serializer = ClientSerializer(data=request.data)
+    serializer = serializers.ClientSerializer(data=request.data)
     if serializer.is_valid():
         
         serializer.save()
@@ -104,7 +104,7 @@ def add_client(request):
 @permission_classes([IsAuthenticated, IsAllowedUser])
 def edit_client(request, client_id):
     client = get_object_or_404(Client, id=client_id)
-    serializer = ClientSerializer(client, data=request.data)
+    serializer = serializers.ClientSerializer(client, data=request.data)
 
     if serializer.is_valid():
         serializer.save()
@@ -183,7 +183,7 @@ def find_external_links(request, site_id):
 
     return Response({
         'message': 'Successfully found links', 
-        'links': ExternalLinksManagerSerializer(external_links_manager).data,
+        'links': serializers.ExternalLinksManagerSerializer(external_links_manager).data,
     }, 200)
 
 
@@ -202,7 +202,7 @@ def get_external_links_progress(request, site_id):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated, IsAllowedUser])
 def add_note(request):
-    serializer = NoteSerializer(data=request.data)
+    serializer = serializers.NoteSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
         return Response({
@@ -220,7 +220,7 @@ def add_note(request):
 @permission_classes([IsAuthenticated, IsAllowedUser])
 def get_note(request, note_id):
     note = get_object_or_404(Note, id=note_id)
-    serializer = NoteSerializer(note)
+    serializer = serializers.NoteSerializer(note)
 
     return  Response({
             'message': 'Successfully updated note', 
@@ -232,7 +232,7 @@ def get_note(request, note_id):
 @permission_classes([IsAuthenticated, IsAllowedUser])
 def update_note(request, note_id):
     note = get_object_or_404(Note, id=note_id)
-    serializer = NoteSerializer(note, data=request.data)
+    serializer = serializers.NoteSerializer(note, data=request.data)
     
     if serializer.is_valid():
         serializer.save()
@@ -257,7 +257,7 @@ def delete_note(request, note_id):
 
 @api_view(['POST'])
 def login_view(request):
-    serializer = LoginSerializer(data=request.data)
+    serializer = serializers.LoginSerializer(data=request.data)
     if not serializer.is_valid():
         return Response({
             'message': 'Submitted data is not valid',
@@ -274,7 +274,7 @@ def login_view(request):
         login(request._request, user)
         return Response({
             'message': 'Successfully logged in',
-            'user': UserSerializer(user).data,
+            'user': serializers.UserSerializer(user).data,
         }, 200)
     return Response({'message': 'Incorrect username or password'}, 400)
     
@@ -289,7 +289,7 @@ def logout_view(request):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated, IsAllowedUser])
 def add_backlink(request):
-    serializer = BacklinkSerializer(data=request.data)
+    serializer = serializers.BacklinkSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
         return Response({
@@ -332,14 +332,14 @@ def check_backlinks_status(request, site_id):
 
     return Response({
         'message': 'Updated backlinks status',
-        'backlinks': BacklinkSerializer(site.backlinks.all(), many=True).data,
+        'backlinks': serializers.BacklinkSerializer(site.backlinks.all(), many=True).data,
     }, 200)
 
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated, IsAllowedUser])
 def add_contract(request):
-    serializer = ContractSerializer(data=request.data)
+    serializer = serializers.ContractSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
         return Response({
@@ -357,13 +357,13 @@ def add_contract(request):
 @permission_classes([IsAuthenticated, IsAllowedUser])
 def edit_contract(request, contract_id):
     contract = get_object_or_404(Contract, id=contract_id)
-    serializer = ContractSerializer(contract, data=request.data)
+    serializer = serializers.ContractSerializer(contract, data=request.data)
     if serializer.is_valid():
         contract = serializer.save()
         contract.check_urgency()
         return Response({
             'message': 'Successfully edited contract.',
-            'contract': ContractSerializer(contract).data,
+            'contract': serializers.ContractSerializer(contract).data,
         }, 200)
     return Response({
         'message': 'Submitted data is incorrect.',
@@ -382,7 +382,7 @@ def delete_contract(request, contract_id):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated, IsAllowedUser])
 def add_invoice(request):
-    serializer = InvoiceSerializer(data=request.data)
+    serializer = serializers.InvoiceSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
 
@@ -405,7 +405,7 @@ def change_invoice_is_paid(request, invoice_id):
     invoice.save()
     return Response({
         'message': 'Successfully changed is_paid attribute.',
-        'invoice': InvoiceSerializer(invoice).data
+        'invoice': serializers.InvoiceSerializer(invoice).data
     })
 
 
@@ -425,7 +425,7 @@ def check_contracts_urgency(request):
         contract.check_urgency()
     
     return Response({
-        'contracts': ContractSerializer(Contract.objects.all(), many=True).data
+        'contracts': serializers.ContractSerializer(Contract.objects.all(), many=True).data
     }, 200)
 
 
