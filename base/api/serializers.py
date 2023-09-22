@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from ..models import Client, Site, Note, Backlink, ExternalLinksManager, Contract, Invoice
+from ..models import Client, Site, Note, Backlink, ExternalLinksManager, Contract, Invoice, User
 from .utils import get_domain_from_url, add_https
 from dateutil.relativedelta import relativedelta
 from django.shortcuts import get_object_or_404
@@ -40,6 +40,11 @@ class ClientSerializer(serializers.ModelSerializer):
         model = Client
         fields = ['name', 'nip', 'email', 'full_name', 'address', 'id', 'is_company']
 
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'id']
+
 
 class NoteSerializer(serializers.ModelSerializer):
     site_id = serializers.IntegerField(write_only=True, required=False)
@@ -74,6 +79,7 @@ class AddBacklinkSerializer(serializers.ModelSerializer):
         backlink = Backlink.objects.create(site=site, **validated_data)
         return backlink
     
+
 class BacklinkSerializer(serializers.ModelSerializer):
 
     class Meta:

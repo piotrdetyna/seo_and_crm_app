@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from django.core.exceptions import ValidationError, ObjectDoesNotExist 
+from django.core.exceptions import ValidationError 
 from django.core.files.storage import FileSystemStorage
 from crm.settings import PRIVATE_STORAGE_ROOT, MEDIA_ROOT
 from django.dispatch import receiver

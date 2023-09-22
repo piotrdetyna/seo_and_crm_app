@@ -1,4 +1,4 @@
-from .serializers import BacklinkSerializer, ContractSerializer, InvoiceSerializer, ClientSerializer, SiteSerializer, NoteSerializer, LoginSerializer, AddBacklinkSerializer, ExternalLinksManagerSerializer
+from .serializers import BacklinkSerializer, ContractSerializer, InvoiceSerializer, ClientSerializer, UserSerializer, SiteSerializer, NoteSerializer, LoginSerializer, AddBacklinkSerializer, ExternalLinksManagerSerializer
 from .utils import get_external_links, get_pages_from_sitemap, is_site_available, get_company_info
 from ..models import Site, ExternalLinksManager, ExternalLink, Note, Backlink, Client, Contract, Invoice
 from rest_framework.response import Response
@@ -259,7 +259,10 @@ def delete_note(request, note_id):
 def login_view(request):
     serializer = LoginSerializer(data=request.data)
     if not serializer.is_valid():
-        return Response({'message': 'Submitted data is not valid'}, 400)
+        return Response({
+            'message': 'Submitted data is not valid',
+            'errors': serializer.errors,
+        }, 400)
     
     user = authenticate(
         request._request, 
@@ -269,7 +272,10 @@ def login_view(request):
 
     if user is not None:
         login(request._request, user)
-        return Response({'message': 'Successfully logged in'}, 200)
+        return Response({
+            'message': 'Successfully logged in',
+            'user': UserSerializer(user).data,
+        }, 200)
     return Response({'message': 'Incorrect username or password'}, 400)
     
 
