@@ -342,8 +342,15 @@ def add_contract(request):
     serializer = ContractSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
-        return Response(serializer.data, 201)
-    return Response(serializer.errors, 400)
+        return Response({
+            'message': 'Successfully added contract.',
+            'contract': serializer.data,
+        }, 201)
+    
+    return Response({
+        'message': 'Submitted data is incorrect.',
+        'errors': serializer.errors,
+    }, 400)
 
 
 @api_view(['PUT'])
@@ -354,8 +361,14 @@ def edit_contract(request, contract_id):
     if serializer.is_valid():
         contract = serializer.save()
         contract.check_urgency()
-        return Response(serializer.data, 200)
-    return Response(serializer.errors, 400)
+        return Response({
+            'message': 'Successfully edited contract.',
+            'contract': ContractSerializer(contract).data,
+        }, 200)
+    return Response({
+        'message': 'Submitted data is incorrect.',
+        'errors': serializer.errors,
+    }, 400)
 
 
 @api_view(['DELETE'])
