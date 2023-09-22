@@ -2,7 +2,7 @@ from rest_framework import serializers
 from ..models import Client, Site, Note, Backlink, ExternalLinksManager, Contract, Invoice
 from .utils import get_domain_from_url, add_https
 from dateutil.relativedelta import relativedelta
-
+from django.shortcuts import get_object_or_404
 
 
 class SiteSerializer(serializers.ModelSerializer):
@@ -41,33 +41,19 @@ class ClientSerializer(serializers.ModelSerializer):
         fields = ['name', 'nip', 'email', 'full_name', 'address', 'id', 'is_company']
 
 
-class UpdateNoteSerializer(serializers.ModelSerializer):
-    
-    class Meta:
-        model = Note
-        fields = ['title', 'text']
-
-
 class NoteSerializer(serializers.ModelSerializer):
+    site_id = serializers.IntegerField(write_only=True, required=False)
     
     class Meta:
         model = Note
-        fields = '__all__'
-
-
-class AddNoteSerializer(serializers.ModelSerializer):
-    site_id = serializers.PrimaryKeyRelatedField(queryset=Site.objects.all(), write_only=True)
-    site = serializers.PrimaryKeyRelatedField(queryset=Site.objects.all(), required=False)
-
-    class Meta:
-        model = Note
-        fields = ['text', 'title', 'site', 'site_id']
+        fields = ['text', 'title', 'site_id', 'id', 'date']
 
     def create(self, validated_data):
-        site = validated_data.pop('site_id')
+        site_id = validated_data.pop('site_id')
+        site = get_object_or_404(Site, id=site_id)
         note = Note.objects.create(site=site, **validated_data)
         return note
-    
+
 
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=150)

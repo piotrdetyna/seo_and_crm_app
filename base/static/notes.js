@@ -23,7 +23,7 @@ async function addNote() {
 		throw new Error(`Error while adding note. Status: ${response.status}`);
 	}
 	const data = await response.json();
-    return data
+    return data.note
 }
 
 async function getAndSetCurrentNote(noteId) {
@@ -34,9 +34,11 @@ async function getAndSetCurrentNote(noteId) {
         },
     })
     if (!response.ok) {
-		throw new Error(`Error while adding note. Status: ${response.status}`);
+		throw new Error(`Error while getting note. Status: ${response.status}`);
 	}
-	const data = await response.json();
+
+	let data = await response.json()
+    data = data.note
     currentNote.style.display = null
     currentNoteContent.value = data.text
     currentNoteTitle.value = data.title
@@ -44,7 +46,7 @@ async function getAndSetCurrentNote(noteId) {
 }
 
 async function saveNote() {
-    const response = await fetch('/api/update-note/', {
+    const response = await fetch(`/api/update-note/${currentNote.dataset.noteId}/`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
@@ -53,35 +55,28 @@ async function saveNote() {
         body: JSON.stringify({
             'text': currentNoteContent.value,
             'title': currentNoteTitle.value,
-            'note_id': currentNote.dataset.noteId,
         })
     })
     if (!response.ok) {
-		throw new Error(`Error while adding note. Status: ${response.status}`);
+		throw new Error(`Error while saving note. Status: ${response.status}`);
 	}
     let notesListElement = notesList.querySelector(`[data-note-id="${currentNote.dataset.noteId}"]`)
     notesListElement.querySelector('strong').innerHTML = currentNoteTitle.value
 }
 
 async function deleteNote() {
-    const response = await fetch('/api/delete-note/', {
+    const response = await fetch(`/api/delete-note/${currentNote.dataset.noteId}/`, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',
             'X-CSRFToken': document.querySelector('[name="csrfmiddlewaretoken"]').value,
-        },
-        body: JSON.stringify({
-            'note_id': currentNote.dataset.noteId,
-        })
+        }
     })
     if (!response.ok) {
-		throw new Error(`Error while adding note. Status: ${response.status}`);
+		throw new Error(`Error while deleting note. Status: ${response.status}`);
 	}
-	const data = await response.json();
-
-    notesList.querySelector(`[data-note-id="${currentNote.dataset.noteId}"]`).remove()
+	notesList.querySelector(`[data-note-id="${currentNote.dataset.noteId}"]`).remove()
     currentNote.style.display = 'none'
-
 }
 
 
@@ -96,7 +91,6 @@ document.addEventListener('DOMContentLoaded', () => {
     notesList.addEventListener('click', async (event) => {
         const notesListItem = event.target.closest('.notes-list-item');
         if (notesListItem) {
-            console.log('clicked');
             getAndSetCurrentNote(notesListItem.dataset.noteId);
             deleteNoteButton.style.display = null;
         }
@@ -125,7 +119,6 @@ document.addEventListener('DOMContentLoaded', () => {
             deleteNoteButton.style.display = null
             currentNote.dataset.noteId = newNoteInfo.id
         }
-        
     }
 
     deleteNoteButton.onclick = () => {

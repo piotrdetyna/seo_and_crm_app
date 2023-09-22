@@ -203,41 +203,58 @@ def get_external_links_progress(request, site_id):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated, IsAllowedUser])
 def add_note(request):
-    serializer = AddNoteSerializer(data=request.data)
+    serializer = NoteSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
-        return Response(serializer.data, 201)
-    return Response(serializer.errors, 400)
+        return Response({
+            'message': 'Successfully added a note', 
+            'note': serializer.data,
+        }, 201)
+    
+    return Response({
+        'message': 'Submitted data is incorrect.', 
+        'errors': serializer.errors,
+    }, 400)
 
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated, IsAllowedUser])
 def get_note(request, note_id):
     note = get_object_or_404(Note, id=note_id)
-    return Response(NoteSerializer(note).data, 200)
+    serializer = NoteSerializer(note)
+
+    return  Response({
+            'message': 'Successfully updated note', 
+            'note': serializer.data,
+        }, 200)
 
 
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated, IsAllowedUser])
-def update_note(request):
-    note_id = request.data.get('note_id')
+def update_note(request, note_id):
     note = get_object_or_404(Note, id=note_id)
-    serializer = UpdateNoteSerializer(note, data=request.data)
+    
+    serializer = NoteSerializer(note, data=request.data)
     
     if serializer.is_valid():
         serializer.save()
-        return Response(serializer.data, 200)
+        return Response({
+            'message': 'Successfully updated note', 
+            'note': serializer.data,
+        }, 201)
     
-    return Response(serializer.errors, 400)
+    return Response({
+        'message': 'Submitted data is incorrect.', 
+        'errors': serializer.errors,
+    }, 400)
 
 
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated, IsAllowedUser])
-def delete_note(request):
-    note_id = request.data.get('note_id')
+def delete_note(request, note_id):
     note = get_object_or_404(Note, id=note_id)
     note.delete()
-    return Response({'message': 'Note deleted successfully'}, 200)
+    return Response(status=204)
     
 
 @api_view(['POST'])
