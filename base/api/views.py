@@ -283,7 +283,7 @@ def login_view(request):
 @permission_classes([IsAuthenticated])
 def logout_view(request):
     logout(request._request)
-    return Response({'message': 'Successfully logged out'}, 200)
+    return Response(status=204)
 
 
 @api_view(['POST'])
