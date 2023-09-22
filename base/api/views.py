@@ -1,4 +1,4 @@
-from .serializers import BacklinkSerializer, ContractSerializer, InvoiceSerializer, UpdateNoteSerializer, ClientSerializer, SiteSerializer, NoteSerializer, AddNoteSerializer, LoginSerializer, AddBacklinkSerializer, ExternalLinksManagerSerializer
+from .serializers import BacklinkSerializer, ContractSerializer, InvoiceSerializer, ClientSerializer, SiteSerializer, NoteSerializer, LoginSerializer, AddBacklinkSerializer, ExternalLinksManagerSerializer
 from .utils import get_external_links, get_pages_from_sitemap, is_site_available, get_company_info
 from ..models import Site, ExternalLinksManager, ExternalLink, Note, Backlink, Client, Contract, Invoice
 from rest_framework.response import Response
@@ -7,7 +7,6 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from rest_framework.permissions import IsAuthenticated, BasePermission
 from crm.settings import ALLOWED_USERS
-from datetime import date, timedelta
 
 
 class IsAllowedUser(BasePermission):
@@ -233,7 +232,6 @@ def get_note(request, note_id):
 @permission_classes([IsAuthenticated, IsAllowedUser])
 def update_note(request, note_id):
     note = get_object_or_404(Note, id=note_id)
-    
     serializer = NoteSerializer(note, data=request.data)
     
     if serializer.is_valid():

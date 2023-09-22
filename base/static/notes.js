@@ -111,7 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const strongElement = document.createElement('strong');
             strongElement.textContent = newNoteInfo.title;
             const smallElement = document.createElement('small');
-            smallElement.textContent = ' nowa';
+            smallElement.textContent = ' ' + newNoteInfo.date;
             newNoteItem.appendChild(strongElement);
             newNoteItem.appendChild(smallElement);
 

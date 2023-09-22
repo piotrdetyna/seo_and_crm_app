@@ -19,7 +19,7 @@ notes.js
 
                         <span class="current-note-options">
                             <span id="save-current-note">💾</span>
-                            <span style="display: {% if not notes %}none;{% endif %}" id="delete-current-note">🗑️</span>
+                            <span {% if not notes %}style="display: none;"{% endif %} id="delete-current-note">🗑️</span>
                         </span>
                     
                     </div>
@@ -31,7 +31,7 @@ notes.js
                 Wybierz notatkę
                 <ul class="notes-list">
                 {% for note in notes.all %}
-                    <li class="notes-list-item" data-note-id="{{ note.id }}"><strong>{{ note.title }}</strong> <small>{{ note.date }}</small></li>   
+                    <li class="notes-list-item" data-note-id="{{ note.id }}"><strong>{{ note.title }}</strong> <small>{{ note.date|date:"Y-m-d" }}</small></li>   
 
                 {% endfor %}
                 </ul>
