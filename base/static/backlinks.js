@@ -16,29 +16,24 @@ async function addBacklink(linking_page) {
 }
 
 async function deleteBacklink(backlink_id) {
-    const response = await fetch('/api/delete-backlink/', {
+    const response = await fetch(`/api/delete-backlink/${backlink_id}/`, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',
             'X-CSRFToken': document.querySelector('[name="csrfmiddlewaretoken"]').value,
         },
-        body: JSON.stringify({
-            'backlink_id': backlink_id,
-        })
     })
     return response.ok
 }
 
 async function checkBacklinksStatus() {
-    const response = await fetch('/api/check-backlinks-status/', {
+    const response = await fetch(`/api/check-backlinks-status/${siteId}/`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
             'X-CSRFToken': document.querySelector('[name="csrfmiddlewaretoken"]').value,
-        },
-        body: JSON.stringify({
-            'site_id': siteId,
-        })
+        }
+
     })
     return response.ok
 }
@@ -80,7 +75,6 @@ document.addEventListener('DOMContentLoaded', () => {
         checkStatusMessage.innerHTML = 'Proszę czekać... | '
         if (checkBacklinksStatus()) {
             setTimeout(() => {
-                location.reload();
             }, 4000);
             
         }

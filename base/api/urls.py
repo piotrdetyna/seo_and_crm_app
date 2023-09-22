@@ -17,15 +17,18 @@ urlpatterns = [
     path('find-external/<int:site_id>/', views.find_external_links, name="find_external_links"),
     path('check-linked-page-availability/<int:site_id>/', views.check_linked_pages_availability, name="check_linked_pages_availability"),
     path('external-links-progress/<int:site_id>/', views.get_external_links_progress, name="get_external_links_progress"),
+
     path('add-note/', views.add_note, name="add_note"), 
     path('get-note/<int:note_id>/', views.get_note, name="get_note"), 
     path('update-note/<int:note_id>/', views.update_note, name="update_note"),
     path('delete-note/<int:note_id>/', views.delete_note, name="delete_note"),
+    
     path('login/', views.login_view, name="login_view"),
     path('logout/', views.logout_view, name="logout_view"),
+
     path('add-backlink/', views.add_backlink, name="add_backlink"),
-    path('delete-backlink/', views.delete_backlink, name="delete_backlink"),
-    path('check-backlinks-status/', views.check_backlinks_status, name="check_backlinks_status"),
+    path('delete-backlink/<int:backlink_id>/', views.delete_backlink, name="delete_backlink"),
+    path('check-backlinks-status/<int:site_id>/', views.check_backlinks_status, name="check_backlinks_status"),
 
     path('add-contract/', views.add_contract, name="add_contract"),
     path('delete-contract/<int:contract_id>/', views.delete_contract, name="delete_contract"),
@@ -37,7 +40,4 @@ urlpatterns = [
     path('change-invoice-is-paid/<int:invoice_id>/', views.change_invoice_is_paid, name="change_invoice_is_paid"),
     
     path('get-client-info/<int:client_id>/', views.get_client_info, name="get_client_info"),
-    
-
-
 ]

@@ -289,38 +289,51 @@ def logout_view(request):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated, IsAllowedUser])
 def add_backlink(request):
-    serializer = AddBacklinkSerializer(data=request.data)
+    serializer = BacklinkSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
-        return Response({'message': 'Added backlink'} | serializer.data, 201)
-    return Response(serializer.errors, 400)
+        return Response({
+            'message': 'Added backlink',
+            'backlink': serializer.data,
+        }, 201)
+    
+    return Response({
+        'message': 'Submitted data is incorrect.',
+        'errors': serializer.errors,
+    }, 400)
 
 
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated, IsAllowedUser])
-def delete_backlink(request):
-    backlink_id = request.data.get('backlink_id')
+def delete_backlink(request, backlink_id):
     backlink = get_object_or_404(Backlink, id=backlink_id)
     backlink.delete()
-    return Response({'message': 'Deleted backlink'}, 200)
+    return Response(status=204)
 
 
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated, IsAllowedUser])
-def check_backlinks_status(request):
-    site = get_object_or_404(Site, id=request.data.get('site_id'))
-    response = []
+def check_backlinks_status(request, site_id):
+    site = get_object_or_404(Site, id=site_id)
 
     for backlink in site.backlinks.all():
         links_from_page = get_external_links(backlink.linking_page)
-        is_active, rel = any(site.url in link['href'] for link in links_from_page), next((link['rel'] for link in links_from_page if site.url in link['href']), None)
 
-        backlink.status_changed, backlink.active = is_active != backlink.active, is_active
-        backlink.rel_changed, backlink.rel = rel != backlink.rel, rel
+        is_active = any(site.url in link['href'] for link in links_from_page)
+        rel = next((link['rel'] for link in links_from_page if site.url in link['href']), None)
+
+        backlink.status_changed = is_active != backlink.active
+        backlink.active = is_active
+
+        backlink.rel_changed = rel != backlink.rel
+        backlink.rel = rel
+
         backlink.save()
-        response.append(BacklinkSerializer(backlink).data)
 
-    return Response({'message': 'Updated backlinks statuses', 'links': response}, 200)
+    return Response({
+        'message': 'Updated backlinks status',
+        'backlinks': BacklinkSerializer(site.backlinks.all(), many=True).data,
+    }, 200)
 
 
 @api_view(['POST'])

@@ -40,6 +40,7 @@ class ClientSerializer(serializers.ModelSerializer):
         model = Client
         fields = ['name', 'nip', 'email', 'full_name', 'address', 'id', 'is_company']
 
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -81,12 +82,27 @@ class AddBacklinkSerializer(serializers.ModelSerializer):
     
 
 class BacklinkSerializer(serializers.ModelSerializer):
+    site_id = serializers.IntegerField(write_only=True)
 
     class Meta:
         model = Backlink
         fields = '__all__'
-    
+        extra_kwargs = {
+            'site': {'read_only': True},
+            'active': {'read_only': True},
+            'rel': {'read_only': True},
+            'rel_changed': {'read_only': True},
+            'status_changed': {'read_only': True},
+        }
 
+    def create(self, validated_data):
+        site_id = validated_data.pop('site_id')
+        site = Site.objects.get(id=site_id)
+        validated_data['linking_page'] = add_https(validated_data['linking_page'])
+        backlink = Backlink.objects.create(site=site, **validated_data)
+        return backlink
+    
+    
 class ExternalLinksManagerSerializer(serializers.ModelSerializer):
     class Meta:
         model = ExternalLinksManager
