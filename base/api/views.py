@@ -386,8 +386,15 @@ def add_invoice(request):
     if serializer.is_valid():
         serializer.save()
 
-        return Response(serializer.data, 200)
-    return Response(serializer.errors, 400)
+        return Response({
+            'message': 'Successfully added invoice.',
+            'invoice': serializer.data,
+        }, 201)
+    
+    return Response({
+        'message': 'Submitted data is incorrect.',
+        'errors': serializer.errors,
+    }, 400)
 
 
 @api_view(['PUT'])
@@ -396,7 +403,10 @@ def change_invoice_is_paid(request, invoice_id):
     invoice = get_object_or_404(Invoice, id=invoice_id)
     invoice.is_paid = not invoice.is_paid
     invoice.save()
-    return Response({'invoice': InvoiceSerializer(invoice).data})
+    return Response({
+        'message': 'Successfully changed is_paid attribute.',
+        'invoice': InvoiceSerializer(invoice).data
+    })
 
 
 @api_view(['DELETE'])
@@ -416,7 +426,7 @@ def check_contracts_urgency(request):
     
     return Response({
         'contracts': ContractSerializer(Contract.objects.all(), many=True).data
-        }, 200)
+    }, 200)
 
 
 @api_view(['GET'])
@@ -437,4 +447,6 @@ def get_client_info(request, client_id):
             'message': company_info['message'],
         }, 400)
 
-    return Response({'client_info': company_info['data']}, 200)
+    return Response({
+        'client_info': company_info['data']
+    }, 200)
