@@ -1,16 +1,5 @@
 let invoiceId = null
 
-async function updateIsPaidAttribute(invoiceId) {
-    const response = await fetch(`/api/change-invoice-is-paid/${invoiceId}/`, {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': document.querySelector('[name="csrfmiddlewaretoken"]').value,
-        },
-    })
-    return response.ok
-}
-
 
 async function editInvoice() {
     let formData = new FormData();
@@ -20,7 +9,6 @@ async function editInvoice() {
         formData.append('invoice_file', invoiceFile);
     }
     
-
     let reportFile = document.querySelector('#report-file').files[0]
     let deleteReportFile = document.querySelector('#delete-report')
     if (deleteReportFile) {
@@ -34,7 +22,6 @@ async function editInvoice() {
 
     let isPaid = document.querySelector('#is-paid').checked
     formData.append('is_paid', isPaid);
-
 
     const response = await fetch(`/api/edit-invoice/${invoiceId}/`, {
         method: 'PATCH',
@@ -60,27 +47,31 @@ async function deleteInvoice() {
 
 
 function downloadFile(blob, filename) {
-    
     let url = window.URL.createObjectURL(blob);
     let a = document.createElement('a');
     a.href = url;
     a.download = filename;
     document.body.appendChild(a);
+    
     a.click();
     document.body.removeChild(a);
 }
 
 
 async function downloadInvoiceFile() {
-    const response = await fetch(`/api/download-invoice-file/${invoiceId}/invoice_file/`, {
+    const response = await fetch(`/api/invoice-download-file/${invoiceId}/invoice_file/`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
             'X-CSRFToken': document.querySelector('[name="csrfmiddlewaretoken"]').value,
         },
     })
+    if (!response.ok) {
+        return false
+    }
     let blob = await response.blob();
-    downloadFile(blob, `invoice_${invoiceId}.pdf`)
+    downloadFile(blob, `invoice_${invoiceId}.pdf`)  
+    return true  
 }
 
 
@@ -92,21 +83,26 @@ async function downloadReportFile() {
             'X-CSRFToken': document.querySelector('[name="csrfmiddlewaretoken"]').value,
         },
     })
+    if (!response.ok) {
+        return false
+    }
     let blob = await response.blob();
-    downloadFile(blob, `report_${invoiceId}.pdf`)
-    
+    downloadFile(blob, `report_${invoiceId}.pdf`)  
+    return true  
 }
 
 
 document.addEventListener('DOMContentLoaded', () => {
 
     let ediInvoiceButton = document.querySelector('#edit-invoice')
+    let editInvoiceMessage = document.querySelector('#edit-invoice-message')
     invoiceId = ediInvoiceButton.value
     ediInvoiceButton.onclick = async () => {
         let response = await editInvoice()
-        let editInvoiceMessage = document.querySelector('#edit-invoice-message')
+        
         if (response) {
             editInvoiceMessage.innerHTML = 'Edytowano fakturę.'
+            location.reload()
         }
         else {
             editInvoiceMessage.innerHTML = 'Coś poszło nie tak.'
@@ -114,19 +110,34 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     let downloadInvoiceButton = document.querySelector('#download-invoice')
+    let downloadInvoiceMessage= document.querySelector('#download-invoice-message')
     downloadInvoiceButton.onclick = async () => {
-        downloadInvoiceFile()
+        responseOk = await downloadInvoiceFile()
+        if (!responseOk) {
+            downloadInvoiceMessage.innerHTML = 'Coś poszło nie tak.'
+        }
     }
 
     let downloadReportButton = document.querySelector('#download-report')
+    let downloadReportMessage = document.querySelector('#download-report-message')
     downloadReportButton.onclick = async () => {
-        downloadReportFile()
+        responseOk = await downloadReportFile()
+        if (!responseOk) {
+            downloadReportMessage.innerHTML = 'Coś poszło nie tak.'
+        }
     }
 
     let deleteInvoiceButton = document.querySelector('#delete-invoice')
+    let deleteInvoiceMessage = document.querySelector('#delete-invoice-message')
     deleteInvoiceButton.onclick = async () => {
-        deleteInvoice()
-        
+        responseOk = await deleteInvoice()
+        if (responseOk) {
+            deleteInvoiceMessage.innerHTML = 'Usunięto fakturę.'
+            window.location.replace("/invoices/");
+        }
+        else {
+            deleteInvoiceMessage.innerHTML = 'Coś poszło nie tak.'
+        }
     }
     
 })

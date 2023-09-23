@@ -42,6 +42,7 @@ invoice.js
                 <div class="row">
                     <div class="column clear-left-padding clear-top-padding">
                         <button class="button-purple" id="download-invoice">Pobierz</button>
+                        <small id="download-invoice-message"></small>
                     </div>
                     <div class="column clear-top-padding clear-left-padding">
                         <label class="file-input">
@@ -57,6 +58,7 @@ invoice.js
                         {% if invoice.report_file %}
                             <label><input type="checkbox" id="delete-report">Usuń raport</label>
                         {% endif %}
+                        <small id="download-report-message"></small>
                     </div>
                     <div class="column clear-top-padding clear-left-padding">
                         <label class="file-input">
@@ -69,6 +71,7 @@ invoice.js
                 <button class="button-purple purple-text clickable" id="edit-invoice" value="{{ invoice.id }}">
                     Edytuj
                 </button>
+                <small id="edit-invoice-message"></small>
                 
             </div>
         </div>
