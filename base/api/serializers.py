@@ -163,20 +163,14 @@ class EditContractSerializer(serializers.ModelSerializer):
         
         instance.save()
         return instance
-    
-    
-class InvoiceSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Invoice
-        fields = '__all__'
-    
+     
 
-class AddInvoiceSerializer(serializers.ModelSerializer):
+class InvoiceSerializer(serializers.ModelSerializer):
     contract_id = serializers.IntegerField(write_only=True)
 
     class Meta:
         model = Invoice
-        fields = ['invoice_file', 'report_file', 'contract_id']
+        fields = ['invoice_file', 'report_file', 'contract_id', 'is_paid', 'id']
     
     def create(self, validated_data):
         contract_id = validated_data.pop('contract_id')

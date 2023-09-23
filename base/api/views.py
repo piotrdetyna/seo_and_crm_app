@@ -426,7 +426,7 @@ def check_contracts_urgency(request):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated, IsAllowedUser])
 def add_invoice(request):
-    serializer = serializers.AddInvoiceSerializer(data=request.data)
+    serializer = serializers.InvoiceSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
 
