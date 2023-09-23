@@ -35,7 +35,7 @@ function checkLinkedPagesAvaliability() {
         }).then(response => {
 
             if (response.ok) {
-                location.reload()
+                //location.reload()
             } else {
                 console.error('Request failed with status:', response.status);
             }

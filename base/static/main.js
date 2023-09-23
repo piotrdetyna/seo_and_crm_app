@@ -1,6 +1,6 @@
 async function setCurrentSite(site_id) {
     const response = await fetch(`/api/set-current-site/${site_id}`, {
-        method: 'PUT',
+        method: 'PATCH',
         headers: {
             'Content-Type': 'application/json',
             'X-CSRFToken': document.querySelector('[name="csrfmiddlewaretoken"]').value,

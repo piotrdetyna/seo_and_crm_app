@@ -7,7 +7,7 @@ function editClient(clientForm) {
     clientFormData.append('is_company', isClientCompany)
  
     fetch(`/api/edit-client/${clientId}/`, {
-        method: 'PUT',
+        method: 'PATCH',
         headers: {
             'X-CSRFToken': document.querySelector('[name="csrfmiddlewaretoken"]').value,
         },

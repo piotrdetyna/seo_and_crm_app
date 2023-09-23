@@ -84,6 +84,7 @@ def auto_delete_file_on_delete(sender, instance, **kwargs):
 
 
 class ExternalLink(models.Model):
+    manager = models.ForeignKey('ExternalLinksManager', related_name='links', on_delete=models.CASCADE)
     linking_page = models.CharField(max_length=150)
     linked_page = models.CharField(max_length=150)
     rel = models.CharField(max_length=10)
@@ -100,7 +101,6 @@ class ExternalLink(models.Model):
 
 class ExternalLinksManager(models.Model):
     site = models.OneToOneField(Site, on_delete=models.CASCADE, related_name="external_links")
-    links = models.ManyToManyField(ExternalLink)
     excluded = models.JSONField(default=list)
     date = models.DateField(auto_now=True)
     progress_current = models.IntegerField(default=0)

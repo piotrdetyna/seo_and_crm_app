@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from ..models import Client, Site, Note, Backlink, ExternalLinksManager, Contract, Invoice, User
+from ..models import Client, Site, Note, Backlink, ExternalLinksManager, ExternalLink, Contract, Invoice, User
 from .utils import get_domain_from_url, add_https
 from dateutil.relativedelta import relativedelta
 from django.shortcuts import get_object_or_404
@@ -32,16 +32,20 @@ class EditSiteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Site
         fields = ('url', 'logo')
-        extra_kwargs = {
-            'url': {'required': False},
-            'logo': {'required': False},
-        }
+        extra_kwargs = {field: {'required': False} for field in fields}
 
 
 class ClientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Client
         fields = ['name', 'nip', 'email', 'full_name', 'address', 'id', 'is_company']
+
+
+class EditClientSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Client
+        fields = ['name', 'nip', 'email', 'full_name', 'address', 'is_company']
+        extra_kwargs = {field: {'required': False} for field in fields}
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -105,8 +109,15 @@ class BacklinkSerializer(serializers.ModelSerializer):
         backlink = Backlink.objects.create(site=site, **validated_data)
         return backlink
     
+
+class ExternalLinkSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ExternalLink
+        fields = '__all__'
+    
     
 class ExternalLinksManagerSerializer(serializers.ModelSerializer):
+    links = ExternalLinkSerializer(read_only=True, many=True)
     class Meta:
         model = ExternalLinksManager
         fields = '__all__'
@@ -136,6 +147,7 @@ class ContractSerializer(serializers.ModelSerializer):
         
         instance.save()
         return instance
+    
     
 class InvoiceSerializer(serializers.ModelSerializer):
     class Meta:

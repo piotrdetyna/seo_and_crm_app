@@ -75,7 +75,7 @@ def get_sites(request, site_id=None):
     return Response({'sites': sites}, 200)
 
 
-@api_view(['PUT'])
+@api_view(['PATCH'])
 @permission_classes([IsAuthenticated, IsAllowedUser])
 def set_current_site(request, site_id):
     _ = get_object_or_404(Site, id=site_id)
@@ -102,17 +102,17 @@ def add_client(request):
     }, 400)
 
 
-@api_view(['PUT'])
+@api_view(['PATCH'])
 @permission_classes([IsAuthenticated, IsAllowedUser])
 def edit_client(request, client_id):
     client = get_object_or_404(Client, id=client_id)
-    serializer = serializers.ClientSerializer(client, data=request.data)
+    serializer = serializers.EditClientSerializer(client, data=request.data)
 
     if serializer.is_valid():
-        serializer.save()
+        client = serializer.save()
         return Response({
             'message': 'Successfully edited site', 
-            'site': serializer.data,           
+            'client': serializers.ClientSerializer(client).data,           
             }, 200)
     
     return Response({
@@ -163,6 +163,7 @@ def get_client_info(request, client_id):
 def check_linked_pages_availability(request, site_id):
     site = get_object_or_404(Site, id=site_id)
     external_links_manager = get_object_or_404(ExternalLinksManager, site=site)
+
     external_links_manager.clear_progress()
 
     unique_linked_pages = external_links_manager.get_unique_linked_pages()
@@ -178,7 +179,10 @@ def check_linked_pages_availability(request, site_id):
         external_links_manager.increase_progress()
     external_links_manager.clear_progress()
     
-    return Response({'message': 'Successfully checked linked pages availability'}, 200)
+    return Response({
+        'message': 'Successfully checked linked pages availability',
+        'external_links': serializers.ExternalLinksManagerSerializer(external_links_manager).data,
+    }, 200)
 
 
 @api_view(['PUT'])
@@ -186,6 +190,7 @@ def check_linked_pages_availability(request, site_id):
 def find_external_links(request, site_id):
     site = get_object_or_404(Site, id=site_id)
     external_links_manager, _ = ExternalLinksManager.objects.get_or_create(site=site)
+    
     to_exclude = request.data.get('to_exclude')
 
     pages = get_pages_from_sitemap(site.url)
@@ -197,12 +202,12 @@ def find_external_links(request, site_id):
         links = get_external_links(page, excluded=to_exclude)
         for link in links:
             external_link_object = ExternalLink(
+                manager = external_links_manager,
                 linking_page=page, 
                 linked_page=link['href'], 
                 rel=link['rel'],
             )
             external_link_object.save()
-            external_links_manager.links.add(external_link_object)
 
         external_links_manager.increase_progress()
     external_links_manager.clear_progress()
