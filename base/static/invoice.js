@@ -1,5 +1,5 @@
 let invoiceId = null
-
+let currentDisplayed = 'invoice'
 
 async function editInvoice() {
     let formData = new FormData();
@@ -10,15 +10,21 @@ async function editInvoice() {
     }
     
     let reportFile = document.querySelector('#report-file').files[0]
-    let deleteReportFile = document.querySelector('#delete-report')
-    if (deleteReportFile) {
-        if (deleteReportFile.checked) {
-            formData.append('report_file', null);
+    let deleteReportFileElement = document.querySelector('#delete-report')
+        
+    deleteReportFile = false
+    if (deleteReportFileElement) {
+        if (deleteReportFileElement.checked) {
+            deleteReportFile = true
         }
     }
-    else if (reportFile) {
+    if (reportFile && !deleteReportFile) {
         formData.append('report_file', reportFile);
     }
+    if (deleteReportFile) {
+        formData.append('report_file', null);
+    }
+
 
     let isPaid = document.querySelector('#is-paid').checked
     formData.append('is_paid', isPaid);
@@ -90,7 +96,25 @@ async function getReportFile() {
 }
 
 
+async function handleSwitch() {
+    currentDisplayed = currentDisplayed == 'invoice' ? 'report' : 'invoice'
+    document.querySelector('#displayed-file-type').innerHTML = currentDisplayed == 'report' ? 'Raport' : 'Faktura'
+    if (currentDisplayed == 'invoice') {
+        blob = await getInvoiceFile()
+    }
+    else {
+        blob = await getReportFile()
+    }
+    if (blob) {
+        const pdfUrl = URL.createObjectURL(blob);
+        document.getElementById('pdf-embed').src = pdfUrl;
+    }
+}
+
+
 document.addEventListener('DOMContentLoaded', async () => {
+    let switchDisplayedFileElement = document.getElementById("switch-input")
+    switchDisplayedFileElement.addEventListener("change", handleSwitch)
     let ediInvoiceButton = document.querySelector('#edit-invoice')
     invoiceId = ediInvoiceButton.value
 

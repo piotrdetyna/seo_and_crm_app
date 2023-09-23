@@ -17,9 +17,12 @@ invoice.js
         
         <div class="row" id="edit-contract-container">
             <div class="column">
+                <div class="switch-description" id="displayed-file-type">Faktura</div>
+                    <label class="switch {% if not invoice.report_file %}disabled{% endif %}">  
+                        <input type="checkbox" id="switch-input">
+                        <span class="slider round"></span>
+                    </label><br>
                 <embed id="pdf-embed" type="application/pdf" class="embed"></embed>
-                
-                
             </div>
 
             <div class="column">
