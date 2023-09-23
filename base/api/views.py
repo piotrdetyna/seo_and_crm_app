@@ -444,7 +444,7 @@ def change_invoice_is_paid(request, invoice_id):
     return Response({
         'message': 'Successfully changed is_paid attribute.',
         'invoice': serializers.InvoiceSerializer(invoice).data
-    })
+    }, 200)
 
 
 @api_view(['DELETE'])
@@ -460,6 +460,7 @@ def delete_invoice(request, invoice_id):
 def edit_invoice(request, invoice_id):
     invoice = get_object_or_404(Invoice, id=invoice_id)
     serializer = serializers.EditInvoiceSerializer(invoice, data=request.data)
+    
     if serializer.is_valid():
         invoice = serializer.save()
         return Response({

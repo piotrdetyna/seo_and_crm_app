@@ -170,6 +170,8 @@ class EditInvoiceSerializer(serializers.ModelSerializer):
     
     def to_internal_value(self, data):
         data._mutable = True
+
+        #set every value which is equal to 'null' to None
         for key, value in data.items():
             if value == 'null':
                 data[key] = None
