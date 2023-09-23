@@ -4,7 +4,7 @@ function editSite(siteForm) {
     let siteFormData = new FormData(siteForm);  
  
     fetch(`/api/edit-site/${siteId}/`, {
-        method: 'PUT',
+        method: 'PATCH',
         headers: {
             'X-CSRFToken': document.querySelector('[name="csrfmiddlewaretoken"]').value,
         },

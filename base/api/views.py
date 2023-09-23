@@ -34,7 +34,7 @@ def add_site(request):
     }, 400)
 
 
-@api_view(['PUT'])
+@api_view(['PATCH'])
 @permission_classes([IsAuthenticated, IsAllowedUser])
 def edit_site(request, site_id):
     site = get_object_or_404(Site, id=site_id)
