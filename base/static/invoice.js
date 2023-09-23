@@ -58,8 +58,8 @@ function downloadFile(blob, filename) {
 }
 
 
-async function downloadInvoiceFile() {
-    const response = await fetch(`/api/invoice-download-file/${invoiceId}/invoice_file/`, {
+async function getInvoiceFile() {
+    const response = await fetch(`/api/invoice-get-file/${invoiceId}/invoice_file/`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -70,13 +70,12 @@ async function downloadInvoiceFile() {
         return false
     }
     let blob = await response.blob();
-    downloadFile(blob, `invoice_${invoiceId}.pdf`)  
-    return true  
+    return blob
 }
 
 
-async function downloadReportFile() {
-    const response = await fetch(`/api/invoice-download-file/${invoiceId}/report_file/`, {
+async function getReportFile() {
+    const response = await fetch(`/api/invoice-get-file/${invoiceId}/report_file/`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -87,16 +86,23 @@ async function downloadReportFile() {
         return false
     }
     let blob = await response.blob();
-    downloadFile(blob, `report_${invoiceId}.pdf`)  
-    return true  
+    return blob
 }
 
 
-document.addEventListener('DOMContentLoaded', () => {
-
+document.addEventListener('DOMContentLoaded', async () => {
     let ediInvoiceButton = document.querySelector('#edit-invoice')
-    let editInvoiceMessage = document.querySelector('#edit-invoice-message')
     invoiceId = ediInvoiceButton.value
+
+    blob = await getInvoiceFile()
+    if (blob) {
+        const pdfUrl = URL.createObjectURL(blob);
+        document.getElementById('pdf-embed').src = pdfUrl;
+    }
+
+    
+    let editInvoiceMessage = document.querySelector('#edit-invoice-message')
+    
     ediInvoiceButton.onclick = async () => {
         let response = await editInvoice()
         
@@ -110,20 +116,28 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     let downloadInvoiceButton = document.querySelector('#download-invoice')
-    let downloadInvoiceMessage= document.querySelector('#download-invoice-message')
+    let downloadInvoiceMessage = document.querySelector('#download-invoice-message')
     downloadInvoiceButton.onclick = async () => {
-        responseOk = await downloadInvoiceFile()
-        if (!responseOk) {
+        blob = await getInvoiceFile()
+        
+        if (!blob) {
             downloadInvoiceMessage.innerHTML = 'Coś poszło nie tak.'
+        }
+        else {
+            downloadFile(blob, `invoice_${invoiceId}.pdf`)  
         }
     }
 
     let downloadReportButton = document.querySelector('#download-report')
     let downloadReportMessage = document.querySelector('#download-report-message')
     downloadReportButton.onclick = async () => {
-        responseOk = await downloadReportFile()
-        if (!responseOk) {
+        blob = await getInvoiceFile()
+        
+        if (!blob) {
             downloadReportMessage.innerHTML = 'Coś poszło nie tak.'
+        }
+        else {
+            downloadFile(blob, `report_${invoiceId}.pdf`)  
         }
     }
 

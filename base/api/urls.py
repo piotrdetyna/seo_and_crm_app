@@ -42,5 +42,5 @@ urlpatterns = [
     
     path('get-client-info/<int:client_id>/', views.get_client_info, name="get_client_info"),
 
-    path('invoice-download-file/<int:invoice_id>/<str:file_type>/', views.invoice_download_file, name="invoice_download_file"),
+    path('invoice-get-file/<int:invoice_id>/<str:file_type>/', views.invoice_get_file, name="invoice_get_file"),
 ]

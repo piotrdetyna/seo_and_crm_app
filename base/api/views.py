@@ -476,7 +476,7 @@ def edit_invoice(request, invoice_id):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated, IsAllowedUser])
-def invoice_download_file(request, invoice_id, file_type):
+def invoice_get_file(request, invoice_id, file_type):
     invoice = get_object_or_404(Invoice, id=invoice_id)
     if not file_type in ['invoice_file', 'report_file']:
         return Response({'message': 'Invalid file field'}, 400)
