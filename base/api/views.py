@@ -38,13 +38,13 @@ def add_site(request):
 @permission_classes([IsAuthenticated, IsAllowedUser])
 def edit_site(request, site_id):
     site = get_object_or_404(Site, id=site_id)
-    serializer = serializers.SiteSerializer(site, data=request.data)
+    serializer = serializers.EditSiteSerializer(site, data=request.data)
 
     if serializer.is_valid():
-        serializer.save()
+        site = serializer.save()
         return Response({
             'message': 'Successfully edited site', 
-            'site': serializer.data,           
+            'site': serializers.SiteSerializer(site).data,           
         }, 200)
     
     return Response({

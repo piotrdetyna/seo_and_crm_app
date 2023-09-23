@@ -6,33 +6,36 @@ from django.shortcuts import get_object_or_404
 
 
 class SiteSerializer(serializers.ModelSerializer):
-    client_id = serializers.IntegerField(write_only=True, required=False)
-    
+    client_id = serializers.IntegerField()
+
     class Meta:
         model = Site
-        fields = ('url', 'client_id', 'logo', 'date', 'id')
+        fields = ('url', 'logo', 'date', 'id', 'client_id')
         extra_kwargs = {
-            'logo': {'required': False},
+            'client_id': {'write_only': True},
         }
     
     def create(self, validated_data):
         client_id = validated_data.pop('client_id', None)
+        client = Client.objects.get(pk=client_id)
 
-        if client_id:
-            client = Client.objects.get(pk=client_id)
-            validated_data['url'] = get_domain_from_url(validated_data['url'])
-            site = Site.objects.create(client=client, **validated_data)
-            return site
-        else:
-            raise serializers.ValidationError("client_id is required for creating a Site")
+        site = Site.objects.create(client=client, **validated_data)
+        return site
+
+    def to_internal_value(self, data):
+        data._mutable = True
+        data['url'] = get_domain_from_url(data['url'])
+        return super().to_internal_value(data)
     
-    def update(self, instance, validated_data):
 
-        instance.url = validated_data.get('url', instance.url)
-        if validated_data.get('logo'):
-            instance.logo = validated_data['logo']
-        instance.save()
-        return instance
+class EditSiteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Site
+        fields = ('url', 'logo')
+        extra_kwargs = {
+            'url': {'required': False},
+            'logo': {'required': False},
+        }
 
 
 class ClientSerializer(serializers.ModelSerializer):
