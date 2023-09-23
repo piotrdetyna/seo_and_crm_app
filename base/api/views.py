@@ -441,18 +441,6 @@ def add_invoice(request):
     }, 400)
 
 
-@api_view(['PUT'])
-@permission_classes([IsAuthenticated, IsAllowedUser])
-def change_invoice_is_paid(request, invoice_id):
-    invoice = get_object_or_404(Invoice, id=invoice_id)
-    invoice.is_paid = not invoice.is_paid
-    invoice.save()
-    return Response({
-        'message': 'Successfully changed is_paid attribute.',
-        'invoice': serializers.InvoiceSerializer(invoice).data
-    }, 200)
-
-
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated, IsAllowedUser])
 def delete_invoice(request, invoice_id):

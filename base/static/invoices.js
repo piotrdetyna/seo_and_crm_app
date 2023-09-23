@@ -1,25 +1,6 @@
 let selectedContract = null
 let selectedContractClient = null
 
-async function addContract() {
-    const response = await fetch('/api/add-contract/', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': document.querySelector('[name="csrfmiddlewaretoken"]').value,
-        },
-        body: JSON.stringify({
-            'site_id': selectedSite,
-            'invoice_frequency': document.querySelector('#invoice-frequency').value,
-            'value': document.querySelector('#value').value,
-            'category': selectedCategory,
-            'invoice_date': document.querySelector('#invoice-date').value,
-            'days_before_invoice_date_to_mark_urgent': document.querySelector('#days-before-invoice-date-to-mark-urgent').value,
-        })
-    })
-    return response.ok
-}
-
 async function addInvoice() {
     let formData = new FormData();
     formData.append('contract_id', selectedContract);
@@ -57,13 +38,16 @@ function handleCheckboxChange(event) {
     }
 }
 
-async function updateIsPaidAttribute(invoiceId) {
-    const response = await fetch(`/api/change-invoice-is-paid/${invoiceId}/`, {
-        method: 'PUT',
+async function updateIsPaidAttribute(invoiceId, value) {
+    const response = await fetch(`/api/edit-invoice/${invoiceId}/`, {
+        method: 'PATCH',
         headers: {
             'Content-Type': 'application/json',
             'X-CSRFToken': document.querySelector('[name="csrfmiddlewaretoken"]').value,
         },
+        body: JSON.stringify({
+            'is_paid': value,
+        })
     })
     return response.ok
 }
@@ -86,7 +70,9 @@ document.addEventListener('DOMContentLoaded', () => {
     changeIsPaidAttributeButtons.forEach(button => {
         button.onclick = async () => {
             let invoiceId = button.parentNode.parentNode.dataset.invoiceId
-            response = await updateIsPaidAttribute(invoiceId)
+            value = button.dataset.isPaid == 'True' ? false : true
+            
+            response = await updateIsPaidAttribute(invoiceId, value)
             if (response) {
                 location.reload()
             }

@@ -3,7 +3,7 @@ from ..models import Client, Site, Note, Backlink, ExternalLinksManager, Externa
 from .utils import get_domain_from_url, add_https
 from dateutil.relativedelta import relativedelta
 from django.shortcuts import get_object_or_404
-
+from copy import copy
 
 class SiteSerializer(serializers.ModelSerializer):
     client_id = serializers.IntegerField()
@@ -200,9 +200,8 @@ class EditInvoiceSerializer(serializers.ModelSerializer):
         }
     
     def to_internal_value(self, data):
-        data._mutable = True
-
         #set every value which is equal to 'null' to None
+        data = copy(data)
         for key, value in data.items():
             if value == 'null':
                 data[key] = None
