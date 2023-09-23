@@ -120,7 +120,7 @@ class ExternalLinksManagerSerializer(serializers.ModelSerializer):
     links = ExternalLinkSerializer(read_only=True, many=True)
     class Meta:
         model = ExternalLinksManager
-        fields = '__all__'
+        exclude = ['progress_current', 'progress_target']
  
 
 class ContractSerializer(serializers.ModelSerializer):

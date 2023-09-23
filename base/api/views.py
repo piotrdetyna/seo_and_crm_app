@@ -214,7 +214,7 @@ def find_external_links(request, site_id):
 
     return Response({
         'message': 'Successfully found links', 
-        'links': serializers.ExternalLinksManagerSerializer(external_links_manager).data,
+        'external_links': serializers.ExternalLinksManagerSerializer(external_links_manager).data,
     }, 200)
 
 
