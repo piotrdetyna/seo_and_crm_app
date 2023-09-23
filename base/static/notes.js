@@ -47,7 +47,7 @@ async function getAndSetCurrentNote(noteId) {
 
 async function saveNote() {
     const response = await fetch(`/api/update-note/${currentNote.dataset.noteId}/`, {
-        method: 'PUT',
+        method: 'PATCH',
         headers: {
             'Content-Type': 'application/json',
             'X-CSRFToken': document.querySelector('[name="csrfmiddlewaretoken"]').value,

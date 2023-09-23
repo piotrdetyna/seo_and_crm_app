@@ -259,17 +259,17 @@ def get_note(request, note_id):
         }, 200)
 
 
-@api_view(['PUT'])
+@api_view(['PATCH'])
 @permission_classes([IsAuthenticated, IsAllowedUser])
 def update_note(request, note_id):
     note = get_object_or_404(Note, id=note_id)
-    serializer = serializers.NoteSerializer(note, data=request.data)
+    serializer = serializers.EditNoteSerializer(note, data=request.data)
     
     if serializer.is_valid():
-        serializer.save()
+        note = serializer.save()
         return Response({
             'message': 'Successfully updated note', 
-            'note': serializer.data,
+            'note': serializers.NoteSerializer(note).data,
         }, 201)
     
     return Response({

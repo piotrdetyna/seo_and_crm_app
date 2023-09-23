@@ -66,6 +66,15 @@ class NoteSerializer(serializers.ModelSerializer):
         site = get_object_or_404(Site, id=site_id)
         note = Note.objects.create(site=site, **validated_data)
         return note
+    
+class EditNoteSerializer(serializers.ModelSerializer):
+   
+    class Meta:
+        model = Note
+        fields = ['text', 'title']
+        extra_kwargs = {field: {'required': False} for field in fields}
+    
+
 
 
 class LoginSerializer(serializers.Serializer):
