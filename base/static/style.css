@@ -218,6 +218,10 @@ aside a {
   padding-left: 0;
 }
 
+.clear-top-padding {
+  padding-top: 0;
+}
+
 @media (max-width: 768px) {
   .row {
     flex-direction: column;
@@ -257,7 +261,7 @@ aside a {
 
 
 
-.clients-list input {
+input[type="checkbox"] {
   width: 15px;
   height: 15px;
   margin-right: 10px;
@@ -269,8 +273,7 @@ form input {
 
   font-size: 16px;
   padding: 5px 10px;
-  margin: 5px;
-  height: 50px;
+  height: 59px;
   box-sizing: border-box;
   border: 1px solid #ccc;
   transition: 0.5s;
@@ -301,17 +304,16 @@ input[type="date"] {
 
 .file-input-button {
   text-align:left;
-  margin: 5px;
-  width: 96%;
+  width: 97%;
   margin-bottom: 25px;
   background-color: white;
   cursor: pointer;
   border: 1px solid #ccc;
-  border-radius: 10px;
+  border-radius: 12px;
   font-size: 16px;
   color: black;
   padding: 5px 10px;
-  line-height: 40px;
+  line-height: 50px;
   transition: background 0.2s ease,color 0.2s ease,box-shadow 0.2s ease;
 }
 
@@ -667,13 +669,6 @@ input:checked + .slider:before {
   padding: 5px; 
   margin-bottom: 2px;
   transition: 0.5s;
-}
-
-.categories-list input {
-  width: 15px;
-  height: 15px;
-  margin-right: 10px;
-  accent-color: #5a3be6;
 }
 
 

@@ -7,6 +7,8 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from rest_framework.permissions import IsAuthenticated, BasePermission
 from crm.settings import ALLOWED_USERS
+from django.http import FileResponse
+
 
 
 class IsAllowedUser(BasePermission):
@@ -130,6 +132,30 @@ def delete_client(request, client_id):
         del request.session['current_site']
     client.delete()
     return Response(status=204)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated, IsAllowedUser])
+def get_client_info(request, client_id):
+    client = get_object_or_404(Client, id=client_id)
+    if not client.is_company:
+        return Response({
+            'client_info': {
+                'name': client.full_name,
+                'address': client.address,
+            }
+        })
+    
+    company_info = get_company_info(client.nip)
+    if not company_info['ok']:
+        return Response({
+            'message': company_info['message'],
+        }, 400)
+
+    return Response({
+        'client_info': company_info['data']
+    }, 200)
+
 
 
 @api_view(['PUT'])
@@ -379,10 +405,22 @@ def delete_contract(request, contract_id):
     return Response(status=204)
 
 
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated, IsAllowedUser])
+def check_contracts_urgency(request):
+    contracts = Contract.objects.all()
+    for contract in contracts:
+        contract.check_urgency()
+    
+    return Response({
+        'contracts': serializers.ContractSerializer(Contract.objects.all(), many=True).data
+    }, 200)
+
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated, IsAllowedUser])
 def add_invoice(request):
-    serializer = serializers.InvoiceSerializer(data=request.data)
+    serializer = serializers.AddInvoiceSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
 
@@ -417,36 +455,33 @@ def delete_invoice(request, invoice_id):
     return Response(status=204)
 
 
-@api_view(['PUT'])
+@api_view(['PATCH'])
 @permission_classes([IsAuthenticated, IsAllowedUser])
-def check_contracts_urgency(request):
-    contracts = Contract.objects.all()
-    for contract in contracts:
-        contract.check_urgency()
+def edit_invoice(request, invoice_id):
+    invoice = get_object_or_404(Invoice, id=invoice_id)
+    serializer = serializers.EditInvoiceSerializer(invoice, data=request.data)
+    if serializer.is_valid():
+        invoice = serializer.save()
+        return Response({
+            'message': 'Successfully edited invoice.',
+            'invoice': serializers.InvoiceSerializer(invoice).data
+        }, 200)
     
     return Response({
-        'contracts': serializers.ContractSerializer(Contract.objects.all(), many=True).data
-    }, 200)
+        'message': 'Submitted data is incorrect.',
+        'errors': serializer.errors,
+    }, 400)
 
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated, IsAllowedUser])
-def get_client_info(request, client_id):
-    client = get_object_or_404(Client, id=client_id)
-    if not client.is_company:
-        return Response({
-            'client_info': {
-                'name': client.full_name,
-                'address': client.address,
-            }
-        })
-    
-    company_info = get_company_info(client.nip)
-    if not company_info['ok']:
-        return Response({
-            'message': company_info['message'],
-        }, 400)
-
-    return Response({
-        'client_info': company_info['data']
-    }, 200)
+def invoice_download_file(request, invoice_id, file_type):
+    invoice = get_object_or_404(Invoice, id=invoice_id)
+    if not file_type in ['invoice_file', 'report_file']:
+        return Response({'message': 'Invalid file field'}, 400)
+   
+    try:
+        f = getattr(invoice, file_type)
+        return FileResponse(f, as_attachment=True)
+    except FileNotFoundError:
+        return Response({'message': "File does not exist"}, 404)

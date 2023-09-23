@@ -68,3 +68,8 @@ def is_invoice_paid_info_from_bool(value):
         False: "Nieopłacona",
     }
     return bool_to_text[value]
+
+
+@register.filter(name='invert_boolean')
+def invert_boolean(value):
+    return not value

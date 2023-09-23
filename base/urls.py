@@ -33,6 +33,8 @@ urlpatterns = [
     path('invoices/', views.invoices, name="invoices"),
     path('invoices/<int:contract_id>/', views.invoices, name="invoices"),
 
+    path('invoice/<int:invoice_id>/', views.invoice, name="invoice"),
+
     path('sites/', views.sites, name="sites"),
 ]
 

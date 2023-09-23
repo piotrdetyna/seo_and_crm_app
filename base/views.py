@@ -178,6 +178,15 @@ def invoices(request, contract_id=None):
         'single_contract': single_contract,
     })
 
+@login_required
+@user_passes_test(is_allowed_user)
+def invoice(request, invoice_id):  
+    invoice = get_object_or_404(Invoice, id=invoice_id)
+
+    return render(request, 'base/invoice.html', context={
+        'invoice': invoice,
+    })
+
 
 @login_required
 @user_passes_test(is_allowed_user)
@@ -187,3 +196,4 @@ def sites(request):
     return render(request, 'base/sites.html', context={
         'sites': sites,
     })
+

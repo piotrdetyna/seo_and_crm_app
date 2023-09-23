@@ -62,7 +62,8 @@ invoices.js
                     <th width="25%">Strona</th>
                     <th width="25%">Umowa</th>
                     <th width="25%">Status</th>
-                    <th width="25%">Data wystawienia</th>
+                    <th width="20%">Data wystawienia</th>
+                    <th width="5%">Szczegóły</th>
                 </tr>
             </thead>
             <tbody>
@@ -75,6 +76,7 @@ invoices.js
                         <small class="purple-text clickable change-is-paid">Zmień</small>
                     </td>
                     <td>{{ invoice.date|date:"Y-m-d" }}</td>
+                    <td><a class="purple-text" href="/invoice/{{ invoice.id }}/">Zobacz</a></td>
                 </tr>
                 {% endfor %}
             </tbody>

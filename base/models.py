@@ -27,15 +27,6 @@ class User(AbstractUser):
     pass
 
 
-
-class OverwriteStorage(FileSystemStorage):
-    def get_available_name(self, name, max_length=None):
-        # If the filename already exists, remove it as if it was a true file system
-        if self.exists(name):
-            os.remove(os.path.join(MEDIA_ROOT, name))
-        return name
-
-
 class Client(models.Model):
     name = models.CharField(max_length=100)
     email = models.CharField(max_length=100)
@@ -66,7 +57,7 @@ class Client(models.Model):
 class Site(models.Model):
     url = models.CharField(max_length=150, unique=True)
     client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name="sites")
-    logo = models.ImageField(upload_to=logo_file_name, storage=OverwriteStorage, default='default.jpg')
+    logo = models.ImageField(upload_to=logo_file_name, default='default.jpg')
     date = models.DateField(auto_now_add=True)
 
     #save object firstly without logo, and with logo at the second time to get object id after first save 

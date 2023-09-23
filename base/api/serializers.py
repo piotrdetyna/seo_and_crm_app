@@ -134,8 +134,13 @@ class ContractSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
     
-
 class InvoiceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Invoice
+        fields = '__all__'
+    
+
+class AddInvoiceSerializer(serializers.ModelSerializer):
     contract_id = serializers.IntegerField(write_only=True)
 
     class Meta:
@@ -150,10 +155,23 @@ class InvoiceSerializer(serializers.ModelSerializer):
         contract.save()
         invoice = Invoice.objects.create(contract=contract, **validated_data)
         return invoice
+    
 
+class EditInvoiceSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Invoice
+        fields = ['is_paid', 'invoice_file', 'report_file']
+        extra_kwargs = {
+            'is_paid': {'required': False},
+            'invoice_file': {'required': False},
+            'report_file': {'required': False},
+        }
+    
     def to_internal_value(self, data):
-        if data['report_file'] == 'null':
-            data['report_file'] = None
+        data._mutable = True
+        for key, value in data.items():
+            if value == 'null':
+                data[key] = None
 
-        return super(InvoiceSerializer, self).to_internal_value(data)
-
+        return super().to_internal_value(data)
