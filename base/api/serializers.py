@@ -73,8 +73,6 @@ class EditNoteSerializer(serializers.ModelSerializer):
         model = Note
         fields = ['text', 'title']
         extra_kwargs = {field: {'required': False} for field in fields}
-    
-
 
 
 class LoginSerializer(serializers.Serializer):
@@ -145,6 +143,15 @@ class ContractSerializer(serializers.ModelSerializer):
         contract = Contract.objects.create(site=site, **validated_data)
         contract.check_urgency()
         return contract
+    
+    
+class EditContractSerializer(serializers.ModelSerializer):
+    site_id = serializers.IntegerField(write_only=True)
+
+    class Meta:
+        model = Contract
+        fields = ['invoice_frequency', 'site_id', 'value', 'category', 'invoice_date', 'days_before_invoice_date_to_mark_urgent', 'is_urgent']
+        extra_kwargs = {field: {'required': False} for field in fields}
     
     def update(self, instance, validated_data):
         site_id = validated_data.pop('site_id')

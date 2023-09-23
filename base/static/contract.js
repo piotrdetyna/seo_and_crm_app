@@ -4,7 +4,7 @@ let contractId = null
 
 async function editContract() {
     const response = await fetch(`/api/edit-contract/${contractId}/`, {
-        method: 'PUT',
+        method: 'PATCH',
         headers: {
             'Content-Type': 'application/json',
             'X-CSRFToken': document.querySelector('[name="csrfmiddlewaretoken"]').value,

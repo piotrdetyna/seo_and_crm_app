@@ -384,11 +384,11 @@ def add_contract(request):
     }, 400)
 
 
-@api_view(['PUT'])
+@api_view(['PATCH'])
 @permission_classes([IsAuthenticated, IsAllowedUser])
 def edit_contract(request, contract_id):
     contract = get_object_or_404(Contract, id=contract_id)
-    serializer = serializers.ContractSerializer(contract, data=request.data)
+    serializer = serializers.EditContractSerializer(contract, data=request.data)
     if serializer.is_valid():
         contract = serializer.save()
         contract.check_urgency()
@@ -396,6 +396,7 @@ def edit_contract(request, contract_id):
             'message': 'Successfully edited contract.',
             'contract': serializers.ContractSerializer(contract).data,
         }, 200)
+    
     return Response({
         'message': 'Submitted data is incorrect.',
         'errors': serializer.errors,
