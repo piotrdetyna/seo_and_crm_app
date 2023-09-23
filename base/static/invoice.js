@@ -155,7 +155,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     let downloadReportButton = document.querySelector('#download-report')
     let downloadReportMessage = document.querySelector('#download-report-message')
     downloadReportButton.onclick = async () => {
-        blob = await getInvoiceFile()
+        blob = await getReportFile()
         
         if (!blob) {
             downloadReportMessage.innerHTML = 'Coś poszło nie tak.'
