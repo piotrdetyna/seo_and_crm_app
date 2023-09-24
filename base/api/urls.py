@@ -16,6 +16,10 @@ urlpatterns = [
     path('contract/<int:contract_id>/', views.ContractView.as_view(), name='contract_details'),
     path('contracts/urgency/', views.check_contracts_urgency, name="check_contracts_urgency"),
 
+    path('invoices/', views.InvoiceView.as_view(), name='invoices'),
+    path('invoices/<int:invoice_id>/', views.InvoiceView.as_view(), name='invoice_details'),
+    path('invoice-get-file/<int:invoice_id>/<str:file_type>/', views.invoice_get_file, name="invoice_get_file"),
+
 
     path('find-external/<int:site_id>/', views.find_external_links, name="find_external_links"),
     path('check-linked-page-availability/<int:site_id>/', views.check_linked_pages_availability, name="check_linked_pages_availability"),
@@ -29,13 +33,7 @@ urlpatterns = [
     path('add-backlink/', views.add_backlink, name="add_backlink"),
     path('delete-backlink/<int:backlink_id>/', views.delete_backlink, name="delete_backlink"),
     path('check-backlinks-status/<int:site_id>/', views.check_backlinks_status, name="check_backlinks_status"),
-
     
 
-    path('add-invoice/', views.add_invoice, name="add_invoice"),
-    path('edit-invoice/<int:invoice_id>/', views.edit_invoice, name="edit_invoice"),
-    path('delete-invoice/<int:invoice_id>/', views.delete_invoice, name="delete_invoice"),
     
-
-    path('invoice-get-file/<int:invoice_id>/<str:file_type>/', views.invoice_get_file, name="invoice_get_file"),
 ]

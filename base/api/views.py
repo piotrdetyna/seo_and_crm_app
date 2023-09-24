@@ -233,6 +233,59 @@ def check_contracts_urgency(request):
     }, 200)
 
 
+class InvoiceView(APIView):
+    permission_classes = [IsAuthenticated, IsAllowedUser]
+    
+    def post(self, request, *args, **kwargs):
+        serializer = serializers.InvoiceSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({
+                'message': 'Successfully added invoice.',
+                'invoice': serializer.data,
+            }, 201)
+        
+        return Response({
+            'message': 'Submitted data is incorrect.',
+            'errors': serializer.errors,
+        }, 400)
+    
+    def delete(self, request, invoice_id, *args, **kwargs):
+        invoice = get_object_or_404(Invoice, id=invoice_id)
+        invoice.delete()
+        return Response(status=204)
+    
+    def patch(self, request, invoice_id, *args, **kwargs):
+        invoice = get_object_or_404(Invoice, id=invoice_id)
+        serializer = serializers.EditInvoiceSerializer(invoice, data=request.data)
+        
+        if serializer.is_valid():
+            invoice = serializer.save()
+            return Response({
+                'message': 'Successfully edited invoice.',
+                'invoice': serializers.InvoiceSerializer(invoice).data
+            }, 200)
+        
+        return Response({
+            'message': 'Submitted data is incorrect.',
+            'errors': serializer.errors,
+        }, 400)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated, IsAllowedUser])
+def invoice_get_file(request, invoice_id, file_type):
+    invoice = get_object_or_404(Invoice, id=invoice_id)
+    if not file_type in ['invoice_file', 'report_file']:
+        return Response({'message': 'Invalid file field'}, 400)
+   
+    try:
+        f = getattr(invoice, file_type)
+        return FileResponse(f, as_attachment=True)
+    except FileNotFoundError:
+        return Response({'message': "File does not exist"}, 404)
+
+
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated, IsAllowedUser])
 def check_linked_pages_availability(request, site_id):
@@ -390,60 +443,4 @@ def check_backlinks_status(request, site_id):
 
 
 
-@api_view(['POST'])
-@permission_classes([IsAuthenticated, IsAllowedUser])
-def add_invoice(request):
-    serializer = serializers.InvoiceSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save()
 
-        return Response({
-            'message': 'Successfully added invoice.',
-            'invoice': serializer.data,
-        }, 201)
-    
-    return Response({
-        'message': 'Submitted data is incorrect.',
-        'errors': serializer.errors,
-    }, 400)
-
-
-@api_view(['DELETE'])
-@permission_classes([IsAuthenticated, IsAllowedUser])
-def delete_invoice(request, invoice_id):
-    invoice = get_object_or_404(Invoice, id=invoice_id)
-    invoice.delete()
-    return Response(status=204)
-
-
-@api_view(['PATCH'])
-@permission_classes([IsAuthenticated, IsAllowedUser])
-def edit_invoice(request, invoice_id):
-    invoice = get_object_or_404(Invoice, id=invoice_id)
-    serializer = serializers.EditInvoiceSerializer(invoice, data=request.data)
-    
-    if serializer.is_valid():
-        invoice = serializer.save()
-        return Response({
-            'message': 'Successfully edited invoice.',
-            'invoice': serializers.InvoiceSerializer(invoice).data
-        }, 200)
-    
-    return Response({
-        'message': 'Submitted data is incorrect.',
-        'errors': serializer.errors,
-    }, 400)
-
-
-@api_view(['GET'])
-@permission_classes([IsAuthenticated, IsAllowedUser])
-def invoice_get_file(request, invoice_id, file_type):
-    invoice = get_object_or_404(Invoice, id=invoice_id)
-    if not file_type in ['invoice_file', 'report_file']:
-        return Response({'message': 'Invalid file field'}, 400)
-   
-    try:
-        f = getattr(invoice, file_type)
-        return FileResponse(f, as_attachment=True)
-    except FileNotFoundError:
-        return Response({'message': "File does not exist"}, 404)
