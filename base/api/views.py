@@ -78,78 +78,64 @@ def set_current_site(request, site_id):
 
 
 
-@api_view(['POST'])
-@permission_classes([IsAuthenticated, IsAllowedUser])
-def add_client(request):
-    serializer = serializers.ClientSerializer(data=request.data)
-    if serializer.is_valid():
+class ClientView(APIView):
+    permission_classes = [IsAuthenticated, IsAllowedUser]
+
+    def post(self, request, *args, **kwargs):
+        serializer = serializers.ClientSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({
+                'message': 'Successfully added client',
+                'client': serializer.data,
+            }, 201)
         
-        serializer.save()
         return Response({
-            'message': 'Successfully added client',
-            'client': serializer.data,
-        }, 201)
-    
-    return Response({
-        'message': 'Submitted data is incorrect.', 
-        'errors': serializer.errors,
-    }, 400)
-
-
-@api_view(['PATCH'])
-@permission_classes([IsAuthenticated, IsAllowedUser])
-def edit_client(request, client_id):
-    client = get_object_or_404(Client, id=client_id)
-    serializer = serializers.EditClientSerializer(client, data=request.data)
-
-    if serializer.is_valid():
-        client = serializer.save()
-        return Response({
-            'message': 'Successfully edited site', 
-            'client': serializers.ClientSerializer(client).data,           
-            }, 200)
-    
-    return Response({
-        'message': 'Submitted data is incorrect.', 
-        'errors': serializer.errors,
-    }, 400)
-
-
-@api_view(['DELETE'])
-@permission_classes([IsAuthenticated, IsAllowedUser])
-def delete_client(request, client_id):
-    client = get_object_or_404(Client, id=client_id)
-    current_site = request.session.get('current_site')
-
-    #delete current site from session, if it is related to deleted client
-    if any(site.id == current_site for site in client.sites.all()):
-        del request.session['current_site']
-    client.delete()
-    return Response(status=204)
-
-
-@api_view(['GET'])
-@permission_classes([IsAuthenticated, IsAllowedUser])
-def get_client_info(request, client_id):
-    client = get_object_or_404(Client, id=client_id)
-    if not client.is_company:
-        return Response({
-            'client_info': {
-                'name': client.full_name,
-                'address': client.address,
-            }
-        })
-    
-    company_info = get_company_info(client.nip)
-    if not company_info['ok']:
-        return Response({
-            'message': company_info['message'],
+            'message': 'Submitted data is incorrect.',
+            'errors': serializer.errors,
         }, 400)
 
-    return Response({
-        'client_info': company_info['data']
-    }, 200)
+    def patch(self, request, client_id, *args, **kwargs):
+        client = get_object_or_404(Client, id=client_id)
+        serializer = serializers.EditClientSerializer(client, data=request.data)
+        if serializer.is_valid():
+            client = serializer.save()
+            return Response({
+                'message': 'Successfully edited site',
+                'client': serializers.ClientSerializer(client).data,
+            }, 200)
+        
+        return Response({
+            'message': 'Submitted data is incorrect.',
+            'errors': serializer.errors,
+        }, 400)
 
+    def delete(self, request, client_id, *args, **kwargs):
+        client = get_object_or_404(Client, id=client_id)
+        current_site = request.session.get('current_site')
+        if any(site.id == current_site for site in client.sites.all()):
+            del request.session['current_site']
+        client.delete()
+        return Response(status=204)
+
+    def get(self, request, client_id, *args, **kwargs):
+        client = get_object_or_404(Client, id=client_id)
+        api = request.query_params.get('api', 'true').lower() == 'false'  
+
+        if not client.is_company or not api:
+            return Response({'client': {serializers.ClientSerializer(client).data}}, 200)
+
+
+        company_info = get_company_info(client.nip)
+        if not company_info['ok']:
+            return Response({
+                'message': company_info['message'],
+            }, 400)
+
+        return Response({
+            'client': serializers.ClientSerializer(client).data,
+            'client_info': company_info['data'],
+        }, 200)
 
 
 @api_view(['PUT'])

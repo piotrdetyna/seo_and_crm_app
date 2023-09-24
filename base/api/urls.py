@@ -3,14 +3,12 @@ from . import views
 
 urlpatterns = [
     path('sites/', views.SiteView.as_view(), name='sites'),
-    path('sites/<int:site_id>/', views.SiteView.as_view(), name='site-detail'),
+    path('sites/<int:site_id>/', views.SiteView.as_view(), name='site_details'),
     path('sites/current/', views.set_current_site, name="set_current_site"),
-    
 
 
-    path('add-client/', views.add_client, name="add_client"),
-    path('edit-client/<int:client_id>/', views.edit_client, name="edit_client"),
-    path('delete-client/<int:client_id>/', views.delete_client, name="delete_client"),
+    path('clients/', views.ClientView.as_view(), name='clients'),
+    path('clients/<int:client_id>/', views.ClientView.as_view(), name='client_details'),
 
     path('find-external/<int:site_id>/', views.find_external_links, name="find_external_links"),
     path('check-linked-page-availability/<int:site_id>/', views.check_linked_pages_availability, name="check_linked_pages_availability"),
