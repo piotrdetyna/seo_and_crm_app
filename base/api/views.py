@@ -8,6 +8,8 @@ from django.contrib.auth import authenticate, login, logout
 from rest_framework.permissions import IsAuthenticated, BasePermission
 from crm.settings import ALLOWED_USERS
 from django.http import FileResponse
+from rest_framework.views import APIView
+
 
 
 
@@ -17,71 +19,63 @@ class IsAllowedUser(BasePermission):
         return request.user.username in ALLOWED_USERS
 
 
-@api_view(['POST'])
-@permission_classes([IsAuthenticated, IsAllowedUser])
-def add_site(request):
-    serializer = serializers.SiteSerializer(data=request.data)
+class SiteView(APIView):
+    permission_classes = [IsAuthenticated, IsAllowedUser]
 
-    if serializer.is_valid():
-        serializer.save()
+    def post(self, request, *args, **kwargs):
+        serializer = serializers.SiteSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({
+                'message': 'Successfully added site',
+                'site': serializer.data,
+            }, status=201)
         return Response({
-            'message': 'Successfully added site', 
-            'site': serializer.data,
-        }, 201)
-    return Response({
-        'message': 'Submitted data is incorrect.', 
-        'errors': serializer.errors
-    }, 400)
+            'message': 'Submitted data is incorrect.',
+            'errors': serializer.errors
+        }, status=400)
 
-
-@api_view(['PATCH'])
-@permission_classes([IsAuthenticated, IsAllowedUser])
-def edit_site(request, site_id):
-    site = get_object_or_404(Site, id=site_id)
-    serializer = serializers.EditSiteSerializer(site, data=request.data)
-
-    if serializer.is_valid():
-        site = serializer.save()
+    def patch(self, request, site_id=None, *args, **kwargs):
+        site = get_object_or_404(Site, id=site_id)
+        serializer = serializers.EditSiteSerializer(site, data=request.data)
+        if serializer.is_valid():
+            site = serializer.save()
+            return Response({
+                'message': 'Successfully edited site',
+                'site': serializers.SiteSerializer(site).data,
+            }, status=200)
         return Response({
-            'message': 'Successfully edited site', 
-            'site': serializers.SiteSerializer(site).data,           
-        }, 200)
-    
-    return Response({
-        'message': 'Submitted data is incorrect.', 
-        'errors': serializer.errors
-    }, 400)
+            'message': 'Submitted data is incorrect.',
+            'errors': serializer.errors
+        }, status=400)
 
+    def delete(self, request, site_id=None, *args, **kwargs):
+        site = get_object_or_404(Site, id=site_id)
+        if site_id == request.session.get('current_site'):
+            del request.session['current_site']
+        site.delete()
+        return Response(status=204)
 
-@api_view(['DELETE'])
-@permission_classes([IsAuthenticated, IsAllowedUser])
-def delete_site(request, site_id):
-    site = get_object_or_404(Site, id=site_id)
-
-    if site_id == request.session.get('current_site'):
-        del request.session['current_site']
-    site.delete()
-    return Response(status=204)
-
-
-@api_view(['GET'])
-@permission_classes([IsAuthenticated, IsAllowedUser])
-def get_sites(request, site_id=None):
-    if site_id:
-        site = serializers.SiteSerializer(get_object_or_404(Site, id=site_id)).data
-        return Response({'site': site}, 200)
-    
-    sites = serializers.SiteSerializer(Site.objects.all(), many=True).data
-    return Response({'sites': sites}, 200)
+    def get(self, request, site_id=None, *args, **kwargs):
+        if site_id:
+            site = serializers.SiteSerializer(get_object_or_404(Site, id=site_id)).data
+            return Response({'site': site}, status=200)
+        
+        sites = serializers.SiteSerializer(Site.objects.all(), many=True).data
+        return Response({'sites': sites}, status=200)
 
 
 @api_view(['PATCH'])
 @permission_classes([IsAuthenticated, IsAllowedUser])
 def set_current_site(request, site_id):
-    _ = get_object_or_404(Site, id=site_id)
+    site = get_object_or_404(Site, id=site_id)
 
     request.session['current_site'] = site_id
-    return Response({'message': 'Successfully set current site'}, 200)
+    return Response({
+        'site': serializers.SiteSerializer(site).data,
+        'message': 'Successfully set current site',
+    }, 200)
+
 
 
 @api_view(['POST'])
