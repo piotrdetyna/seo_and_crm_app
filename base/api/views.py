@@ -65,17 +65,34 @@ class SiteView(APIView):
         return Response({'sites': sites}, status=200)
 
 
-@api_view(['PATCH'])
-@permission_classes([IsAuthenticated, IsAllowedUser])
-def set_current_site(request, site_id):
-    site = get_object_or_404(Site, id=site_id)
+class CurrentSiteView(APIView):
+    permission_classes = [IsAuthenticated, IsAllowedUser]
 
-    request.session['current_site'] = site_id
-    return Response({
-        'site': serializers.SiteSerializer(site).data,
-        'message': 'Successfully set current site',
-    }, 200)
+    def put(self, request, site_id, *args, **kwargs):
+        site = get_object_or_404(Site, id=site_id)
 
+        request.session['current_site'] = site_id
+        return Response({
+            'site': serializers.SiteSerializer(site).data,
+            'message': 'Successfully set current site',
+        }, 200)
+    
+    def get(self, request, *args, **kwargs):
+        site_id = request.session.get('current_site', None)
+        if not site_id:
+            return Response({'message': 'There is no current site set in the session'}, 404)
+        
+        site = get_object_or_404(Site, id=site)
+
+        return Response({'site': serializers.SiteSerializer(site).data})
+    
+    def delete(self, request, *args, **kwargs):
+        site_id = request.session.get('current_site', None)
+        if not site_id:
+            return Response({'message': 'There is no current site set in the session'}, 404)
+        
+        del request.session['current_site']
+        return Response(status=204)
 
 
 class ClientView(APIView):

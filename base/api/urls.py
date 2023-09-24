@@ -4,7 +4,8 @@ from . import views
 urlpatterns = [
     path('sites/', views.SiteView.as_view(), name='sites'),
     path('sites/<int:site_id>/', views.SiteView.as_view(), name='site_details'),
-    path('sites/current/', views.set_current_site, name="set_current_site"),
+
+    path('session/current-site/', views.CurrentSiteView.as_view(), name="current_site"),
 
     path('clients/', views.ClientView.as_view(), name='clients'),
     path('clients/<int:client_id>/', views.ClientView.as_view(), name='client_details'),
