@@ -172,6 +172,16 @@ class NoteView(APIView):
         }, 400)
 
     def get(self, request, note_id=None, *args, **kwargs):
+        if not note_id:
+            notes = Note.objects.all()
+            if not notes:
+                return Response({'message': 'No notes found.'}, 404)
+            
+            return Response({
+                'message': 'Successfully retrieved notes',
+                'notes': serializers.NoteSerializer(notes, many=True).data
+            }, 200)
+        
         note = get_object_or_404(Note, id=note_id)
         serializer = serializers.NoteSerializer(note)
         return Response({
@@ -215,7 +225,21 @@ class ContractView(APIView):
             'message': 'Submitted data is incorrect.',
             'errors': serializer.errors,
         }, 400)
-
+    
+    def get(self, request, contract_id=None, *args, **kwargs):
+        if not contract_id:
+            contracts = Contract.objects.all()
+            if not contracts:
+                return Response({'message': 'No contracts found.'}, 404)
+            
+            return Response({
+                'contracts': serializers.ContractSerializer(contracts, many=True).data,
+            }, 200)
+        
+        contract = get_object_or_404(Contract, id=contract_id)
+        return Response({'contract': serializers.ContractSerializer(contract).data}, 200)
+        
+    
     def patch(self, request, contract_id, *args, **kwargs):
         contract = get_object_or_404(Contract, id=contract_id)
         serializer = serializers.EditContractSerializer(contract, data=request.data)
