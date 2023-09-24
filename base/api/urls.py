@@ -20,20 +20,14 @@ urlpatterns = [
     path('invoices/<int:invoice_id>/', views.InvoiceView.as_view(), name='invoice_details'),
     path('invoice-get-file/<int:invoice_id>/<str:file_type>/', views.invoice_get_file, name="invoice_get_file"),
 
-
     path('find-external/<int:site_id>/', views.find_external_links, name="find_external_links"),
     path('check-linked-page-availability/<int:site_id>/', views.check_linked_pages_availability, name="check_linked_pages_availability"),
-    path('external-links-progress/<int:site_id>/', views.get_external_links_progress, name="get_external_links_progress"),
-
-    
+    path('external-links-progress/<int:site_id>/', views.get_external_links_progress, name="get_external_links_progress"),    
     
     path('login/', views.login_view, name="login_view"),
     path('logout/', views.logout_view, name="logout_view"),
 
-    path('add-backlink/', views.add_backlink, name="add_backlink"),
-    path('delete-backlink/<int:backlink_id>/', views.delete_backlink, name="delete_backlink"),
+    path('backlinks/', views.BacklinkView.as_view(), name='backlinks'),
+    path('backlinks/<int:backlink_id>/', views.BacklinkView.as_view(), name='backlink_details'),
     path('check-backlinks-status/<int:site_id>/', views.check_backlinks_status, name="check_backlinks_status"),
-    
-
-    
 ]

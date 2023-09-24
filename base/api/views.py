@@ -313,7 +313,7 @@ def check_linked_pages_availability(request, site_id):
     }, 200)
 
 
-@api_view(['PUT'])
+@api_view(['POST'])
 @permission_classes([IsAuthenticated, IsAllowedUser])
 def find_external_links(request, site_id):
     site = get_object_or_404(Site, id=site_id)
@@ -390,29 +390,27 @@ def logout_view(request):
     return Response(status=204)
 
 
-@api_view(['POST'])
-@permission_classes([IsAuthenticated, IsAllowedUser])
-def add_backlink(request):
-    serializer = serializers.BacklinkSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save()
+class BacklinkView(APIView):
+    permission_classes = [IsAuthenticated, IsAllowedUser]
+
+    def post(self, request, *args, **kwargs):
+        serializer = serializers.BacklinkSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({
+                'message': 'Added backlink',
+                'backlink': serializer.data,
+            }, 201)
+        
         return Response({
-            'message': 'Added backlink',
-            'backlink': serializer.data,
-        }, 201)
-    
-    return Response({
-        'message': 'Submitted data is incorrect.',
-        'errors': serializer.errors,
-    }, 400)
+            'message': 'Submitted data is incorrect.',
+            'errors': serializer.errors,
+        }, 400)
 
-
-@api_view(['DELETE'])
-@permission_classes([IsAuthenticated, IsAllowedUser])
-def delete_backlink(request, backlink_id):
-    backlink = get_object_or_404(Backlink, id=backlink_id)
-    backlink.delete()
-    return Response(status=204)
+    def delete(self, request, backlink_id, *args, **kwargs):
+        backlink = get_object_or_404(Backlink, id=backlink_id)
+        backlink.delete()
+        return Response(status=204)
 
 
 @api_view(['PUT'])
