@@ -180,6 +180,57 @@ class NoteView(APIView):
         note = get_object_or_404(Note, id=note_id)
         note.delete()
         return Response(204)
+    
+
+class ContractView(APIView):
+    permission_classes = [IsAuthenticated, IsAllowedUser]
+
+    def post(self, request, *args, **kwargs):
+        serializer = serializers.ContractSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({
+                'message': 'Successfully added contract.',
+                'contract': serializer.data,
+            }, 201)
+        
+        return Response({
+            'message': 'Submitted data is incorrect.',
+            'errors': serializer.errors,
+        }, 400)
+
+    def patch(self, request, contract_id, *args, **kwargs):
+        contract = get_object_or_404(Contract, id=contract_id)
+        serializer = serializers.EditContractSerializer(contract, data=request.data)
+        if serializer.is_valid():
+            contract = serializer.save()
+            contract.check_urgency()
+            return Response({
+                'message': 'Successfully edited contract.',
+                'contract': serializers.ContractSerializer(contract).data,
+            }, status=200)
+        
+        return Response({
+            'message': 'Submitted data is incorrect.',
+            'errors': serializer.errors,
+        }, 400)
+
+    def delete(self, request, contract_id, *args, **kwargs):
+        contract = get_object_or_404(Contract, id=contract_id)
+        contract.delete()
+        return Response(204)
+
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated, IsAllowedUser])
+def check_contracts_urgency(request):
+    contracts = Contract.objects.all()
+    for contract in contracts:
+        contract.check_urgency()
+    
+    return Response({
+        'contracts': serializers.ContractSerializer(Contract.objects.all(), many=True).data
+    }, 200)
 
 
 @api_view(['PUT'])
@@ -336,60 +387,7 @@ def check_backlinks_status(request, site_id):
     }, 200)
 
 
-@api_view(['POST'])
-@permission_classes([IsAuthenticated, IsAllowedUser])
-def add_contract(request):
-    serializer = serializers.ContractSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save()
-        return Response({
-            'message': 'Successfully added contract.',
-            'contract': serializer.data,
-        }, 201)
-    
-    return Response({
-        'message': 'Submitted data is incorrect.',
-        'errors': serializer.errors,
-    }, 400)
 
-
-@api_view(['PATCH'])
-@permission_classes([IsAuthenticated, IsAllowedUser])
-def edit_contract(request, contract_id):
-    contract = get_object_or_404(Contract, id=contract_id)
-    serializer = serializers.EditContractSerializer(contract, data=request.data)
-    if serializer.is_valid():
-        contract = serializer.save()
-        contract.check_urgency()
-        return Response({
-            'message': 'Successfully edited contract.',
-            'contract': serializers.ContractSerializer(contract).data,
-        }, 200)
-    
-    return Response({
-        'message': 'Submitted data is incorrect.',
-        'errors': serializer.errors,
-    }, 400)
-
-
-@api_view(['DELETE'])
-@permission_classes([IsAuthenticated, IsAllowedUser])
-def delete_contract(request, contract_id):
-    contract = get_object_or_404(Contract, id=contract_id)
-    contract.delete()
-    return Response(status=204)
-
-
-@api_view(['PUT'])
-@permission_classes([IsAuthenticated, IsAllowedUser])
-def check_contracts_urgency(request):
-    contracts = Contract.objects.all()
-    for contract in contracts:
-        contract.check_urgency()
-    
-    return Response({
-        'contracts': serializers.ContractSerializer(Contract.objects.all(), many=True).data
-    }, 200)
 
 
 @api_view(['POST'])
