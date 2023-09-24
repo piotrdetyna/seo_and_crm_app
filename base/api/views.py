@@ -136,6 +136,50 @@ class ClientView(APIView):
             'client': serializers.ClientSerializer(client).data,
             'client_info': company_info['data'],
         }, 200)
+    
+
+class NoteView(APIView):
+    permission_classes = [IsAuthenticated, IsAllowedUser]
+
+    def post(self, request, *args, **kwargs):
+        serializer = serializers.NoteSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({
+                'message': 'Successfully added a note',
+                'note': serializer.data,
+            }, 201)
+        return Response({
+            'message': 'Submitted data is incorrect.',
+            'errors': serializer.errors,
+        }, 400)
+
+    def get(self, request, note_id=None, *args, **kwargs):
+        note = get_object_or_404(Note, id=note_id)
+        serializer = serializers.NoteSerializer(note)
+        return Response({
+            'message': 'Successfully retrieved note',
+            'note': serializer.data,
+        }, 200)
+
+    def patch(self, request, note_id=None, *args, **kwargs):
+        note = get_object_or_404(Note, id=note_id)
+        serializer = serializers.EditNoteSerializer(note, data=request.data)
+        if serializer.is_valid():
+            note = serializer.save()
+            return Response({
+                'message': 'Successfully updated note',
+                'note': serializers.NoteSerializer(note).data,
+            }, 201)
+        return Response({
+            'message': 'Submitted data is incorrect.',
+            'errors': serializer.errors,
+        }, 400)
+
+    def delete(self, request, note_id=None, *args, **kwargs):
+        note = get_object_or_404(Note, id=note_id)
+        note.delete()
+        return Response(204)
 
 
 @api_view(['PUT'])
@@ -209,61 +253,6 @@ def get_external_links_progress(request, site_id):
         'target': external_links_manager.progress_target,
     }, 200)
 
-
-@api_view(['POST'])
-@permission_classes([IsAuthenticated, IsAllowedUser])
-def add_note(request):
-    serializer = serializers.NoteSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save()
-        return Response({
-            'message': 'Successfully added a note', 
-            'note': serializer.data,
-        }, 201)
-    
-    return Response({
-        'message': 'Submitted data is incorrect.', 
-        'errors': serializer.errors,
-    }, 400)
-
-
-@api_view(['GET'])
-@permission_classes([IsAuthenticated, IsAllowedUser])
-def get_note(request, note_id):
-    note = get_object_or_404(Note, id=note_id)
-    serializer = serializers.NoteSerializer(note)
-
-    return  Response({
-            'message': 'Successfully updated note', 
-            'note': serializer.data,
-        }, 200)
-
-
-@api_view(['PATCH'])
-@permission_classes([IsAuthenticated, IsAllowedUser])
-def update_note(request, note_id):
-    note = get_object_or_404(Note, id=note_id)
-    serializer = serializers.EditNoteSerializer(note, data=request.data)
-    
-    if serializer.is_valid():
-        note = serializer.save()
-        return Response({
-            'message': 'Successfully updated note', 
-            'note': serializers.NoteSerializer(note).data,
-        }, 201)
-    
-    return Response({
-        'message': 'Submitted data is incorrect.', 
-        'errors': serializer.errors,
-    }, 400)
-
-
-@api_view(['DELETE'])
-@permission_classes([IsAuthenticated, IsAllowedUser])
-def delete_note(request, note_id):
-    note = get_object_or_404(Note, id=note_id)
-    note.delete()
-    return Response(status=204)
     
 
 @api_view(['POST'])
