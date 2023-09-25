@@ -112,7 +112,7 @@ class ExternalLinksManager(models.Model):
         self.save()
 
     def delete_links(self):
-        self.links.all().delete()
+        self.external_links.all().delete()
         self.save()
     
     def clear_progress(self):

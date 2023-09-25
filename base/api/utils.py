@@ -124,14 +124,13 @@ def get_company_info(nip):
         company_info_data = api.search(nip=nip)[0]
     except REGONAPIError:
         return {
-            'message': 'Incorrect nip',
+            'data': 'Incorrect nip',
             'ok': False,
         }
 
     company_info_xml = etree.tostring(company_info_data, pretty_print=True).decode('utf-8')
     company_info_json = xmltodict.parse(company_info_xml)['dane']
     return {
-            'message': 'ok',
             'ok': True,
             'data': company_info_json,
         }

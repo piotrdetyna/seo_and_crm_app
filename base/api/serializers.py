@@ -5,34 +5,21 @@ from dateutil.relativedelta import relativedelta
 from django.shortcuts import get_object_or_404
 from copy import copy
 
-class SiteSerializer(serializers.ModelSerializer):
-    client_id = serializers.IntegerField()
 
-    class Meta:
-        model = Site
-        fields = ('url', 'logo', 'date', 'id', 'client_id')
-        extra_kwargs = {
-            'client_id': {'write_only': True},
-        }
-    
-    def create(self, validated_data):
-        client_id = validated_data.pop('client_id', None)
-        client = Client.objects.get(pk=client_id)
-
-        site = Site.objects.create(client=client, **validated_data)
-        return site
-
-    def to_internal_value(self, data):
-        data._mutable = True
-        data['url'] = get_domain_from_url(data['url'])
-        return super().to_internal_value(data)
-    
-
-class EditSiteSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Site
-        fields = ('url', 'logo')
-        extra_kwargs = {field: {'required': False} for field in fields}
+class DynamicFieldsSerializer(serializers.ModelSerializer):
+    def __init__(self, *args, **kwargs):
+        fields = kwargs.pop('fields', None)
+        super(DynamicFieldsSerializer, self).__init__(*args, **kwargs)
+        
+        if fields is not None:
+            allowed = set(fields)
+            existing = set(self.fields)
+            for field in allowed:
+                if field not in existing:
+                    raise(serializers.ValidationError(f'{field} is not valid field'))
+            
+            for field_name in existing - allowed:
+                self.fields.pop(field_name)
 
 
 class ClientSerializer(serializers.ModelSerializer):
@@ -46,6 +33,13 @@ class EditClientSerializer(serializers.ModelSerializer):
         model = Client
         fields = ['name', 'nip', 'email', 'full_name', 'address', 'is_company']
         extra_kwargs = {field: {'required': False} for field in fields}
+    
+
+class EditSiteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Site
+        fields = ('url', 'logo')
+        extra_kwargs = {field: {'required': False} for field in fields}
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -54,7 +48,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['username', 'email', 'id']
 
 
-class NoteSerializer(serializers.ModelSerializer):
+class NoteSerializer(DynamicFieldsSerializer):
     site_id = serializers.IntegerField(write_only=True, required=False)
     
     class Meta:
@@ -95,7 +89,7 @@ class AddBacklinkSerializer(serializers.ModelSerializer):
         return backlink
     
 
-class BacklinkSerializer(serializers.ModelSerializer):
+class BacklinkSerializer(DynamicFieldsSerializer):
     site_id = serializers.IntegerField(write_only=True)
 
     class Meta:
@@ -123,11 +117,11 @@ class ExternalLinkSerializer(serializers.ModelSerializer):
         fields = '__all__'
     
     
-class ExternalLinksManagerSerializer(serializers.ModelSerializer):
+class ExternalLinksManagerSerializer(DynamicFieldsSerializer):
     links = ExternalLinkSerializer(read_only=True, many=True)
     class Meta:
         model = ExternalLinksManager
-        exclude = ['progress_current', 'progress_target']
+        fields = '__all__'
  
 
 class ContractSerializer(serializers.ModelSerializer):
@@ -135,7 +129,7 @@ class ContractSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Contract
-        fields = ['invoice_frequency', 'value', 'category', 'site_id', 'invoice_date', 'days_before_invoice_date_to_mark_urgent', 'is_urgent']
+        fields = ['invoice_frequency', 'value', 'category', 'site_id', 'invoice_date', 'days_before_invoice_date_to_mark_urgent', 'is_urgent', 'id']
     
     def create(self, validated_data):
         site_id = validated_data.pop('site_id')
@@ -165,7 +159,7 @@ class EditContractSerializer(serializers.ModelSerializer):
         return instance
      
 
-class InvoiceSerializer(serializers.ModelSerializer):
+class InvoiceSerializer(DynamicFieldsSerializer):
     contract_id = serializers.IntegerField(write_only=True)
 
     class Meta:
@@ -201,3 +195,56 @@ class EditInvoiceSerializer(serializers.ModelSerializer):
                 data[key] = None
 
         return super().to_internal_value(data)
+
+
+class SiteSerializer(serializers.ModelSerializer):
+    client_id = serializers.IntegerField(write_only=True)
+    
+
+    class Meta:
+        model = Site
+        fields = ('url', 'logo', 'date', 'id', 'client_id', 'client')
+        extra_kwargs = {
+            'client': {'read_only': True},
+        }
+
+    
+    def create(self, validated_data):
+        client_id = validated_data.pop('client_id', None)
+        client = Client.objects.get(pk=client_id)
+
+        site = Site.objects.create(client=client, **validated_data)
+        return site
+
+    def to_internal_value(self, data):
+        data = copy(data)
+        data['url'] = get_domain_from_url(data['url'])
+        return super().to_internal_value(data)
+    
+
+class ExtendedSiteSerializer(DynamicFieldsSerializer):
+    contracts = ContractSerializer(many=True)
+    notes = NoteSerializer(many=True)
+    external_links = ExternalLinksManagerSerializer()
+    backlinks = BacklinkSerializer(many=True)
+    client = ClientSerializer()
+
+    class Meta:
+        model = Site
+        fields = ('url', 'logo', 'date', 'id', 'client_id', 'client', 'notes', 'external_links', 'contracts', 'backlinks')
+
+
+class ExtendedClientSerialzier(DynamicFieldsSerializer):
+    sites = SiteSerializer(many=True)
+
+    class Meta:
+        model = Client
+        fields = ['name', 'nip', 'email', 'full_name', 'address', 'id', 'is_company', 'sites']
+
+
+class ExtendedContractSerializer(DynamicFieldsSerializer):
+    invoices = InvoiceSerializer(many=True)
+
+    class Meta:
+        model = Contract
+        fields = ['invoice_frequency', 'value', 'category', 'invoice_date', 'days_before_invoice_date_to_mark_urgent', 'is_urgent', 'invoices', 'id']

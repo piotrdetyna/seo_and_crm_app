@@ -11,8 +11,6 @@ from django.http import FileResponse
 from rest_framework.views import APIView
 
 
-
-
 class IsAllowedUser(BasePermission):
 
     def has_permission(self, request, view):
@@ -56,10 +54,15 @@ class SiteView(APIView):
         site.delete()
         return Response(status=204)
 
-    def get(self, request, site_id=None, *args, **kwargs):
+    def get(self, request, site_id=None, attribute=None, *args, **kwargs):
+
         if site_id:
-            site = serializers.SiteSerializer(get_object_or_404(Site, id=site_id)).data
-            return Response({'site': site}, status=200)
+            site = get_object_or_404(Site, id=site_id)
+            if attribute:
+                attribute = attribute.replace('-', '_')  
+                serializer = serializers.ExtendedSiteSerializer(site, fields=[attribute]).data
+                return Response({'site': serializer}, status=200)
+            return Response({'site': serializers.SiteSerializer(site).data})
         
         sites = serializers.SiteSerializer(Site.objects.all(), many=True).data
         return Response({'sites': sites}, status=200)
@@ -68,7 +71,8 @@ class SiteView(APIView):
 class CurrentSiteView(APIView):
     permission_classes = [IsAuthenticated, IsAllowedUser]
 
-    def put(self, request, site_id, *args, **kwargs):
+    def put(self, request, *args, **kwargs):
+        site_id = request.data.get('site_id', None)
         site = get_object_or_404(Site, id=site_id)
 
         request.session['current_site'] = site_id
@@ -82,8 +86,7 @@ class CurrentSiteView(APIView):
         if not site_id:
             return Response({'message': 'There is no current site set in the session'}, 404)
         
-        site = get_object_or_404(Site, id=site)
-
+        site = get_object_or_404(Site, id=site_id)
         return Response({'site': serializers.SiteSerializer(site).data})
     
     def delete(self, request, *args, **kwargs):
@@ -135,25 +138,36 @@ class ClientView(APIView):
         client.delete()
         return Response(status=204)
 
-    def get(self, request, client_id, *args, **kwargs):
+    def get(self, request, client_id=None, attribute=None, *args, **kwargs):
+        if not client_id:
+            clients = Client.objects.all()
+            return Response({'clients': serializers.ClientSerializer(clients, many=True).data}, 200)
+        
         client = get_object_or_404(Client, id=client_id)
-        api = request.query_params.get('api', 'true').lower() == 'false'  
 
-        if not client.is_company or not api:
-            return Response({'client': {serializers.ClientSerializer(client).data}}, 200)
-
-
-        company_info = get_company_info(client.nip)
-        if not company_info['ok']:
+        if attribute:
+            attribute = attribute.replace('-', '_')  
+            serializer = serializers.ExtendedClientSerialzier(client, fields=[attribute])
+            if not serializer.data.get(attribute, None):
+                return Response({'No instances found'}, 404)
+            return Response({'client': serializer.data}, 200)
+        
+        api = request.GET.get('api', 'false').lower() == 'true' 
+        if api:
+            if not client.is_company:
+                return Response({
+                    'client': serializers.ClientSerializer(client).data,
+                    'company_info': 'api=true is provided in the URL, but client is not a company'
+                })
+            
+            company_info = get_company_info(client.nip)
             return Response({
-                'message': company_info['message'],
-            }, 400)
+                'client': serializers.ClientSerializer(client).data,
+                'company_info': company_info['data'],
+            }, 200)
 
-        return Response({
-            'client': serializers.ClientSerializer(client).data,
-            'client_info': company_info['data'],
-        }, 200)
-    
+        return Response({'client': serializers.ClientSerializer(client).data}, 200)
+
 
 class NoteView(APIView):
     permission_classes = [IsAuthenticated, IsAllowedUser]
@@ -171,7 +185,7 @@ class NoteView(APIView):
             'errors': serializer.errors,
         }, 400)
 
-    def get(self, request, note_id=None, *args, **kwargs):
+    def get(self, request, note_id=None, attribute=None, *args, **kwargs):
         if not note_id:
             notes = Note.objects.all()
             if not notes:
@@ -184,6 +198,12 @@ class NoteView(APIView):
         
         note = get_object_or_404(Note, id=note_id)
         serializer = serializers.NoteSerializer(note)
+        if attribute:
+            attribute = attribute.replace('-', '_')  
+            serializer = serializers.NoteSerializer(note, fields=[attribute])
+            if not serializer.data.get(attribute, None):
+                return Response({'No instances found'}, 404)
+        
         return Response({
             'message': 'Successfully retrieved note',
             'note': serializer.data,
@@ -226,7 +246,7 @@ class ContractView(APIView):
             'errors': serializer.errors,
         }, 400)
     
-    def get(self, request, contract_id=None, *args, **kwargs):
+    def get(self, request, contract_id=None, attribute=None, *args, **kwargs):
         if not contract_id:
             contracts = Contract.objects.all()
             if not contracts:
@@ -237,8 +257,14 @@ class ContractView(APIView):
             }, 200)
         
         contract = get_object_or_404(Contract, id=contract_id)
-        return Response({'contract': serializers.ContractSerializer(contract).data}, 200)
-        
+        serializer = serializers.ContractSerializer(contract)
+        if attribute:
+            attribute = attribute.replace('-', '_')  
+            serializer = serializers.ExtendedContractSerializer(contract, fields=[attribute])
+            if not serializer.data.get(attribute, None):
+                return Response({'No instances found'}, 404)
+
+        return Response({'contract': serializer.data}, 200)
     
     def patch(self, request, contract_id, *args, **kwargs):
         contract = get_object_or_404(Contract, id=contract_id)
@@ -264,18 +290,24 @@ class ContractView(APIView):
 
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated, IsAllowedUser])
-def check_contracts_urgency(request):
-    contracts = Contract.objects.all()
+def check_contracts_urgency(request, contract_id=None):
+    if not contract_id:
+        contracts = Contract.objects.all()
+    else:
+        contracts = [get_object_or_404(Contract, id=contract_id)]
+        
     for contract in contracts:
         contract.check_urgency()
-    
+
     return Response({
-        'contracts': serializers.ContractSerializer(Contract.objects.all(), many=True).data
+        'message': 'Checked contracts urgency',
+        'contracts': serializers.ContractSerializer(contracts, many=True).data
     }, 200)
 
 
 class InvoiceView(APIView):
     permission_classes = [IsAuthenticated, IsAllowedUser]
+    file_fields = ['report_file', 'invoice_file']
     
     def post(self, request, *args, **kwargs):
         serializer = serializers.InvoiceSerializer(data=request.data)
@@ -291,6 +323,28 @@ class InvoiceView(APIView):
             'errors': serializer.errors,
         }, 400)
     
+    def get(self, request, invoice_id=None, attribute=None, *args, **kwargs):
+        if not invoice_id:
+            invoices = Invoice.objects.all()
+            serializer = serializers.InvoiceSerializer(invoices, many=True)
+            return Response({'invoice': serializer.data}, 200)
+        
+        invoice = get_object_or_404(Invoice, id=invoice_id)
+        if not attribute:
+            serializer = serializers.InvoiceSerializer(invoice)
+            return Response({'invoice': serializer.data}, 200)
+        
+        attribute = attribute.replace('-', '_')  
+        if attribute in self.file_fields:
+            f = getattr(invoice, attribute)
+            if not f:
+                return Response({'message': f"{attribute} file does not exist"}, 404)
+            return FileResponse(f, as_attachment=True)
+
+        
+        serializer = serializers.InvoiceSerializer(invoice, fields=[attribute])
+        return Response({'invoice': serializer.data}, 200)
+
     def delete(self, request, invoice_id, *args, **kwargs):
         invoice = get_object_or_404(Invoice, id=invoice_id)
         invoice.delete()
@@ -312,93 +366,6 @@ class InvoiceView(APIView):
             'errors': serializer.errors,
         }, 400)
 
-
-@api_view(['GET'])
-@permission_classes([IsAuthenticated, IsAllowedUser])
-def invoice_get_file(request, invoice_id, file_type):
-    invoice = get_object_or_404(Invoice, id=invoice_id)
-    if not file_type in ['invoice_file', 'report_file']:
-        return Response({'message': 'Invalid file field'}, 400)
-   
-    try:
-        f = getattr(invoice, file_type)
-        return FileResponse(f, as_attachment=True)
-    except FileNotFoundError:
-        return Response({'message': "File does not exist"}, 404)
-
-
-@api_view(['PUT'])
-@permission_classes([IsAuthenticated, IsAllowedUser])
-def check_linked_pages_availability(request, site_id):
-    site = get_object_or_404(Site, id=site_id)
-    external_links_manager = get_object_or_404(ExternalLinksManager, site=site)
-
-    external_links_manager.clear_progress()
-
-    unique_linked_pages = external_links_manager.get_unique_linked_pages()
-    external_links_manager.update(progress_target=len(unique_linked_pages))
-
-    for linked_page in unique_linked_pages:
-
-        #update every ExternalLink object where linked_page is equal to current unique page
-        objects_to_update = external_links_manager.links.filter(linked_page=linked_page)
-        for object_to_update in objects_to_update:
-            object_to_update.update(is_linked_page_available=is_site_available(linked_page))
-        
-        external_links_manager.increase_progress()
-    external_links_manager.clear_progress()
-    
-    return Response({
-        'message': 'Successfully checked linked pages availability',
-        'external_links': serializers.ExternalLinksManagerSerializer(external_links_manager).data,
-    }, 200)
-
-
-@api_view(['POST'])
-@permission_classes([IsAuthenticated, IsAllowedUser])
-def find_external_links(request, site_id):
-    site = get_object_or_404(Site, id=site_id)
-    external_links_manager, _ = ExternalLinksManager.objects.get_or_create(site=site)
-    
-    to_exclude = request.data.get('to_exclude')
-
-    pages = get_pages_from_sitemap(site.url)
-    external_links_manager.clear_progress()
-    external_links_manager.delete_links()
-    external_links_manager.update(progress_target=len(pages), excluded=to_exclude)
-    
-    for page in pages:
-        links = get_external_links(page, excluded=to_exclude)
-        for link in links:
-            external_link_object = ExternalLink(
-                manager = external_links_manager,
-                linking_page=page, 
-                linked_page=link['href'], 
-                rel=link['rel'],
-            )
-            external_link_object.save()
-
-        external_links_manager.increase_progress()
-    external_links_manager.clear_progress()
-
-    return Response({
-        'message': 'Successfully found links', 
-        'external_links': serializers.ExternalLinksManagerSerializer(external_links_manager).data,
-    }, 200)
-
-
-@api_view(['GET'])
-@permission_classes([IsAuthenticated, IsAllowedUser])
-def get_external_links_progress(request, site_id):
-    site = get_object_or_404(Site, id=site_id)
-    external_links_manager = ExternalLinksManager.objects.get(site=site)
-        
-    return Response({
-        'current': external_links_manager.progress_current,
-        'target': external_links_manager.progress_target,
-    }, 200)
-
-    
 
 @api_view(['POST'])
 def login_view(request):
@@ -447,6 +414,21 @@ class BacklinkView(APIView):
             'message': 'Submitted data is incorrect.',
             'errors': serializer.errors,
         }, 400)
+    
+    def get(self, request, backlink_id=None, attribute=None, *args, **kwargs):
+        if not backlink_id:
+            backlinks = Backlink.objects.all()
+            serializer = serializers.BacklinkSerializer(backlinks, many=True)
+            return Response({'backlinks': serializer.data}, 200)
+        
+        backlink = get_object_or_404(Backlink, id=backlink_id)
+        if not attribute:
+            serializer = serializers.BacklinkSerializer(backlink)
+            return Response({'backlink': serializer.data}, 200)
+
+        attribute = attribute.replace('-', '_')        
+        serializer = serializers.BacklinkSerializer(backlink, fields=[attribute])
+        return Response({'backlink': serializer.data}, 200)
 
     def delete(self, request, backlink_id, *args, **kwargs):
         backlink = get_object_or_404(Backlink, id=backlink_id)
@@ -456,14 +438,20 @@ class BacklinkView(APIView):
 
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated, IsAllowedUser])
-def check_backlinks_status(request, site_id):
-    site = get_object_or_404(Site, id=site_id)
+def check_backlinks_status(request, backlink_id=None, site_id=None):
+    if site_id:
+        site = get_object_or_404(Site, id=site_id)
+        backlinks = site.backlinks.all()
+    elif backlink_id:
+        backlinks = [get_object_or_404(Backlink, id=backlink_id)]
+    else:
+        backlinks = Backlink.objects.all()
 
-    for backlink in site.backlinks.all():
+    for backlink in backlinks:
         links_from_page = get_external_links(backlink.linking_page)
 
-        is_active = any(site.url in link['href'] for link in links_from_page)
-        rel = next((link['rel'] for link in links_from_page if site.url in link['href']), None)
+        is_active = any(backlink.site.url in link['href'] for link in links_from_page)
+        rel = next((link['rel'] for link in links_from_page if backlink.site.url in link['href']), None)
 
         backlink.status_changed = is_active != backlink.active
         backlink.active = is_active
@@ -475,11 +463,67 @@ def check_backlinks_status(request, site_id):
 
     return Response({
         'message': 'Updated backlinks status',
-        'backlinks': serializers.BacklinkSerializer(site.backlinks.all(), many=True).data,
+        'backlinks': serializers.BacklinkSerializer(backlinks, many=True).data,
     }, 200)
 
 
+class ExternalLinksView(APIView):
+    permission_classes = [IsAuthenticated, IsAllowedUser]
 
+    def post(self, request, site_id, *args, **kwargs):
+        site = get_object_or_404(Site, id=site_id)
+        external_links_manager, _ = ExternalLinksManager.objects.get_or_create(site=site)
+        to_exclude = request.data.get('to_exclude')
 
+        pages = get_pages_from_sitemap(site.url)
+        external_links_manager.clear_progress()
+        external_links_manager.delete_links()
+        external_links_manager.update(progress_target=len(pages), excluded=to_exclude)
+        
+        for page in pages:
+            links = get_external_links(page, excluded=to_exclude)
+            for link in links:
+                external_link_object = ExternalLink(
+                    manager = external_links_manager,
+                    linking_page=page, 
+                    linked_page=link['href'], 
+                    rel=link['rel'],
+                )
+                external_link_object.save()
 
+            external_links_manager.increase_progress()
+        external_links_manager.clear_progress()
 
+        return Response({
+            'message': 'Successfully found links', 
+            'external_links': serializers.ExternalLinksManagerSerializer(external_links_manager).data,
+        }, 200)
+
+    def get(self, request, site_id=None, external_link=None, *args, **kwargs):
+        if site_id:
+            return SiteView.as_view()(request._request, site_id=site_id, attribute='external-links')
+        #external_links_manager = get_object_or_404(ExternalLinksManager, site_id=site_id)
+        serializer = serializers.ExternalLinksManagerSerializer(external_links_manager)
+
+        return Response({'external_links': serializer.data}, 200)
+    
+    def put(self, site_id, request, *args, **kwargs):
+        external_links_manager = get_object_or_404(ExternalLinksManager, site_id=site_id)
+        external_links_manager.clear_progress()
+        unique_linked_pages = external_links_manager.get_unique_linked_pages()
+        external_links_manager.update(progress_target=len(unique_linked_pages))
+
+        for linked_page in unique_linked_pages:
+            #update every ExternalLink object where linked_page is equal to current unique page
+            objects_to_update = external_links_manager.links.filter(linked_page=linked_page)
+            for object_to_update in objects_to_update:
+                object_to_update.update(is_linked_page_available=is_site_available(linked_page))
+            
+            external_links_manager.increase_progress()
+        external_links_manager.clear_progress()
+        
+        return Response({
+            'message': 'Successfully checked linked pages availability',
+            'external_links': serializers.ExternalLinksManagerSerializer(external_links_manager).data,
+        }, 200)
+    
