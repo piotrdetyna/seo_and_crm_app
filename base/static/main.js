@@ -1,10 +1,13 @@
-async function setCurrentSite(site_id) {
-    const response = await fetch(`/api/set-current-site/${site_id}`, {
-        method: 'PATCH',
+async function setCurrentSite(siteId) {
+    const response = await fetch(`/api/session/current-site/`, {
+        method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
             'X-CSRFToken': document.querySelector('[name="csrfmiddlewaretoken"]').value,
         },
+        body: JSON.stringify({
+            'site_id': siteId,
+        })
     })
     if (!response.ok) {
 		throw new Error(`Error while fetching sites list. Status: ${response.status}`);
@@ -25,7 +28,7 @@ async function setCurrentSite(site_id) {
 }
 
 async function getSite(site_id) {
-    const response = await fetch(`/api/get-sites/${site_id}/`, {
+    const response = await fetch(`/api/sites/${site_id}/`, {
         method: 'GET',
     })
 
@@ -52,10 +55,9 @@ async function logout() {
 }
 
 
-
 async function populateSitesList() {
     let sitesLists = document.querySelectorAll('.sites-list');
-    const response = await fetch('/api/get-sites/', {
+    const response = await fetch('/api/sites/', {
         method: 'GET',
     });
     if (!response.ok) {

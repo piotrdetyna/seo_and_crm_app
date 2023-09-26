@@ -9,6 +9,7 @@ urlpatterns = [
     path('sites/<int:site_id>/<str:attribute>/', views.SiteView.as_view(), name='site_detail'),
     
     path('session/current-site/', views.CurrentSiteView.as_view(), name="current_site"),
+    path('session/current-site/<str:attribute>/', views.CurrentSiteView.as_view(), name="current_site_attribute"),
 
     path('clients/', views.ClientView.as_view(), name='clients'),
     path('clients/<int:client_id>/', views.ClientView.as_view(), name='client_details'),
