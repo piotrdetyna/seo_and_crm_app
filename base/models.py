@@ -54,37 +54,8 @@ class Client(models.Model):
         return self.name
 
 
-class Site(models.Model):
-    url = models.CharField(max_length=150, unique=True)
-    client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name="sites")
-    logo = models.ImageField(upload_to=logo_file_name, default='default.jpg')
-    date = models.DateField(auto_now_add=True)
-
-    #save object firstly without logo, and with logo at the second time to get object id after first save 
-    def save(self, *args, **kwargs):
-        if not self.id and self.logo:
-            logo_tmp = self.logo
-            self.logo = None
-            super(Site, self).save(*args, **kwargs)
-            self.logo = logo_tmp
-            self.save()
-        else:
-            super(Site, self).save(*args, **kwargs)
-
-    def __str__(self):
-        return self.url
-    
-    
-@receiver(models.signals.post_delete, sender=Site)
-def auto_delete_file_on_delete(sender, instance, **kwargs):
-
-    if instance.logo:
-        if os.path.isfile(instance.logo.path):
-            os.remove(instance.logo.path)
-
-
 class ExternalLink(models.Model):
-    manager = models.ForeignKey('ExternalLinksManager', related_name='links', on_delete=models.CASCADE)
+    manager = models.ForeignKey('ExternalLinksManager', related_name='external_links', on_delete=models.CASCADE)
     linking_page = models.CharField(max_length=150)
     linked_page = models.CharField(max_length=150)
     rel = models.CharField(max_length=10)
@@ -100,8 +71,8 @@ class ExternalLink(models.Model):
 
 
 class ExternalLinksManager(models.Model):
-    site = models.OneToOneField(Site, on_delete=models.CASCADE, related_name="external_links")
-    excluded = models.JSONField(default=list)
+    site = models.OneToOneField('Site', on_delete=models.CASCADE, related_name="external_links_manager")
+    excluded = models.JSONField(default=list, blank=True)
     date = models.DateField(auto_now=True)
     progress_current = models.IntegerField(default=0)
     progress_target = models.IntegerField(default=1)
@@ -122,14 +93,45 @@ class ExternalLinksManager(models.Model):
 
     def get_unique_linked_pages(self):
         unique_linked_pages = set()
-        for external_link in self.links.all():
+        for external_link in self.external_links.all():
             unique_linked_pages.add(external_link.linked_page)
         return unique_linked_pages
     
     def increase_progress(self):
         self.progress_current += 1
         self.save()
+
+
+class Site(models.Model):
+    url = models.CharField(max_length=150, unique=True)
+    client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name="sites")
+    logo = models.ImageField(upload_to=logo_file_name, default='default.jpg')
+    date = models.DateField(auto_now_add=True)
+
+    
+    def save(self, *args, **kwargs):
+        new_site = not self.id            
+        #save object firstly without logo, and with logo at the second time to get object id after first save 
+        if new_site and self.logo:
+            
+            logo_tmp = self.logo
+            self.logo = None
+            super(Site, self).save(*args, **kwargs)
+            self.logo = logo_tmp
+            self.save()
+        else:
+            super(Site, self).save(*args, **kwargs)
         
+    def __str__(self):
+        return self.url        
+    
+    
+@receiver(models.signals.post_delete, sender=Site)
+def auto_delete_file_on_delete(sender, instance, **kwargs):
+
+    if instance.logo:
+        if os.path.isfile(instance.logo.path):
+            os.remove(instance.logo.path)
 
 
 class Note(models.Model):
