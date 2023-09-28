@@ -16,6 +16,7 @@ class IsAllowedUser(BasePermission):
     def has_permission(self, request, view):
         return request.user.username in ALLOWED_USERS
     
+
 def format_query_attributes(query_attributes):
     if not query_attributes:
         return None
@@ -23,11 +24,13 @@ def format_query_attributes(query_attributes):
     attributes = [attribute.replace('-', '_') for attribute in attributes]
     return attributes
 
+
 def format_path_attributes(path_attribute):
     if not path_attribute:
         return None
     attributes = [path_attribute.replace('-', '_')]
     return attributes
+
 
 def get_attributes_from_path_or_query(path_attribute, query_attributes):
         attributes = None
@@ -516,7 +519,6 @@ class ExternalLinkView(APIView):
                     linked_page=link['href'], 
                     rel=link['rel'],
                 )
-                print(page, link['href'])
                 external_link_object.save()
 
             external_links_manager.increase_progress()
