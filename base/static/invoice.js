@@ -29,7 +29,7 @@ async function editInvoice() {
     let isPaid = document.querySelector('#is-paid').checked
     formData.append('is_paid', isPaid);
 
-    const response = await fetch(`/api/edit-invoice/${invoiceId}/`, {
+    const response = await fetch(`/api/invoices/${invoiceId}/`, {
         method: 'PATCH',
         headers: {
             'X-CSRFToken': document.querySelector('[name="csrfmiddlewaretoken"]').value,
@@ -41,7 +41,7 @@ async function editInvoice() {
 }
 
 async function deleteInvoice() {
-    const response = await fetch(`/api/delete-invoice/${invoiceId}/`, {
+    const response = await fetch(`/api/invoices/${invoiceId}/`, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',
@@ -65,7 +65,7 @@ function downloadFile(blob, filename) {
 
 
 async function getInvoiceFile() {
-    const response = await fetch(`/api/invoice-get-file/${invoiceId}/invoice_file/`, {
+    const response = await fetch(`/api/invoices/${invoiceId}/invoice_file/`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -81,7 +81,7 @@ async function getInvoiceFile() {
 
 
 async function getReportFile() {
-    const response = await fetch(`/api/invoice-get-file/${invoiceId}/report_file/`, {
+    const response = await fetch(`/api/invoices/${invoiceId}/report_file/`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',

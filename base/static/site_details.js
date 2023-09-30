@@ -3,8 +3,8 @@ var siteId = null
 function editSite(siteForm) {
     let siteFormData = new FormData(siteForm);  
  
-    fetch(`/api/edit-site/${siteId}/`, {
-        method: 'PUT',
+    fetch(`/api/sites/${siteId}/`, {
+        method: 'PATCH',
         headers: {
             'X-CSRFToken': document.querySelector('[name="csrfmiddlewaretoken"]').value,
         },
@@ -21,7 +21,7 @@ function editSite(siteForm) {
 
 function deleteSite() {
   
-    fetch(`/api/delete-site/${siteId}/`, {
+    fetch(`/api/sites/${siteId}/`, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',

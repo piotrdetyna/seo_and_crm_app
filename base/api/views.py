@@ -179,8 +179,6 @@ class ClientView(APIView):
         
         if attributes:
             serializer = serializers.ExtendedClientSerialzier(client, fields=attributes)
-            if not serializer.data.get(attribute, None):
-                return Response({'No instances found'}, 404)
             return Response({'client': serializer.data}, 200)
         
         api = request.GET.get('api', 'false').lower() == 'true' 
@@ -188,13 +186,13 @@ class ClientView(APIView):
             if not client.is_company:
                 return Response({
                     'client': serializers.ClientSerializer(client).data,
-                    'company_info': 'api=true is provided in the URL, but client is not a company'
+                    'company': {'error': 'api=true is provided in the URL, but client is not a company'}
                 })
             
             company_info = get_company_info(client.nip)
             return Response({
                 'client': serializers.ClientSerializer(client).data,
-                'company_info': company_info['data'],
+                'company': company_info['data'],
             }, 200)
 
         return Response({'client': serializers.ClientSerializer(client).data}, 200)

@@ -2,7 +2,7 @@ let selectedSite = null
 let selectedCategory = null
 
 async function addContract() {
-    const response = await fetch('/api/add-contract/', {
+    const response = await fetch('/api/contracts/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -22,7 +22,7 @@ async function addContract() {
 
 
 async function checkUrgency() {
-    const response = await fetch('/api/check-contracts-urgency/', {
+    const response = await fetch('/api/contracts/urgency/', {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',

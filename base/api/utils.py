@@ -124,7 +124,7 @@ def get_company_info(nip):
         company_info_data = api.search(nip=nip)[0]
     except REGONAPIError:
         return {
-            'data': 'Incorrect nip',
+            'data': {'error': 'Incorrect nip'},
             'ok': False,
         }
 

@@ -6,7 +6,7 @@ function editClient(clientForm) {
     let clientFormData = new FormData(clientForm);  
     clientFormData.append('is_company', isClientCompany)
  
-    fetch(`/api/edit-client/${clientId}/`, {
+    fetch(`/api/clients/${clientId}/`, {
         method: 'PATCH',
         headers: {
             'X-CSRFToken': document.querySelector('[name="csrfmiddlewaretoken"]').value,
@@ -24,7 +24,7 @@ function editClient(clientForm) {
 
 function deleteClient() {
   
-    fetch(`/api/delete-client/${clientId}/`, {
+    fetch(`/api/clients/${clientId}/`, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',

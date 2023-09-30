@@ -11,7 +11,7 @@ async function addInvoice() {
     }
     
 
-    const response = await fetch('/api/add-invoice/', {
+    const response = await fetch('/api/invoices/', {
         method: 'POST',
         headers: {
             'X-CSRFToken': document.querySelector('[name="csrfmiddlewaretoken"]').value,
@@ -39,7 +39,7 @@ function handleCheckboxChange(event) {
 }
 
 async function updateIsPaidAttribute(invoiceId, value) {
-    const response = await fetch(`/api/edit-invoice/${invoiceId}/`, {
+    const response = await fetch(`/api/invoices/${invoiceId}/`, {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json',
@@ -54,7 +54,7 @@ async function updateIsPaidAttribute(invoiceId, value) {
 
 
 async function getClientInfo() {
-    const response = await fetch(`/api/get-client-info/${selectedContractClient}/`, {
+    const response = await fetch(`/api/clients/${selectedContractClient}/?api=true`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -114,19 +114,31 @@ document.addEventListener('DOMContentLoaded', () => {
     let clientInfoCointaner = document.querySelector('#client-info-container')
     getClientInfoButton.onclick = async () => {
         let response = await getClientInfo()
+        clientInfoCointaner.innerHTML = ''
         if (response.ok) {
-            client_info = await response.json()
-            client_info = client_info.client_info
-            
+            let client_info = await response.json()
+            client = client_info.client
+            company = client_info.company
             clientInfoCointaner.innerHTML = ''
 
-            const ul = document.createElement('ul');
-            for (const key in client_info) {
-            if (client_info.hasOwnProperty(key)) {
-                const li = document.createElement('li');
-                li.textContent = `${key}: ${client_info[key] !== null ? client_info[key] : 'brak'}`;
-                ul.appendChild(li);
+            let ul = document.createElement('ul');
+            for (const key in client) {
+                if (client.hasOwnProperty(key)) {
+                    const li = document.createElement('li');
+                    li.textContent = `${key}: ${client[key] !== null ? client[key] : 'brak'}`;
+                    ul.appendChild(li);
+                }
             }
+            clientInfoCointaner.appendChild(ul);
+            const hr = document.createElement('hr');
+            clientInfoCointaner.appendChild(hr)
+            ul = document.createElement('ul');
+            for (const key in company) {
+                if (company.hasOwnProperty(key)) {
+                    const li = document.createElement('li');
+                    li.textContent = `${key}: ${company[key] !== null ? company[key] : 'brak'}`;
+                    ul.appendChild(li);
+                }
             }
             clientInfoCointaner.appendChild(ul);
         }

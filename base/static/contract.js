@@ -3,7 +3,7 @@ let selectedCategory = null
 let contractId = null
 
 async function editContract() {
-    const response = await fetch(`/api/edit-contract/${contractId}/`, {
+    const response = await fetch(`/api/contracts/${contractId}/`, {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json',
@@ -22,7 +22,7 @@ async function editContract() {
 }
 
 async function deleteContract() {
-    const response = await fetch(`/api/delete-contract/${contractId}/`, {
+    const response = await fetch(`/api/contracts/${contractId}/`, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',
@@ -79,6 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let editContractMessage = document.querySelector('#edit-contract-message')
         if (response) {
             editContractMessage.innerHTML = 'Edytowano umowę.'
+            location.reload()
         }
         else {
             editContractMessage.innerHTML = 'Coś poszło nie tak.'
