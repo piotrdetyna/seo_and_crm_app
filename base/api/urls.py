@@ -4,8 +4,6 @@ from . import views
 urlpatterns = [
     path('sites/', views.SiteView.as_view(), name='sites'),
     path('sites/<int:site_id>/', views.SiteView.as_view(), name='site_details'),
-    path('sites/<int:site_id>/backlinks/status/', views.update_backlinks_status_view, name='site_backlinks_status'),
-    path('sites/<int:site_id>/external-links/status/', views.update_external_links_status_view, name='site_external_links_status'),
     path('sites/<int:site_id>/<str:attribute>/', views.SiteView.as_view(), name='site_detail'),
     
     path('session/current-site/', views.CurrentSiteView.as_view(), name="current_site"),
@@ -35,11 +33,11 @@ urlpatterns = [
     path('backlinks/<int:backlink_id>/status/', views.update_backlinks_status_view, name="backlink_status"),
     path('backlinks/<int:backlink_id>/<str:attribute>/', views.BacklinkView.as_view(), name='backlink_details'),
 
-    path('external-links/', views.ExternalLinkView.as_view(), name="external_links"),
-    path('external-links/<int:external_link_id>/', views.ExternalLinkView.as_view(), name="external_link"),
-    path('external-links/status/', views.update_external_links_status_view, name="external_links_status"),
-    path('external-links/<int:external_link_id>/status/', views.update_external_links_status_view, name="external_link_status"),
-    path('external-links/<int:external_link_id>/<str:attribute>/', views.ExternalLinkView.as_view(), name="external_link_detail"),
+    path('external-links-managers/', views.ExternalLinksManagersView.as_view(), name="external_links"),
+    path('external-links-managers/<int:site_id>/', views.ExternalLinksManagersView.as_view(), name="external_link"),
+    path('external-links-managers/status/', views.update_external_links_status_view, name="external_links_status"),
+    path('external-links-managers/<int:site_id>/status/', views.update_external_links_status_view, name="external_link_status"),
+    path('external-links-managers/<int:site_id>/<str:attribute>/', views.ExternalLinksManagersView.as_view(), name="external_link_detail"),
     
     path('login/', views.login_view, name="login_view"),
     path('logout/', views.logout_view, name="logout_view"),    

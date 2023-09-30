@@ -67,7 +67,7 @@ def external_links(request, site_id=None):
     external_links_manager = get_object_or_none(ExternalLinksManager, site=site)
 
     return render(request, 'base/external-links.html', context={
-        'external_links': external_links_manager,
+        'external_links_manager': external_links_manager,
         'site': site,
     })
 

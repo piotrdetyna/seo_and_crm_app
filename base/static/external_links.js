@@ -3,7 +3,7 @@ let siteId = null;
 
 function findExternalLinks(requestData) {
     try {
-        fetch(`/api/find-external/${siteId}/`, {
+        fetch(`/api/external-links-managers/${siteId}/`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -13,7 +13,7 @@ function findExternalLinks(requestData) {
         }).then(response => {
 
             if (response.ok) {
-                location.reload()
+                //location.reload()
             } else {
                 console.error('Request failed with status:', response.status);
             }
@@ -26,7 +26,7 @@ function findExternalLinks(requestData) {
 
 function checkLinkedPagesAvaliability() {
     try {
-        fetch(`/api/check-linked-page-availability/${siteId}/`, {
+        fetch(`/api/external-links-managers/${siteId}/status/`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -91,8 +91,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         const toExclude = getExcludedDomains();
 
-        findExternalLinks({'site_id': siteId, 'to_exclude': toExclude })
-        setInterval(updateProgress, 500, `/api/external-links-progress/${siteId}/`, findLinksButton);
+        findExternalLinks({'to_exclude': toExclude })
+        setInterval(updateProgress, 500, `/api/external-links-managers/${siteId}/?attributes=progress_current,progress_target`, findLinksButton);
     };
 
     
@@ -102,6 +102,6 @@ document.addEventListener('DOMContentLoaded', () => {
         findLinksButton.classList.add('disabled');
 
         checkLinkedPagesAvaliability();
-        setInterval(updateProgress, 500, `/api/external-links-progress/${siteId}/`, progressTracker);
+        setInterval(updateProgress, 500, `/api/external-links-managers/${siteId}/?attributes=progress_current,progress_target`, progressTracker);
     };
 });

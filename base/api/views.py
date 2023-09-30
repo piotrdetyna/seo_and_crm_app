@@ -496,11 +496,10 @@ def update_backlinks_status_view(request, backlink_id=None, site_id=None):
     }, 200)
 
 
-class ExternalLinkView(APIView):
+class ExternalLinksManagersView(APIView):
     permission_classes = [IsAuthenticated, IsAllowedUser]
 
-    def put(self, request, *args, **kwargs):
-        site_id = request.data.get('site_id', None)
+    def put(self, request, site_id, *args, **kwargs):
         site = get_object_or_404(Site, id=site_id)
         external_links_manager, _ = ExternalLinksManager.objects.get_or_create(site=site)
         to_exclude = request.data.get('to_exclude', [])
@@ -529,35 +528,22 @@ class ExternalLinkView(APIView):
             'external_links': serializers.ExtendedExternalLinksManagerSerializer(external_links_manager).data,
         }, 200)
 
-    def get(self, request, external_link_id=None, attribute=None, *args, **kwargs):
-        add_manager = request.GET.get('details', 'false').lower() == 'true'
+    def get(self, request, site_id=None, attribute=None, *args, **kwargs):      
         
-        if external_link_id:
-            external_link = get_object_or_404(ExternalLink, id=external_link_id)
-            attributes = get_attributes_from_path_or_query(attribute, request.GET.get('attributes'))     
+        if site_id:
+            external_links_manager = get_object_or_404(ExternalLinksManager, site_id=site_id)
             
+            attributes = get_attributes_from_path_or_query(attribute, request.GET.get('attributes'))     
             if attributes:
-                external_link_serializer = serializers.ExternalLinkSerializer(external_link, fields=attributes)
-                return Response({'external_links': external_link_serializer.data}, 200)
+                external_links_manager_serializer = serializers.ExtendedExternalLinksManagerSerializer(external_links_manager, fields=attributes)
+                return Response({'external_links_managers': external_links_manager_serializer.data}, 200)
                 
-            external_link_serializer = serializers.ExternalLinkSerializer(external_link)
-            if add_manager:
-                external_links_manager_serializer_data = serializers.ExternalLinksManagerSerializer(external_link.manager).data
-                external_links_manager_serializer_data['external_links'] = external_link_serializer.data
-                return Response({
-                    'external_links_managers': external_links_manager_serializer_data,
-                }, 200)
-            return Response({'external_links': external_link_serializer.data}, 200)
-
-        if add_manager:
-            external_links_managers = ExternalLinksManager.objects.all()
-            return Response({
-                'external_links_managers': serializers.ExtendedExternalLinksManagerSerializer(external_links_managers, many=True).data
-            }, 200)
+            external_links_manager_serializer = serializers.ExternalLinksManagerSerializer(external_links_manager)
+            return Response({'external_links_managers': external_links_manager_serializer.data}, 200)
         
-        external_links = ExternalLink.objects.all()
+        external_links_managers = ExternalLinksManager.objects.all()
         return Response({
-            'external_links': serializers.ExternalLinkSerializer(external_links, many=True).data,
+            'external_links_managers': serializers.ExternalLinksManagerSerializer(external_links_managers, many=True).data,
         }, 200)
 
 
@@ -568,7 +554,7 @@ def check_external_links_status(external_links_manager):
 
     for linked_page in unique_linked_pages:
         #update every ExternalLink object where linked_page is equal to current unique page
-        objects_to_update = external_links_manager.links.filter(linked_page=linked_page)
+        objects_to_update = external_links_manager.external_links.filter(linked_page=linked_page)
         for object_to_update in objects_to_update:
             object_to_update.update(is_linked_page_available=is_site_available(linked_page))
         
@@ -577,14 +563,7 @@ def check_external_links_status(external_links_manager):
     
 
 @api_view(['PUT'])
-def update_external_links_status_view(request, site_id=None, external_link_id=None):
-    if external_link_id:
-        external_link = get_object_or_404(ExternalLink, id=external_link_id)
-        external_link.update(is_linked_page_available=is_site_available(external_link.linked_page))
-        return Response({
-            'message': 'Successfully checked linked pages availability',
-            'external_links': serializers.ExternalLinkSerializer(external_link).data,
-        }, 200)
+def update_external_links_status_view(request, site_id=None):
     
     if site_id:
         external_links_managers = [get_object_or_404(ExternalLinksManager, site_id=site_id)]
@@ -596,5 +575,5 @@ def update_external_links_status_view(request, site_id=None, external_link_id=No
     
     return Response({
         'message': 'Successfully checked linked pages availability',
-        'external_links': serializers.ExternalLinksManagerSerializer(external_links_managers, many=True).data,
+        'external_links_managers': serializers.ExternalLinksManagerSerializer(external_links_managers, many=True).data,
     }, 200)
