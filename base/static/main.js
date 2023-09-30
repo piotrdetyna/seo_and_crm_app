@@ -1,3 +1,7 @@
+let sidebar = null
+let main = null
+let toggleSidebarBtn = null
+
 async function setCurrentSite(siteId) {
     const response = await fetch(`/api/session/current-site/`, {
         method: 'PUT',
@@ -84,22 +88,39 @@ async function populateSitesList() {
     });
 }
 
+function handleResize() {
+    if (window.innerWidth < 767 && !sidebar.classList.contains('sidebar-hidden')) {
+        toggleSidebarBtn.click()
+    }
+    else if (window.innerWidth > 767 && sidebar.classList.contains('sidebar-hidden')) {
+        toggleSidebarBtn.click()
+    }
+}
 
+document.addEventListener('DOMContentLoaded', async () => {
+    sidebar = document.querySelector('aside')
+    main = document.querySelector('main')
+    toggleSidebarBtn = document.getElementById('menu-button');
 
-document.addEventListener('DOMContentLoaded', () => {
-    (async () => {
-        let currentSiteSpan = document.querySelector('#current-site-url')
-        let currentSiteId = currentSiteSpan.dataset.id
-        if (currentSiteId) {
-            let current_site = await getSite(currentSiteId)
-            currentSiteSpan.innerHTML = `Aktualna strona: <a href="/site/"> ${current_site.url}✏️</a>`
-        } 
-        else {
-            currentSiteSpan.innerText = 'Brak wybranej strony'
-        }
-        document.querySelector('#logout-button').onclick = () => { logout() }
-    })();
+    toggleSidebarBtn.onclick = () => {
+        sidebar.classList.toggle('sidebar-hidden')
+        main.classList.toggle('main-full-width')
+    }
     
+    window.addEventListener("resize", handleResize)
+    handleResize()
+
+    let currentSiteSpan = document.querySelector('#current-site-url')
+    let currentSiteId = currentSiteSpan.dataset.id
+    if (currentSiteId) {
+        let current_site = await getSite(currentSiteId)
+        currentSiteSpan.innerHTML = `Aktualna strona: <a href="/site/"> ${current_site.url}✏️</a>`
+    } 
+    else {
+        currentSiteSpan.innerText = 'Brak wybranej strony'
+    }
+    document.querySelector('#logout-button').onclick = () => { logout() }
+
     
     populateSitesList()
 })

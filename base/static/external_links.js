@@ -56,7 +56,8 @@ function updateProgress(url, progressElement) {
         }).then(response => {
             if (response.ok) {
                 response.json().then(data => {
-                    progressElement.innerHTML = parseInt((data.current / data.target) * 100) + '%';
+                    data = data.external_links_managers
+                    progressElement.innerHTML = parseInt((data.progress_current / data.progress_target) * 100) + '%';
                 })
             }
         })

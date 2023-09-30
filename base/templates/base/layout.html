@@ -13,8 +13,10 @@
 </head>
 <body>
   <header>
+    <div class="menu-button" id="menu-button">☰</div>
     <div class="menu-left">
-      <a href="/"><img src="/static/logo.svg" class="logo"></a>
+      
+      <a href="/"><img src="/static/logo.svg" class="logo pc"></a>
     </div>
     <div class="menu-center">
       {% csrf_token %}
@@ -23,6 +25,7 @@
     <div class="menu-right"><span id="logout-button">Wyloguj</span></div>
   </header>
   <aside>
+    <a href="/"><img src="/static/logo.svg" class="logo mobile"></a>
     <h2>SEO</h2>
     <hr>
     <div class="sidebar-menu">

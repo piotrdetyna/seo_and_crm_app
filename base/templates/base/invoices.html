@@ -56,7 +56,7 @@ invoices.js
             </div>
         </div>      
         {% csrf_token %}    
-        <table>
+        <div class="table-container"><table>
             <thead>
                 <tr>
                     <th width="25%">Strona</th>
@@ -80,6 +80,6 @@ invoices.js
                 </tr>
                 {% endfor %}
             </tbody>
-        </table>
+        </table></div>
     </div>
 {% endblock %}

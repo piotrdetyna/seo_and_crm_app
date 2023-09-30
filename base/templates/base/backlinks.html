@@ -14,16 +14,21 @@ backlinks.js
         {% csrf_token %}
         <div class="row">
             <div class="column top">
-                <input class="big-input" type="text" id="linking-page" placeholder="Wprowadź URL linkujący">
-                <button id="add-backlink" class="button-purple" value="{{ site.id }}">Dodaj backlink</button>
-                
+                <div class="row">
+                    <div class="column top">
+                        <input class="big-input" type="text" id="linking-page" placeholder="Wprowadź URL linkujący">
+                    </div>
+                    <div class="column top">
+                        <button id="add-backlink" class="button-purple" value="{{ site.id }}">Dodaj backlink</button>
+                    </div>
+                </div>
             </div>
             <div class="column">
                 <p id="add-backlink-message"></p>
             </div>
         </div>
         
-        <table>
+        <div class="table-container"><table>
             <caption>
                 <span id="check-status-message"></span>
                 <span class="purple-text clickable" id="check-status-button">Sprawdź status linków</span>
@@ -46,6 +51,6 @@ backlinks.js
                 </tr>
                 {% endfor %}
             </tbody>
-        </table>
+        </table></div>
     </div>
 {% endblock %}
