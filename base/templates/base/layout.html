@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="{% static 'style.css' %}"">
   <link rel="icon" type="image/jpg" href="/static/favicon.jpg">
   <script src="/static/main.js"></script>
-  <script src="/static/{% block script %}{% endblock %}"></script>
+  {% block script %}{% endblock %}
   <title>Interactive Agency CRM</title>
 </head>
 <body>
@@ -22,10 +22,11 @@
       {% csrf_token %}
       <span id="current-site-url" data-id="{{ request.session.current_site }}"></span>
     </div>
-    <div class="menu-right"><span id="logout-button">Wyloguj</span></div>
+    <div class="menu-right"><span id="logout-button" class="pc">Wyloguj</span></div>
   </header>
   <aside>
     <a href="/"><img src="/static/logo.svg" class="logo mobile"></a>
+    <span id="logout-button" class="mobile">Wyloguj</span>
     <h2>SEO</h2>
     <hr>
     <div class="sidebar-menu">

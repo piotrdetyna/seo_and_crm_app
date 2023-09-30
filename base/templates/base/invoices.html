@@ -2,12 +2,12 @@
 {% load custom_filters %}
 
 {% block script %}
-invoices.js
+<script src="/static/invoices.js"></script>
 {% endblock %}
 
 {% block main %}
     <div class="card-top">
-        <h1>Faktury</h1>
+        <h1>Faktury {% if single_contract %}dla umowy <span class="purple-text">{{ contracts.get_category_display }}</span> dla strony {{ contracts.site.url }}{% endif %}</h1>
     </div>
     <div class="card-content" id="info">  
         <p class="purple-text clickable" id="add-invoice-toggle-button">Nowa faktura</p>

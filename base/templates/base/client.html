@@ -1,7 +1,7 @@
 {% extends "base/layout.html" %}
 
 {% block script %}
-client.js
+<script src="/static/client.js"></script>
 {% endblock %}
 {% block main %}
     <div class="card-top">
@@ -13,7 +13,7 @@ client.js
                 <h2>Strony klienta:</h2>
                 <div class="clients-list">
                     {% for site in client.sites.all %}
-                        <p>{{ site.url }}</p>
+                        <p><a href="/site/{{ site.id }}">{{ site.url }}</a></p>
                     {% empty %}
                         <p>Brak stron</p>
                     {% endfor %}

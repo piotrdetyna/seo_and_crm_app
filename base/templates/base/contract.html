@@ -2,7 +2,7 @@
 {% load custom_filters %}
 
 {% block script %}
-contract.js
+<script src="/static/contract.js"></script>
 {% endblock %}
 
 {% block main %}
@@ -16,7 +16,7 @@ contract.js
             <div class="column">
                 
                 <img class="center-img" src="/static/contract.jpg">
-                
+                <a href="/invoices/{{contract.id}}/" class="purple-text">Faktury</a>
             </div>
 
             <div class="column">

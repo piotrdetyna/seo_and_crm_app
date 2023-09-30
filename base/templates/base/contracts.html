@@ -2,7 +2,7 @@
 {% load custom_filters %}
 
 {% block script %}
-contracts.js
+<script src="/static/contracts.js"></script>
 {% endblock %}
 
 {% block main %}
@@ -57,8 +57,9 @@ contracts.js
             <caption class="purple-text clickable" id="check-urgency-button">Sprawdź, dla których umów należy wystawić fakturę</caption>
             <thead>
                 <tr>
-                    <th width="20%">Strona</th>
-                    <th width="20%">Kategoria</th>
+                    <th width="15%">Strona</th>
+                    <th width="15%">Klient</th>
+                    <th width="15%">Kategoria</th>
                     <th width="20%">Data wystawienia FV</th>
                     <th width="10%">Częstotliwość</th>
                     <th width="10%">Kwota</th>
@@ -69,13 +70,14 @@ contracts.js
             <tbody>
                 {% for contract in contracts %}
                 <tr class="{{ contract.is_urgent|background_color_class_from_change_attribute }}">
-                    <td>{{ contract.site }}</td>
+                    <td><a href="/site/{{contract.site.id}}">{{ contract.site }}</a></td>
+                    <td><a href="/client/{{contract.site.client.id}}">{{ contract.site.client }}</a></td>
                     <td>{{ contract.get_category_display }}</td>
                     <td>{{ contract.invoice_date|date:"Y-m-d" }}</td>
                     <td>{{ contract.invoice_frequency }}</td>
                     <td>{{ contract.value }}</td>
-                    <td><a href="/invoices/{{contract.id}}/">Zobacz</a></td>
-                    <td><a href="/contract/{{ contract.id }}/">Zobacz</a></td>
+                    <td><a href="/invoices/{{contract.id}}/">Faktury</a></td>
+                    <td><a href="/contract/{{ contract.id }}/">Szczegóły</a></td>
                 </tr>
                 {% endfor %}
             </tbody>
