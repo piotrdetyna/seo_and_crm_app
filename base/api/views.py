@@ -467,7 +467,8 @@ class BacklinkView(APIView):
 
 @api_view(['PUT'])
 @permission_classes([IsAuthenticated, IsAllowedUser])
-def update_backlinks_status_view(request, backlink_id=None, site_id=None):
+def update_backlinks_status_view(request, backlink_id=None):
+    site_id = request.GET.get('site', None)
     if site_id:
         site = get_object_or_404(Site, id=site_id)
         backlinks = site.backlinks.all()

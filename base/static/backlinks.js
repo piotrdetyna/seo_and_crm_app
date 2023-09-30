@@ -1,7 +1,7 @@
 let siteId = null
 
 async function addBacklink(linking_page) {
-    const response = await fetch('/api/add-backlink/', {
+    const response = await fetch('/api/backlinks/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -16,7 +16,7 @@ async function addBacklink(linking_page) {
 }
 
 async function deleteBacklink(backlink_id) {
-    const response = await fetch(`/api/delete-backlink/${backlink_id}/`, {
+    const response = await fetch(`/api/backlinks/${backlink_id}/`, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',
@@ -27,7 +27,7 @@ async function deleteBacklink(backlink_id) {
 }
 
 async function checkBacklinksStatus() {
-    const response = await fetch(`/api/check-backlinks-status/${siteId}/`, {
+    const response = await fetch(`/api/backlinks/status/?site=${siteId}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
@@ -75,7 +75,8 @@ document.addEventListener('DOMContentLoaded', () => {
         checkStatusMessage.innerHTML = 'Proszę czekać... | '
         if (checkBacklinksStatus()) {
             setTimeout(() => {
-            }, 4000);
+                location.reload()
+            }, 5000);
             
         }
         else {
