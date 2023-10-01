@@ -31,6 +31,14 @@
                     <span id="info-contract-id" data-contract-id="{{ contracts.id }}"></span>
                     <span id="info-client-id" data-client-id="{{ contracts.site.client.id }}"></span>
                 {% endif %}
+                <br>
+                <label>
+                    Data płatności
+                    <input class="small-input" type="date"
+                        id="invoice-payment-date" 
+                        name="invoice-payment-date" 
+                    >
+                </label>
                 <div class="row">
                     <div class="column clear-left-padding clear-bottom-padding">
                         <label class="file-input">
@@ -57,18 +65,23 @@
         </div>      
         {% csrf_token %}    
         <div class="table-container"><table>
+            <caption id="check-invoices-overduity" class="purple-text clickable">Sprawdź, które faktury są zaległe</caption>
             <thead>
                 <tr>
-                    <th width="25%">Strona</th>
-                    <th width="25%">Umowa</th>
-                    <th width="25%">Status</th>
-                    <th width="20%">Data wystawienia</th>
-                    <th width="5%">Szczegóły</th>
+                    <th>Strona</th>
+                    <th>Umowa</th>
+                    <th>Status</th>
+                    <th>Data wystawienia</th>
+                    <th>Data płatności</th>
+                    <th>Szczegóły</th>
                 </tr>
             </thead>
             <tbody>
                 {% for invoice in invoices %}
-                <tr data-invoice-id="{{ invoice.id }}">
+                <tr 
+                    data-invoice-id="{{ invoice.id }}"
+                    class="{{ invoice.is_overdue|background_color_class_from_change_attribute }}"
+                >
                     <td>{{ invoice.contract.site }}</td>
                     <td>{{ invoice.contract.get_category_display }}</td>
                     <td class="{{ invoice.is_paid|color_class_from_bool }}">
@@ -76,6 +89,7 @@
                         <small class="purple-text clickable change-is-paid" data-is-paid="{{ invoice.is_paid }}">Zmień</small>
                     </td>
                     <td>{{ invoice.date|date:"Y-m-d" }}</td>
+                    <td>{{ invoice.payment_date|date:"Y-m-d" }}</td>
                     <td><a class="purple-text" href="/invoice/{{ invoice.id }}/">Zobacz</a></td>
                 </tr>
                 {% endfor %}

@@ -382,6 +382,7 @@ class InvoiceView(APIView):
         serializer = serializers.EditInvoiceSerializer(invoice, data=request.data)
         
         if serializer.is_valid():
+            invoice.check_overduity()
             invoice = serializer.save()
             return Response({
                 'message': 'Successfully edited invoice.',
@@ -392,6 +393,26 @@ class InvoiceView(APIView):
             'message': 'Submitted data is incorrect.',
             'errors': serializer.errors,
         }, 400)
+    
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated, IsAllowedUser])
+def update_invoice_overduity(request, invoice_id=None):
+    if invoice_id:
+        invoice = get_object_or_404(Invoice, id=invoice_id)
+        invoice.check_overduity()
+        return Response({
+            'message': 'Checked invoice overduity',
+            'invoices': serializers.InvoiceSerializer(invoice).data,
+        }, 200)
+    
+    invoices = Invoice.objects.all()
+    for invoice in invoices:
+        invoice.check_overduity()
+    return Response({
+        'message': 'Checked invoices overduity',
+        'invoices': serializers.InvoiceSerializer(invoices, many=True).data,
+    }, 200)
 
 
 @api_view(['POST'])
@@ -562,6 +583,7 @@ def check_external_links_status(external_links_manager):
     
 
 @api_view(['PUT'])
+@permission_classes([IsAuthenticated, IsAllowedUser])
 def update_external_links_status_view(request, site_id=None):
     
     if site_id:

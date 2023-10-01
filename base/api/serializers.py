@@ -170,7 +170,7 @@ class InvoiceSerializer(DynamicFieldsSerializer):
 
     class Meta:
         model = Invoice
-        fields = ['invoice_file', 'report_file', 'contract_id', 'is_paid', 'id']
+        fields = ['invoice_file', 'report_file', 'contract_id', 'is_paid', 'id', 'payment_date']
     
     def create(self, validated_data):
         contract_id = validated_data.pop('contract_id')
@@ -179,6 +179,7 @@ class InvoiceSerializer(DynamicFieldsSerializer):
         contract.check_urgency()
         contract.save()
         invoice = Invoice.objects.create(contract=contract, **validated_data)
+        invoice.check_overduity()
         return invoice
     
 
@@ -186,12 +187,8 @@ class EditInvoiceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Invoice
-        fields = ['is_paid', 'invoice_file', 'report_file']
-        extra_kwargs = {
-            'is_paid': {'required': False},
-            'invoice_file': {'required': False},
-            'report_file': {'required': False},
-        }
+        fields = ['is_paid', 'invoice_file', 'report_file', 'payment_date']
+        extra_kwargs = {field: {'required': False} for field in fields}
     
     def to_internal_value(self, data):
         #set every value which is equal to 'null' to None

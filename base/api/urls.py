@@ -25,6 +25,8 @@ urlpatterns = [
 
     path('invoices/', views.InvoiceView.as_view(), name='invoices'),
     path('invoices/<int:invoice_id>/', views.InvoiceView.as_view(), name='invoice_details'),
+    path('invoices/overduity/', views.update_invoice_overduity, name='invoices_overduity'),
+    path('invoices/<int:invoice_id>/overduity/', views.update_invoice_overduity, name='invoice_overduity'),
     path('invoices/<int:invoice_id>/<str:attribute>/', views.InvoiceView.as_view(), name="invoice_detail"),
 
     path('backlinks/', views.BacklinkView.as_view(), name='backlinks'),

@@ -25,6 +25,7 @@ async function editInvoice() {
         formData.append('report_file', null);
     }
 
+    formData.append('payment_date', document.querySelector('#invoice-payment-date').value);
 
     let isPaid = document.querySelector('#is-paid').checked
     formData.append('is_paid', isPaid);

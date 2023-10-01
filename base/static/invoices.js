@@ -4,6 +4,7 @@ let selectedContractClient = null
 async function addInvoice() {
     let formData = new FormData();
     formData.append('contract_id', selectedContract);
+    formData.append('payment_date', document.querySelector('#invoice-payment-date').value);
     formData.append('invoice_file', document.querySelector('#invoice-file').files[0]);
     let report_file = document.querySelector('#report-file').files[0]
     if (report_file) {
@@ -48,6 +49,18 @@ async function updateIsPaidAttribute(invoiceId, value) {
         body: JSON.stringify({
             'is_paid': value,
         })
+    })
+    return response.ok
+}
+
+
+async function updateOverduityAttribute() {
+    const response = await fetch(`/api/invoices/overduity/`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('[name="csrfmiddlewaretoken"]').value,
+        },
     })
     return response.ok
 }
@@ -107,6 +120,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         else {
             document.querySelector('#add-invoice-message').innerHTML = 'Coś poszło nie tak.'
+        }
+    }
+
+    let checkOverduityButton = document.querySelector('#check-invoices-overduity')
+    checkOverduityButton.onclick = async () => {
+        let response = await updateOverduityAttribute()
+        if (response) {
+            checkOverduityButton.innerHTML = 'Sprawdzono zaległość faktur.'
+            location.reload()
+        }
+        else {
+            checkOverduityButton.innerHTML = 'Coś poszło nie tak.'
         }
     }
 

@@ -40,7 +40,7 @@
             <div class="column box">
                 <h2>Faktury</h2>
                 {% if not_paid_invoices %}
-                    <p>Nieopłacone faktury.</p>
+                    <p>Nieopłacone faktury. Na fioletowo zostały oznaczone faktury po terminie.</p>
                     <div class="small-table-container">
                         <table>
                             <thead>
@@ -48,14 +48,16 @@
                                     <th>Strona</th>
                                     <th>Umowa</th>
                                     <th>Data wystawienia</th>
+                                    <th>Data płatności</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for invoice in not_paid_invoices %}
-                                <tr onclick="window.location='/invoice/{{ invoice.id }}/'" class="clickable">
+                                <tr onclick="window.location='/invoice/{{ invoice.id }}/'" class="clickable {{ invoice.is_overdue|background_color_class_from_change_attribute }}">
                                     <td>{{ invoice.contract.site }}</td>
                                     <td>{{ invoice.contract.get_category_display }}</td>
                                     <td>{{ invoice.date|date:"Y-m-d" }}</td>
+                                    <td>{{ invoice.payment_date|date:"Y-m-d" }}</td>
                                 </tr>
                                 {% endfor %}
                             </tbody>

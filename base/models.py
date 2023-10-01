@@ -208,6 +208,7 @@ def validate_file_size(value):
 class Invoice(models.Model):
     contract = models.ForeignKey(Contract, on_delete=models.CASCADE, related_name="invoices")
     is_paid = models.BooleanField(default=False)
+    is_overdue = models.BooleanField(default=False)
     invoice_file = models.FileField(
         upload_to=invoice_upload_to, 
         storage=private_storage, 
@@ -225,4 +226,10 @@ class Invoice(models.Model):
     update_date = models.DateField(auto_now=True)
 
     class Meta:
-        ordering = ['-is_paid', 'date']
+        ordering = ['is_paid', 'payment_date']
+
+    def check_overduity(self):
+        self.is_overdue = False
+        if self.payment_date < date.today() and not self.is_paid:
+            self.is_overdue = True
+        self.save()
