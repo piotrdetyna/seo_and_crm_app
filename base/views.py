@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from .models import User, Client, Site, ExternalLinksManager, Invoice, Note, Contract
+from .models import User, Client, Site, ExternalLinksManager, Invoice, Note, Contract, Backlink, ExternalLink
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponseRedirect
@@ -44,7 +44,17 @@ def login(request):
 @login_required
 @user_passes_test(is_allowed_user)
 def index(request):
-    return render(request, 'base/index.html')
+    urgent_contracts = Contract.objects.filter(is_urgent=True)
+    not_paid_invoices = Invoice.objects.filter(is_paid=False)
+    not_active_backlinks = Backlink.objects.filter(active=False)
+    broken_external_links = ExternalLink.objects.filter(is_linked_page_available=False)
+
+    return render(request, 'base/index.html', {
+        'urgent_contracts': urgent_contracts,
+        'not_paid_invoices': not_paid_invoices,
+        'not_active_backlinks': not_active_backlinks,
+        'broken_external_links': broken_external_links,
+    })
 
 
 @login_required
@@ -167,10 +177,7 @@ def invoices(request, contract_id=None):
     else:
         invoices = Invoice.objects.all()
         contracts = Contract.objects.all()
-        contracts = contracts.order_by('-is_urgent')
         single_contract = False
-
-    invoices = invoices.order_by('is_paid', '-date')
     
     return render(request, 'base/invoices.html', context={
         'invoices': invoices,

@@ -1,11 +1,128 @@
 {% extends "base/layout.html" %}
-
+{% load custom_filters %}
 
 {% block main %}
     <div class="card-top">
         <h1>Narzędzie do zarządzania klientami i nie tylko</h1>
     </div>
+    
     <div class="card-content">
-        <img src="static/contract.jpg">
+        <div class="row">
+            <div class="column box">
+                <h2>Umowy</h2>
+                {% if urgent_contracts %}
+                    <p>Umowy wymagające wystawienia faktury.</p>
+                    <div class="small-table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Strona</th>
+                                    <th>Umowa</th>
+                                    <th>Data wystawienia</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for contract in urgent_contracts %}
+                                <tr onclick="window.location='/contract/{{ contract.id }}/'" class="clickable">
+                                    <td>{{ contract.site }}</td>
+                                    <td>{{ contract.get_category_display }}</td>
+                                    <td>{{ contract.invoice_date|date:"Y-m-d" }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p>Nie masz żadnych faktur do wystawienia</p>
+                {% endif %}
+                <a href="/contracts">Zobacz wszystkie</a>
+            </div>
+            <div class="column box">
+                <h2>Faktury</h2>
+                {% if not_paid_invoices %}
+                    <p>Nieopłacone faktury.</p>
+                    <div class="small-table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Strona</th>
+                                    <th>Umowa</th>
+                                    <th>Data wystawienia</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for invoice in not_paid_invoices %}
+                                <tr onclick="window.location='/invoice/{{ invoice.id }}/'" class="clickable">
+                                    <td>{{ invoice.contract.site }}</td>
+                                    <td>{{ invoice.contract.get_category_display }}</td>
+                                    <td>{{ invoice.date|date:"Y-m-d" }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p>Wszystkie faktury są opłacone</p>
+                {% endif %}
+                <a href="/invoices">Zobacz wszystkie</a>
+            </div>
+        </div>
+        <div class="row">
+            <div class="column box">
+                <h2>Backlinki</h2>
+                {% if not_active_backlinks %}
+                    <p>Nieaktywne linki zwrotne.</p>
+                    <div class="small-table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Strona docelowa</th>
+                                    <th>Strona linkująca</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for backlink in not_active_backlinks %}
+                                <tr>
+                                    <td>{{ backlink.site.url }}</td>
+                                    <td>{{ backlink.linking_page|extract_domain }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p>Wszystkie backlinki są aktywne</p>
+                {% endif %}
+                <a href="/backlinks">Zobacz wszystkie</a>
+            </div>
+            <div class="column box">
+                <h2>Linki wychodzące</h2>
+                {% if broken_external_links %}
+                    <p>Linki linkujące do nieaktywnych stron.</p>
+                    <div class="small-table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Strona linkująca</th>
+                                    <th>Strona docelowa</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for external_link in broken_external_links %}
+                                <tr>
+                                    <td>{{ external_link.linking_page|extract_domain }}</td>
+                                    <td>{{ external_link.linked_page|extract_domain }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p>Wszystkie linki wychodzące są w porządku</p>
+                {% endif %}
+                <a href="/external">Zobacz wszystkie</a>
+            </div>
+        </div>
+        
     </div>
 {% endblock %}

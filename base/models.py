@@ -5,7 +5,7 @@ from django.core.files.storage import FileSystemStorage
 from crm.settings import PRIVATE_STORAGE_ROOT, MEDIA_ROOT
 from django.dispatch import receiver
 import os
-from django.core.validators import MinValueValidator
+from django.core.validators import MinValueValidator, MaxValueValidator
 from datetime import date, timedelta
 
 private_storage = FileSystemStorage(location=PRIVATE_STORAGE_ROOT)
@@ -35,6 +35,8 @@ class Client(models.Model):
     nip = models.CharField(max_length=10, blank=True)
     address = models.CharField(max_length=200, blank=True)
     full_name = models.CharField(max_length=200, blank=True)
+
+    
 
     def clean(self):
         #when client is a company
@@ -108,6 +110,9 @@ class Site(models.Model):
     logo = models.ImageField(upload_to=logo_file_name, default='default.jpg')
     date = models.DateField(auto_now_add=True)
 
+    class Meta:
+        ordering = ['-id']
+
     
     def save(self, *args, **kwargs):
         new_site = not self.id            
@@ -151,6 +156,9 @@ class Backlink(models.Model):
     rel_changed = models.BooleanField(default=False)
     status_changed = models.BooleanField(default=False)
 
+    class Meta:
+        ordering = ['-rel_changed', '-status_changed']
+
     def __str__(self):
         return f'Backlink from {self.linking_page} to {self.site.url}'
     
@@ -162,7 +170,7 @@ class Contract(models.Model):
     invoice_date = models.DateField()
     days_before_invoice_date_to_mark_urgent = models.IntegerField(
         default=0, 
-        validators=[MinValueValidator(0)]
+        validators=[MinValueValidator(0), MaxValueValidator(100)]
     )
     is_urgent = models.BooleanField(default=False)
     value = models.IntegerField()
@@ -175,6 +183,9 @@ class Contract(models.Model):
         ('other', 'Inne'),
     )
     category = models.CharField(max_length=9, choices=CATEGORIES)
+
+    class Meta:
+        ordering = ['-is_urgent', 'invoice_date']
 
     def check_urgency(self):
         self.is_urgent = False
@@ -209,6 +220,9 @@ class Invoice(models.Model):
         blank=True,
         null=True,
     )
+    payment_date = models.DateField()
     date = models.DateField(auto_now_add=True)
     update_date = models.DateField(auto_now=True)
-    
+
+    class Meta:
+        ordering = ['-is_paid', 'date']

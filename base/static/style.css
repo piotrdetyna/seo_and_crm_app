@@ -141,6 +141,10 @@ table a {
   color: inherit;
 }
 
+table tr:hover {
+  background-color: #ede9ff;
+}
+
 aside a {
   font-size: 16px;
   text-decoration: none;
@@ -771,4 +775,15 @@ a {
 
 .menu-button:hover {
   color: #e4dffc;
+}
+
+.box {
+  background-color: rgb(253, 253, 253);
+  border-radius: 10px;
+  margin: 10px;
+}
+
+.small-table-container {
+  overflow: auto;
+  max-height: 400px;
 }
