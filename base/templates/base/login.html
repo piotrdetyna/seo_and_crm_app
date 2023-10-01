@@ -5,14 +5,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href='https://fonts.googleapis.com/css?family=Quicksand' rel='stylesheet'>
-  <link rel="stylesheet" href="{% static 'style-login.css' %}"">
-  <link rel="icon" type="image/jpg" href="/static/favicon.jpg">
-  <script src="/static/login.js"></script>
+  <link rel="stylesheet" href="{% static 'style-login.css' %}">
+  <link rel="icon" type="image/jpg" href="{% static 'favicon.jpg' %}">
+  <script src="{% static 'login.js' %}"></script>
   <title>Interactive Agency CRM</title>
 </head>
 <body>
   <main>
-    <img src="/static/logo.svg" class="logo">
+    <img src="{% static 'logo.svg' %}" class="logo">
     {% csrf_token %}
     <input type="text" name="username" id="username" placeholder="Nazwa użytkownika">
     <input type="password" name="password" id="password" placeholder="Hasło">

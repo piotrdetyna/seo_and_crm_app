@@ -119,7 +119,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     else {
         currentSiteSpan.innerText = 'Brak wybranej strony'
     }
-    document.querySelector('#logout-button').onclick = () => { logout() }
+    document.querySelectorAll('.logout-button').forEach((button) => {
+        button.onclick = () => { logout() }
+    })
 
     
     populateSitesList()

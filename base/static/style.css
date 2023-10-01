@@ -577,11 +577,11 @@ table caption {
   color: black;
 }
 
-#logout-button {
+.logout-button {
   cursor: pointer;
 }
 
-#logout-button:hover {
+.logout-button:hover {
   color: #e4dffc;
 }
 
