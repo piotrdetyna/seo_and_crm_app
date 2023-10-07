@@ -5,9 +5,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href='https://fonts.googleapis.com/css?family=Quicksand' rel='stylesheet'>
-  <link rel="stylesheet" href="{% static 'style.css' %}"">
-  <link rel="icon" type="image/jpg" href="{% static 'favicon.jpg' %}">
-  <script src="{% static 'main.js' %}"></script>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}"">
+  <link rel="icon" type="image/jpg" href="{% static 'img/favicon.jpg' %}">
+  <script src="{% static 'js/main.js' %}"></script>
   {% block script %}{% endblock %}
   <title>Interactive Agency CRM</title>
 </head>
@@ -16,7 +16,7 @@
     <div class="menu-button" id="menu-button">☰</div>
     <div class="menu-left">
       
-      <a href="/"><img src="{% static 'logo.svg' %}" class="logo pc"></a>
+      <a href="/"><img src="{% static 'img/logo.svg' %}" class="logo pc"></a>
     </div>
     <div class="menu-center">
       {% csrf_token %}
@@ -25,7 +25,7 @@
     <div class="menu-right"><span class="logout-button pc">Wyloguj</span></div>
   </header>
   <aside>
-    <a href="/"><img src="{% static 'logo.svg' %}" class="logo mobile"></a>
+    <a href="/"><img src="{% static 'img/logo.svg' %}" class="logo mobile"></a>
     <span class="logout-button mobile">Wyloguj</span>
     <h2>SEO</h2>
     <hr>

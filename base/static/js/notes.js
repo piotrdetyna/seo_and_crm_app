@@ -23,7 +23,7 @@ async function addNote() {
 		throw new Error(`Error while adding note. Status: ${response.status}`);
 	}
 	const data = await response.json();
-    return data.note
+    return data.notes
 }
 
 async function getAndSetCurrentNote(noteId) {
@@ -38,7 +38,7 @@ async function getAndSetCurrentNote(noteId) {
 	}
 
 	let data = await response.json()
-    data = data.note
+    data = data.notes
     currentNote.style.display = null
     currentNoteContent.value = data.text
     currentNoteTitle.value = data.title

@@ -1,7 +1,8 @@
 {% extends "base/layout.html" %}
 {% load custom_filters %}
+{% load static %}
 {% block script %}
-<script src="/base/static/external_links.js"></script>
+<script src="{% static 'js/external_links.js' %}"></script>
 {% endblock %}
 
 {% block main %}

@@ -96,13 +96,14 @@ document.addEventListener('DOMContentLoaded', () => {
         setInterval(updateProgress, 500, `/api/external-links-managers/${siteId}/?attributes=progress_current,progress_target`, findLinksButton);
     };
 
-    
-    checkAvailabilityButton.onclick = () => {
-        const externalLinksId = checkAvailabilityButton.dataset.externalLinksId;
-        checkAvailabilityButton.classList.add('disabled');
-        findLinksButton.classList.add('disabled');
+    if (checkAvailabilityButton) {
+        checkAvailabilityButton.onclick = () => {
+            const externalLinksId = checkAvailabilityButton.dataset.externalLinksId;
+            checkAvailabilityButton.classList.add('disabled');
+            findLinksButton.classList.add('disabled');
 
-        checkLinkedPagesAvaliability();
-        setInterval(updateProgress, 500, `/api/external-links-managers/${siteId}/?attributes=progress_current,progress_target`, progressTracker);
-    };
+            checkLinkedPagesAvaliability();
+            setInterval(updateProgress, 500, `/api/external-links-managers/${siteId}/?attributes=progress_current,progress_target`, progressTracker);
+        };
+    }
 });

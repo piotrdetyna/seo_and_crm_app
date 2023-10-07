@@ -40,7 +40,7 @@ async function getSite(site_id) {
         throw new Error(`Error while fetching site ${site_id}. Status: ${response.status}`);
     }
     let data = await response.json();
-    return data['site']
+    return data['sites']
 }
 
 

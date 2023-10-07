@@ -96,7 +96,6 @@ class SiteView(APIView):
         return Response({'sites': serializer.data})
         
 
-
 class CurrentSiteView(APIView):
     permission_classes = [IsAuthenticated, IsAllowedUser]
 
@@ -522,7 +521,7 @@ class ExternalLinksManagersView(APIView):
 
         external_links_manager = get_object_or_404(ExternalLinksManager, site_id=site_id)
         attributes = get_query_attributes(request.GET.get('attributes'))  
-        get_accurate_serializer(external_links_manager, attributes)
+        serializer = get_accurate_serializer(external_links_manager, attributes)
         return Response({'external_links_managers': serializer.data}, 200)
     
 

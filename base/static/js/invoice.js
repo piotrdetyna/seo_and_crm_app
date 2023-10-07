@@ -66,7 +66,7 @@ function downloadFile(blob, filename) {
 
 
 async function getInvoiceFile() {
-    const response = await fetch(`/api/invoices/${invoiceId}/invoice_file/`, {
+    const response = await fetch(`/api/invoices/${invoiceId}?attributes=invoice_file`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -82,7 +82,7 @@ async function getInvoiceFile() {
 
 
 async function getReportFile() {
-    const response = await fetch(`/api/invoices/${invoiceId}/report_file/`, {
+    const response = await fetch(`/api/invoices/${invoiceId}?attributes=report_file`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',

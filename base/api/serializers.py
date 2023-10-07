@@ -118,6 +118,7 @@ class ExternalLinkSerializer(DynamicFieldsSerializer):
     
     
 class ExternalLinksManagerSerializer(serializers.ModelSerializer):
+    external_links = ExternalLinkSerializer(read_only=True, many=True, fields=['id'])
     class Meta:
         model = ExternalLinksManager
         fields = '__all__'
@@ -256,22 +257,22 @@ class ExtendedContractSerializer(DynamicFieldsSerializer):
 STATIC_SERIALIZERS = {
     Site: SiteSerializer,
     Client: ClientSerializer,
-    User: UserSerializer,
     Note: NoteSerializer,
     Backlink: BacklinkSerializer,
     ExternalLink: ExternalLinkSerializer,
     ExternalLinksManager: ExternalLinksManagerSerializer,
-    Contract: ContractSerializer,
     Invoice: InvoiceSerializer,
+    Contract: ContractSerializer,
+    User: UserSerializer,
 }
 
 DYNAMIC_SERIALIZERS = {
+    Site: ExtendedSiteSerializer,
+    Client: ExtendedClientSerialzier,
     Note: NoteSerializer,
     Backlink: BacklinkSerializer,
     ExternalLink: ExternalLinkSerializer,
-    ExternalLinkSerializer: ExtendedExternalLinksManagerSerializer,
+    ExternalLinksManager: ExtendedExternalLinksManagerSerializer,
     Invoice: InvoiceSerializer,
-    Site: ExtendedSiteSerializer,
-    Client: ExtendedClientSerialzier,
     Contract: ExtendedContractSerializer,
 }
