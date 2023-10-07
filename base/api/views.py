@@ -3,13 +3,13 @@ from .utils import get_external_links, get_pages_from_sitemap, is_site_available
 from ..models import Site, ExternalLinksManager, ExternalLink, Note, Backlink, Client, Contract, Invoice
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, get_list_or_404
 from django.contrib.auth import authenticate, login, logout
 from rest_framework.permissions import IsAuthenticated, BasePermission
 from crm.settings import ALLOWED_USERS
 from django.http import FileResponse
 from rest_framework.views import APIView
-
+from django.db.models.base import ModelBase
 
 class IsAllowedUser(BasePermission):
 
@@ -17,7 +17,7 @@ class IsAllowedUser(BasePermission):
         return request.user.username in ALLOWED_USERS
     
 
-def format_query_attributes(query_attributes):
+def get_query_attributes(query_attributes):
     if not query_attributes:
         return None
     attributes = query_attributes.split(',')
@@ -25,21 +25,26 @@ def format_query_attributes(query_attributes):
     return attributes
 
 
-def format_path_attributes(path_attribute):
-    if not path_attribute:
-        return None
-    attributes = [path_attribute.replace('-', '_')]
-    return attributes
+def get_accurate_serializer(object_or_model, attributes=None):
 
+    #if Model is passed return its objects serializer
+    if type(object_or_model) == ModelBase:
+        model = object_or_model
 
-def get_attributes_from_path_or_query(path_attribute, query_attributes):
-        attributes = None
-        if query_attributes:
-            attributes = format_query_attributes(query_attributes)
-        if path_attribute:
-            attributes = format_path_attributes(path_attribute)
-                    
-        return attributes
+        objects = get_list_or_404(model)
+        serializer_class = serializers.STATIC_SERIALIZERS[model]
+        serializer = serializer_class(objects, many=True)
+        return serializer
+    
+    model_object = object_or_model
+    model = type(model_object)
+    if attributes:
+        serializer_class = serializers.DYNAMIC_SERIALIZERS[model]
+        serializer = serializer_class(model_object, fields=attributes)
+    else:
+        serializer_class = serializers.STATIC_SERIALIZERS[model]
+        serializer = serializer_class(model_object)
+    return serializer    
 
 
 class SiteView(APIView):
@@ -53,6 +58,7 @@ class SiteView(APIView):
                 'message': 'Successfully added site',
                 'site': serializer.data,
             }, status=201)
+        
         return Response({
             'message': 'Submitted data is incorrect.',
             'errors': serializer.errors
@@ -79,19 +85,16 @@ class SiteView(APIView):
         site.delete()
         return Response(status=204)
 
-    def get(self, request, site_id=None, attribute=None, *args, **kwargs):
+    def get(self, request, site_id=None, *args, **kwargs):
+        if not site_id:
+            serializer = get_accurate_serializer(Site)
+            return Response({'sites': serializer.data}, 200)
 
-        if site_id:
-            site = get_object_or_404(Site, id=site_id)
-            attributes = get_attributes_from_path_or_query(attribute, request.GET.get('attributes'))
-
-            if attributes:
-                serializer = serializers.ExtendedSiteSerializer(site, fields=attributes)
-                return Response({'site': serializer.data}, status=200)
-            return Response({'site': serializers.SiteSerializer(site).data})
+        site = get_object_or_404(Site, id=site_id)
+        attributes = get_query_attributes(request.GET.get('attributes'))
+        serializer = get_accurate_serializer(site, attributes)
+        return Response({'sites': serializer.data})
         
-        sites = serializers.SiteSerializer(Site.objects.all(), many=True).data
-        return Response({'sites': sites}, status=200)
 
 
 class CurrentSiteView(APIView):
@@ -107,17 +110,15 @@ class CurrentSiteView(APIView):
             'message': 'Successfully set current site',
         }, 200)
     
-    def get(self, request, attribute=None, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
         site_id = request.session.get('current_site', None)
         if not site_id:
             return Response({'message': 'There is no current site set in the session'}, 404)
         
         site = get_object_or_404(Site, id=site_id)
-        attributes = get_attributes_from_path_or_query(attribute, request.GET.get('attributes'))        
-        if attributes:
-            return Response({'site': serializers.ExtendedSiteSerializer(site, fields=attributes).data})
-        
-        return Response({'site': serializers.SiteSerializer(site).data})
+        attributes = get_query_attributes(request.GET.get('attributes'))
+        serializer = get_accurate_serializer(site, attributes)
+        return Response({'sites': serializer.data})
     
     def delete(self, request, *args, **kwargs):
         site_id = request.session.get('current_site', None)
@@ -169,33 +170,28 @@ class ClientView(APIView):
         return Response(status=204)
 
 
-    def get(self, request, client_id=None, attribute=None, *args, **kwargs):
+    def get(self, request, client_id=None, *args, **kwargs):
         if not client_id:
-            clients = Client.objects.all()
-            return Response({'clients': serializers.ClientSerializer(clients, many=True).data}, 200)
-        
+            serializer = get_accurate_serializer(Client)
+            return Response({'clients': serializer.data}, 200)
+
         client = get_object_or_404(Client, id=client_id)
-        attributes = get_attributes_from_path_or_query(attribute, request.GET.get('attributes'))
+        attributes = get_query_attributes(request.GET.get('attributes'))
+        serializer = get_accurate_serializer(client, attributes)
         
-        if attributes:
-            serializer = serializers.ExtendedClientSerialzier(client, fields=attributes)
-            return Response({'client': serializer.data}, 200)
-        
-        api = request.GET.get('api', 'false').lower() == 'true' 
-        if api:
+        get_company_info_from_api = request.GET.get('api', 'false').lower() == 'true' 
+        if get_company_info_from_api:
             if not client.is_company:
-                return Response({
-                    'client': serializers.ClientSerializer(client).data,
-                    'company': {'error': 'api=true is provided in the URL, but client is not a company'}
-                })
-            
-            company_info = get_company_info(client.nip)
+                company = {'error': 'api=true is provided in the URL, but client is not a company'}
+            else:
+                company = get_company_info(client.nip)['data']
+
             return Response({
-                'client': serializers.ClientSerializer(client).data,
-                'company': company_info['data'],
+                'client': serializer.data,
+                'company': company,
             }, 200)
 
-        return Response({'client': serializers.ClientSerializer(client).data}, 200)
+        return Response({'clients': serializer.data}, 200)
 
 
 class NoteView(APIView):
@@ -214,27 +210,15 @@ class NoteView(APIView):
             'errors': serializer.errors,
         }, 400)
 
-    def get(self, request, note_id=None, attribute=None, *args, **kwargs):
+    def get(self, request, note_id=None, *args, **kwargs):
         if not note_id:
-            notes = Note.objects.all()
-            if not notes:
-                return Response({'message': 'No notes found.'}, 404)
-            
-            return Response({
-                'message': 'Successfully retrieved notes',
-                'notes': serializers.NoteSerializer(notes, many=True).data
-            }, 200)
+            serializer = get_accurate_serializer(Note)            
+            return Response({'notes': serializer.data}, 200)
         
         note = get_object_or_404(Note, id=note_id)
-        serializer = serializers.NoteSerializer(note)
-        attributes = get_attributes_from_path_or_query(attribute, request.GET.get('attributes'))
-        if attributes:
-            serializer = serializers.NoteSerializer(note, fields=attributes)
-
-        return Response({
-            'message': 'Successfully retrieved note',
-            'note': serializer.data,
-        }, 200)
+        attributes = get_query_attributes(request.GET.get('attributes'))
+        serializer = get_accurate_serializer(note, attributes)
+        return Response({'notes': serializer.data}, 200)
 
     def patch(self, request, note_id=None, *args, **kwargs):
         note = get_object_or_404(Note, id=note_id)
@@ -273,24 +257,15 @@ class ContractView(APIView):
             'errors': serializer.errors,
         }, 400)
     
-    def get(self, request, contract_id=None, attribute=None, *args, **kwargs):
+    def get(self, request, contract_id=None, *args, **kwargs):
         if not contract_id:
-            contracts = Contract.objects.all()
-            if not contracts:
-                return Response({'message': 'No contracts found.'}, 404)
-            
-            return Response({
-                'contracts': serializers.ContractSerializer(contracts, many=True).data,
-            }, 200)
+            serializer = get_accurate_serializer(Contract)            
+            return Response({'contracts': serializer.data}, 200)
         
         contract = get_object_or_404(Contract, id=contract_id)
-        serializer = serializers.ContractSerializer(contract)
-        attributes = get_attributes_from_path_or_query(attribute, request.GET.get('attributes'))
-
-        if attributes:
-            serializer = serializers.ExtendedContractSerializer(contract, fields=attributes)
-
-        return Response({'contract': serializer.data}, 200)
+        attributes = get_query_attributes(request.GET.get('attributes'))
+        serializer = get_accurate_serializer(contract, attributes)
+        return Response({'contracts': serializer.data}, 200)
     
     def patch(self, request, contract_id, *args, **kwargs):
         contract = get_object_or_404(Contract, id=contract_id)
@@ -318,7 +293,7 @@ class ContractView(APIView):
 @permission_classes([IsAuthenticated, IsAllowedUser])
 def check_contracts_urgency(request, contract_id=None):
     if not contract_id:
-        contracts = Contract.objects.all()
+        contracts = get_list_or_404(Contract)
     else:
         contracts = [get_object_or_404(Contract, id=contract_id)]
         
@@ -349,28 +324,25 @@ class InvoiceView(APIView):
             'errors': serializer.errors,
         }, 400)
     
-    def get(self, request, invoice_id=None, attribute=None, *args, **kwargs):
+    def get(self, request, invoice_id=None, *args, **kwargs):
         if not invoice_id:
-            invoices = Invoice.objects.all()
-            serializer = serializers.InvoiceSerializer(invoices, many=True)
-            return Response({'invoice': serializer.data}, 200)
+            serializer = get_accurate_serializer(Invoice)
+            return Response({'invoices': serializer.data}, 200)
         
+
         invoice = get_object_or_404(Invoice, id=invoice_id)
-        attributes = get_attributes_from_path_or_query(attribute, request.GET.get('attributes'))
-        if not attributes:
-            serializer = serializers.InvoiceSerializer(invoice)
-            return Response({'invoice': serializer.data}, 200)
+        attributes = get_query_attributes(request.GET.get('attributes'))
         
-        path_attributes = format_path_attributes(attribute)
-        if path_attributes:
-            if path_attributes[0] in self.file_fields:
+        # check if at least one field should return a file
+        for attribute in attributes:
+            if attribute in self.file_fields:
                 f = getattr(invoice, attribute)
                 if not f:
                     return Response({'message': f"{attribute} file does not exist"}, 404)
                 return FileResponse(f, as_attachment=True)
-        
-        serializer = serializers.InvoiceSerializer(invoice, fields=attributes)
-        return Response({'invoice': serializer.data}, 200)
+            
+        serializer = get_accurate_serializer(invoice, attributes)
+        return Response({'invoices': serializer.data}, 200)
 
     def delete(self, request, invoice_id, *args, **kwargs):
         invoice = get_object_or_404(Invoice, id=invoice_id)
@@ -406,7 +378,7 @@ def update_invoice_overduity(request, invoice_id=None):
             'invoices': serializers.InvoiceSerializer(invoice).data,
         }, 200)
     
-    invoices = Invoice.objects.all()
+    invoices = get_list_or_404(Invoice)
     for invoice in invoices:
         invoice.check_overduity()
     return Response({
@@ -463,20 +435,15 @@ class BacklinkView(APIView):
             'errors': serializer.errors,
         }, 400)
     
-    def get(self, request, backlink_id=None, attribute=None, *args, **kwargs):
+    def get(self, request, backlink_id=None, *args, **kwargs):
         if not backlink_id:
-            backlinks = Backlink.objects.all()
-            serializer = serializers.BacklinkSerializer(backlinks, many=True)
+            serializer = get_accurate_serializer(Backlink)
             return Response({'backlinks': serializer.data}, 200)
         
         backlink = get_object_or_404(Backlink, id=backlink_id)
-        attributes = get_attributes_from_path_or_query(attribute, request.GET.get('attributes'))     
-        if not attributes:
-            serializer = serializers.BacklinkSerializer(backlink)
-            return Response({'backlink': serializer.data}, 200)
-        
-        serializer = serializers.BacklinkSerializer(backlink, fields=attributes)
-        return Response({'backlink': serializer.data}, 200)
+        attributes = get_query_attributes(request.GET.get('attributes'))
+        serializer = get_accurate_serializer(backlink, attributes)
+        return Response({'backlinks': serializer.data}, 200)
 
     def delete(self, request, backlink_id, *args, **kwargs):
         backlink = get_object_or_404(Backlink, id=backlink_id)
@@ -494,7 +461,7 @@ def update_backlinks_status_view(request, backlink_id=None):
     elif backlink_id:
         backlinks = [get_object_or_404(Backlink, id=backlink_id)]
     else:
-        backlinks = Backlink.objects.all()
+        backlinks = get_list_or_404(Backlink)
 
     for backlink in backlinks:
         links_from_page = get_external_links(backlink.linking_page)
@@ -548,23 +515,16 @@ class ExternalLinksManagersView(APIView):
             'external_links': serializers.ExtendedExternalLinksManagerSerializer(external_links_manager).data,
         }, 200)
 
-    def get(self, request, site_id=None, attribute=None, *args, **kwargs):      
-        
-        if site_id:
-            external_links_manager = get_object_or_404(ExternalLinksManager, site_id=site_id)
-            
-            attributes = get_attributes_from_path_or_query(attribute, request.GET.get('attributes'))     
-            if attributes:
-                external_links_manager_serializer = serializers.ExtendedExternalLinksManagerSerializer(external_links_manager, fields=attributes)
-                return Response({'external_links_managers': external_links_manager_serializer.data}, 200)
-                
-            external_links_manager_serializer = serializers.ExternalLinksManagerSerializer(external_links_manager)
-            return Response({'external_links_managers': external_links_manager_serializer.data}, 200)
-        
-        external_links_managers = ExternalLinksManager.objects.all()
-        return Response({
-            'external_links_managers': serializers.ExternalLinksManagerSerializer(external_links_managers, many=True).data,
-        }, 200)
+    def get(self, request, site_id=None, *args, **kwargs):      
+        if not site_id:
+            serializer = get_accurate_serializer(ExternalLinksManager)
+            return Response({'external_links_managers': serializer.data}, 200)
+
+        external_links_manager = get_object_or_404(ExternalLinksManager, site_id=site_id)
+        attributes = get_query_attributes(request.GET.get('attributes'))  
+        get_accurate_serializer(external_links_manager, attributes)
+        return Response({'external_links_managers': serializer.data}, 200)
+    
 
 
 def check_external_links_status(external_links_manager):
@@ -589,7 +549,7 @@ def update_external_links_status_view(request, site_id=None):
     if site_id:
         external_links_managers = [get_object_or_404(ExternalLinksManager, site_id=site_id)]
     else:
-        external_links_managers = ExternalLinksManager.objects.all()
+        external_links_managers = get_list_or_404(ExternalLinksManager)
     
     for external_link_manager in external_links_managers:
         check_external_links_status(external_link_manager)    

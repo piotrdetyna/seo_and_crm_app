@@ -251,3 +251,27 @@ class ExtendedContractSerializer(DynamicFieldsSerializer):
     class Meta:
         model = Contract
         fields = ['invoice_frequency', 'value', 'category', 'invoice_date', 'days_before_invoice_date_to_mark_urgent', 'is_urgent', 'invoices', 'id']
+
+
+STATIC_SERIALIZERS = {
+    Site: SiteSerializer,
+    Client: ClientSerializer,
+    User: UserSerializer,
+    Note: NoteSerializer,
+    Backlink: BacklinkSerializer,
+    ExternalLink: ExternalLinkSerializer,
+    ExternalLinksManager: ExternalLinksManagerSerializer,
+    Contract: ContractSerializer,
+    Invoice: InvoiceSerializer,
+}
+
+DYNAMIC_SERIALIZERS = {
+    Note: NoteSerializer,
+    Backlink: BacklinkSerializer,
+    ExternalLink: ExternalLinkSerializer,
+    ExternalLinkSerializer: ExtendedExternalLinksManagerSerializer,
+    Invoice: InvoiceSerializer,
+    Site: ExtendedSiteSerializer,
+    Client: ExtendedClientSerialzier,
+    Contract: ExtendedContractSerializer,
+}
