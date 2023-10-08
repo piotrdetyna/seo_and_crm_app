@@ -1,0 +1,74 @@
+{% extends "base/layout.html" %}
+{% load custom_filters %}
+{% load static %}
+{% block script %}
+<script src="{% static 'js/keywords.js' %}"></script>
+{% endblock %}
+{% block body_start %}
+        <div class="overlay clickable" id="reload" style="display:none;">
+            <div class="overlay-content">
+                <h2>Sprawdzono pozycję</h2>
+                <p class="big-text centered">#<span id="checked-position"></span></p>
+                <p class="centered">Odśwież stronę</p>
+            </div>
+        </div>
+    {% endblock %}
+{% block main %}
+    
+    <div class="card-top">
+        <h1>Słowa kluczowe dla strony <span class="purple-text">{{ site.url }}</span></h1>
+    </div>
+    <div class="card-content">        
+        
+        {% csrf_token %}
+        <div class="row">
+            <div class="column top">
+                <div class="row">
+                    <div class="column">
+                        <input id="keyword-input" class="big-input" type="text" name="keyword" placeholder="Słowo kluczowe">
+                    </div>
+                    <div class="column">
+                        <button id="add-keyword" class="button-purple" value="{{ site.id }}">Sprawdź</button>
+                        <span id="add-keyword-message"></span>
+                    </div>
+                    
+                </div>
+            </div>
+            <div class="column top">
+                <div class="clients-list max-height-150" id="keywords-list">
+                    {% for keyword in keywords %}
+                        <p class="keywords-list-item clickable purple-text" data-keyword-id="{{ keyword.id }}">{{ keyword.keyword }}</p>
+                    {% endfor %}
+                </div>
+            </div>
+            
+        </div>
+        {% if keywords %}
+        <div class="table-container"><table>
+            <thead>
+                <tr>
+                    <th>Słowo kluczowe</th>
+                    <th>Pozycja</th>
+                    <th>Zmiana</th>
+                    <th>Akcja</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for keyword in keywords %} 
+                    <tr>
+                        <td>{{ keyword.keyword }}</td>
+                        <td>{{ keyword.latest_check.position }}</td>
+                        <td class="{{ keyword.position_change|text_color_from_position_change }}">
+                            {{ keyword.position_change|format_poisition_change }}
+                        </td>
+                        <td>
+                            <span class="delete-keyword clickable" data-keyword-id="{{ keyword.id }}">🗑️</span>
+                            <span class="check-position clickable" data-keyword-id="{{ keyword.id }}">🔁</span>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table></div>
+        {% endif %}
+    </div>
+{% endblock %}

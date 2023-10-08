@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from .models import User, Client, Site, ExternalLinksManager, Invoice, Note, Contract, Backlink, ExternalLink
+from .models import Keyword, Client, Site, ExternalLinksManager, Invoice, Note, Contract, Backlink, ExternalLink
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponseRedirect
@@ -164,6 +164,18 @@ def backlinks(request, site_id):
         'backlinks': site.backlinks,
     })
 
+@login_required
+@user_passes_test(is_allowed_user)
+@site_required
+def keywords(request, site_id):  
+    site = get_object_or_404(Site, id=site_id)
+    keywords = site.keywords.all()
+
+    return render(request, 'base/keywords.html', context={
+        'keywords': keywords,
+        'site': site,
+    })
+
 
 @login_required
 @user_passes_test(is_allowed_user)
@@ -203,4 +215,8 @@ def sites(request):
     return render(request, 'base/sites.html', context={
         'sites': sites,
     })
+
+
+
+
 

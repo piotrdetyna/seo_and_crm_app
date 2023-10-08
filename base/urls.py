@@ -36,5 +36,7 @@ urlpatterns = [
     path('invoice/<int:invoice_id>/', views.invoice, name="invoice"),
 
     path('sites/', views.sites, name="sites"),
+
+    path('keywords/', views.keywords, name="keywords"),
 ]
 

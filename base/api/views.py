@@ -1,6 +1,6 @@
 from . import serializers
 from .utils import get_external_links, get_pages_from_sitemap, is_site_available, get_company_info
-from ..models import Site, ExternalLinksManager, ExternalLink, Note, Backlink, Client, Contract, Invoice
+from ..models import Site, ExternalLinksManager, Keyword, Check, ExternalLink, Note, Backlink, Client, Contract, Invoice
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from django.shortcuts import get_object_or_404, get_list_or_404
@@ -10,6 +10,7 @@ from crm.settings import ALLOWED_USERS
 from django.http import FileResponse
 from rest_framework.views import APIView
 from django.db.models.base import ModelBase
+from time import sleep
 
 class IsAllowedUser(BasePermission):
 
@@ -556,4 +557,60 @@ def update_external_links_status_view(request, site_id=None):
     return Response({
         'message': 'Successfully checked linked pages availability',
         'external_links_managers': serializers.ExternalLinksManagerSerializer(external_links_managers, many=True).data,
+    }, 200)
+
+
+class KeywordView(APIView):
+    permission_classes = [IsAuthenticated, IsAllowedUser]
+
+    def post(self, request, *args, **kwargs):
+        serializer = serializers.KeywordSerializer(data=request.data)
+        if serializer.is_valid():
+            keyword = serializer.save()
+            keyword.new_check()
+
+            return Response({
+                'message': 'Successfully added keyword',
+                'keywords': serializer.data,
+            }, 201)
+        
+        return Response({
+            'message': 'Submitted data is incorrect.',
+            'errors': serializer.errors
+        }, 400)
+    
+    def get(self, request, keyword_id=None, *args, **kwargs):
+        if not keyword_id:
+            serializer = get_accurate_serializer(Keyword)
+            return Response({'keywords': serializer.data}, 200)
+        
+        keyword = get_object_or_404(Keyword, id=keyword_id)
+        attributes = get_query_attributes(request.GET.get('attributes'))
+        serializer = get_accurate_serializer(keyword, attributes)
+        return Response({'keywords': serializer.data}, 200)
+    
+    def delete(self, request, keyword_id, *args, **kwargs):
+        keyword = get_object_or_404(Keyword, id=keyword_id)
+        keyword.delete()
+        return Response(status=204)
+    
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated, IsAllowedUser])
+def check_keyword_position(request, keyword_id=None):
+    site_id = request.GET.get('site', None)
+    if site_id:
+        site = get_object_or_404(Site, id=site_id)
+        keywords = site.keywords.all()
+    elif keyword_id:
+        keywords = [get_object_or_404(Keyword, id=keyword_id)]
+    else:
+        keywords = get_list_or_404(Keyword)
+    
+    for keyword in keywords:
+        keyword.new_check()
+        sleep(1)
+
+    return Response({
+        'message': 'Checked positions',
+        'keywords': serializers.ExtendedKeywordSerializer(keywords, many=True).data,
     }, 200)

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from ..models import Client, Site, Note, Backlink, ExternalLinksManager, ExternalLink, Contract, Invoice, User
+from ..models import Client, Site, Note, Backlink, Keyword, Check, ExternalLinksManager, ExternalLink, Contract, Invoice, User
 from .utils import get_domain_from_url, add_https
 from dateutil.relativedelta import relativedelta
 from django.shortcuts import get_object_or_404
@@ -254,6 +254,46 @@ class ExtendedContractSerializer(DynamicFieldsSerializer):
         fields = ['invoice_frequency', 'value', 'category', 'invoice_date', 'days_before_invoice_date_to_mark_urgent', 'is_urgent', 'invoices', 'id']
 
 
+class CheckSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Check
+        fields = '__all__'
+
+
+class KeywordSerializer(serializers.ModelSerializer):
+    site_id = serializers.IntegerField(write_only=True)
+    position = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Keyword
+        fields = '__all__'
+        extra_kwargs = {
+            'site': {'read_only': True},
+        }
+    
+    def create(self, validated_data):
+        site_id = validated_data.pop('site_id', None)
+        site = Site.objects.get(id=site_id)
+
+        keyword = Keyword.objects.create(site=site, **validated_data)
+        return keyword
+    
+    def get_position(self, obj):
+        return obj.latest_check().position
+
+
+class ExtendedKeywordSerializer(DynamicFieldsSerializer):
+    checks = CheckSerializer(many=True)
+    position = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Keyword
+        fields = '__all__'
+
+    def get_position(self, obj):
+        return obj.latest_check().position
+
+
 STATIC_SERIALIZERS = {
     Site: SiteSerializer,
     Client: ClientSerializer,
@@ -264,6 +304,7 @@ STATIC_SERIALIZERS = {
     Invoice: InvoiceSerializer,
     Contract: ContractSerializer,
     User: UserSerializer,
+    Keyword: KeywordSerializer,
 }
 
 DYNAMIC_SERIALIZERS = {
@@ -275,4 +316,5 @@ DYNAMIC_SERIALIZERS = {
     ExternalLinksManager: ExtendedExternalLinksManagerSerializer,
     Invoice: InvoiceSerializer,
     Contract: ExtendedContractSerializer,
+    Keyword: ExtendedKeywordSerializer,
 }

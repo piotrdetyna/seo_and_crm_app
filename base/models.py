@@ -7,6 +7,7 @@ from django.dispatch import receiver
 import os
 from django.core.validators import MinValueValidator, MaxValueValidator
 from datetime import date, timedelta
+from base.api.utils import check_position
 
 private_storage = FileSystemStorage(location=PRIVATE_STORAGE_ROOT)
 
@@ -233,3 +234,39 @@ class Invoice(models.Model):
         if self.payment_date < date.today() and not self.is_paid:
             self.is_overdue = True
         self.save()
+
+class Check(models.Model):
+    keyword = models.ForeignKey('Keyword', related_name='checks', on_delete=models.CASCADE)
+    position = models.IntegerField(null=True, validators=[MinValueValidator(0), MaxValueValidator(101)])
+    date = models.DateField(auto_now_add=True)
+
+    def __str__(self):
+        return f'Keyword {self.keyword.keyword}, position {self.position} on {self.date}'
+
+
+class Keyword(models.Model):
+    site = models.ForeignKey(Site, related_name="keywords", on_delete=models.CASCADE)
+    keyword = models.CharField(max_length=100)
+    
+    def latest_check(self):
+        return self.checks.order_by('-id').first()
+    
+    def position_change(self):
+        latest_positions = self.checks.order_by('-id')[:2]
+        if len(latest_positions) < 2:
+            return 0
+        
+        if latest_positions[0].position and latest_positions[1].position:
+            return latest_positions[1].position - latest_positions[0].position
+        return 0
+    
+    def new_check(self):
+        position = check_position(self.keyword, self.site.url)
+        check = Check(keyword=self, position=position)
+        check.save()
+    
+    class Meta:
+        unique_together = ['site', 'keyword']
+
+
+

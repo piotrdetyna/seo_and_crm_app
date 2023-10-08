@@ -73,3 +73,21 @@ def is_invoice_paid_info_from_bool(value):
 @register.filter(name='invert_boolean')
 def invert_boolean(value):
     return not value
+
+
+@register.filter(name='text_color_from_position_change')
+def text_color_from_position_change(value):
+    if value < 0:
+        return 'red-text'
+    elif value == 0:
+        return 'pass'
+    else:
+        return 'green-text'
+
+@register.filter(name='format_poisition_change')
+def format_poisition_change(value):
+    if value > 0:
+        return f'+{value}'
+    elif value == 0:
+        return '-'
+    return value

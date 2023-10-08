@@ -33,6 +33,11 @@ urlpatterns = [
     path('external-links-managers/status/', views.update_external_links_status_view, name="external_links_status"),
     path('external-links-managers/<int:site_id>/status/', views.update_external_links_status_view, name="external_link_status"),
     
+    path('keywords/', views.KeywordView.as_view(), name='keywords'),
+    path('keywords/<int:keyword_id>/', views.KeywordView.as_view(), name='keyword_details'),
+    path('keywords/position/', views.check_keyword_position, name="keywords_status"),
+    path('keywords/<int:keyword_id>/position/', views.check_keyword_position, name="keyword_position"),
+
     path('login/', views.login_view, name="login_view"), 
     path('logout/', views.logout_view, name="logout_view"),    
 ]
