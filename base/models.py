@@ -110,6 +110,7 @@ class Site(models.Model):
     client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name="sites")
     logo = models.ImageField(upload_to=logo_file_name, default='default.jpg')
     date = models.DateField(auto_now_add=True)
+    expiry_date = models.DateField(null=True, blank=True)
 
     class Meta:
         ordering = ['-id']

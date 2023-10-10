@@ -7,6 +7,7 @@ from litex.regon import REGONAPI, REGONAPIError
 from lxml import etree
 import xmltodict
 from time import sleep
+import whois
 
 headers = {
     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
@@ -157,3 +158,15 @@ def get_company_info(nip):
             'ok': True,
             'data': company_info_json,
         }
+
+
+def get_domain_expiry_date(domain):
+    try:
+        w = whois.whois(domain)
+        date = w.get('expiration_date', None)
+        if date:
+            return date.date()
+        return
+    except Exception as e:
+        print(f"An error encountered while checking {domain}'s expiration date: {e}")
+        return None

@@ -72,6 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
     })
 
     addKeywordButton.onclick = async () => {
+        addKeywordButton.classList.add('disabled')
         let keywordToAdd = keywordInput.value
         let keywordToAddExists = false
         let existingKeywordId = 0

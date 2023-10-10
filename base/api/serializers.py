@@ -207,7 +207,7 @@ class SiteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Site
-        fields = ('url', 'logo', 'date', 'id', 'client_id', 'client')
+        fields = '__all__'
         extra_kwargs = {
             'client': {'read_only': True},
         }
@@ -235,7 +235,7 @@ class ExtendedSiteSerializer(DynamicFieldsSerializer):
 
     class Meta:
         model = Site
-        fields = ('url', 'logo', 'date', 'id', 'client_id', 'client', 'notes', 'external_links_manager', 'contracts', 'backlinks')
+        fields = '__all__'
 
 
 class ExtendedClientSerialzier(DynamicFieldsSerializer):

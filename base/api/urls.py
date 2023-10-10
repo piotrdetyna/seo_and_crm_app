@@ -3,7 +3,9 @@ from . import views
 
 urlpatterns = [
     path('sites/', views.SiteView.as_view(), name='sites'),
+    path('sites/expiry/', views.check_domain_expiry, name='sites_expiry_dates'),
     path('sites/<int:site_id>/', views.SiteView.as_view(), name='site_details'),
+    path('sites/<int:site_id>/expiry/', views.check_domain_expiry, name='site_expiry_date'),
     
     path('session/current-site/', views.CurrentSiteView.as_view(), name="current_site"),
 

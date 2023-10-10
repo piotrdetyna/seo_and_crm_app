@@ -1,6 +1,9 @@
 {% extends "base/layout.html" %}
 {% load custom_filters %}
-
+{% load static %}
+{% block script %}
+<script src="{% static 'js/sites.js' %}"></script>
+{% endblock %}
 {% block main %}
     <div class="card-top">
         <h1>Strony</h1>
@@ -8,12 +11,14 @@
     <div class="card-content">        
                
         <div class="table-container"><table>
+            <caption id="check-expiry" class="purple-text clickable">Sprawdź daty wygaśnięcia</caption>
             <thead>
                 <tr>
-                    <th width="5%">Logo</th>
-                    <th width="35%">URL</th>
-                    <th width="30%">Klient</th>
-                    <th width="30%">Data dodania</th>
+                    <th>Logo</th>
+                    <th>URL</th>
+                    <th>Klient</th>
+                    <th>Data wygaśnięcia</th>
+                    <th>Data dodania</th>
                 </tr>
             </thead>
             <tbody>
@@ -26,7 +31,8 @@
                     </td>
                     <td><a href="/site/{{ site.id }}">{{ site.url }}</a></td>
                     <td><a href="/client/{{ site.client.id }}">{{ site.client }}</a></td>
-                    <td>{{ site.date }}</td>
+                    <td>{{ site.expiry_date|date:"Y-m-d" }}</td>
+                    <td>{{ site.date|date:"Y-m-d"  }}</td>
                 </tr>
                 {% endfor %}
             </tbody>

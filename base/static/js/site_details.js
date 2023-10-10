@@ -38,6 +38,26 @@ function deleteSite() {
 }
 
 
+function checkExpiry() {
+  
+    fetch(`/api/sites/${siteId}/expiry/`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('[name="csrfmiddlewaretoken"]').value,
+        },
+    })
+    .then(response => {
+        if (response.ok) {
+            location.reload()
+        } else {
+            document.querySelector('#check-expiry').innerHTML = 'Coś poszło nie tak. Sprawdź poprawność domeny'
+        }
+    })
+}
+
+
+
 document.addEventListener('DOMContentLoaded', () => {
     let siteForm = document.querySelector('form#edit-site')
     siteId = siteForm.dataset.siteId
@@ -48,5 +68,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.querySelector('#delete-site-button').onclick = () => {
         deleteSite()
+    }
+
+    document.querySelector('#check-expiry').onclick = () => {
+        document.querySelector('#check-expiry').classList.add('disabled')
+        checkExpiry()
     }
 })

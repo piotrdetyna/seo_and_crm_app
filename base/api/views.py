@@ -1,5 +1,5 @@
 from . import serializers
-from .utils import get_external_links, get_pages_from_sitemap, is_site_available, get_company_info
+from .utils import get_external_links, get_pages_from_sitemap, is_site_available, get_company_info, get_domain_expiry_date
 from ..models import Site, ExternalLinksManager, Keyword, Check, ExternalLink, Note, Backlink, Client, Contract, Invoice
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
@@ -127,6 +127,40 @@ class CurrentSiteView(APIView):
         
         del request.session['current_site']
         return Response(status=204)
+    
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated, IsAllowedUser])
+def check_domain_expiry(request, site_id=None):
+    if site_id:
+        sites = [get_object_or_404(Site, id=site_id)]
+    else:
+        sites = Site.objects.all()
+    
+    errors = 0
+    for site in sites:
+        site.expiry_date = get_domain_expiry_date(site.url)
+        if not site.expiry_date:
+            errors += 1
+        else:
+            site.save()
+
+    if errors == 0:
+        message = f'Successfully checked {len(sites)} sites expiry date. Unsuccessful attempts: {errors}'
+        status = 200
+    elif errors == len(sites):
+        message = f'Tried to check {len(sites)} sites, but no one of them was a successfull attempt'
+        status = 424
+    else:
+        message = f'Successfully checked {len(sites) - errors} sites expiry date. Unsuccessful attempts: {errors}'
+        status = 207
+        
+    return Response({
+        'message': message,
+        'sites': serializers.SiteSerializer(sites, many=True).data
+    }, status)
+
+
 
 
 class ClientView(APIView):
