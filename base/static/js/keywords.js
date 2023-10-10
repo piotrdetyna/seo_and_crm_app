@@ -103,7 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
         keywordObject.onclick = async () => {
             responseOk = await deleteKeyword(keywordObject.dataset.keywordId)
             if (responseOk) {
-                location.reload
+                location.reload()
             }
             else {
                 keywordObject.innerHTML += ' Coś poszło nie tak.'

@@ -19,7 +19,7 @@
                         <button id="find-links" class="button-purple" value="{{ site.id }}">Znajdź linki</button>
                     </div>
                     <div class="column">
-                        <textarea id="to-exclude" placeholder="Wprowadź słowa do wykluczenia">{% for keyword in external_links_manager.excluded %}{{ keyword }}{% if not forloop.last %}, {% endif %}{% endfor %}</textarea>
+                        <textarea id="to-exclude" placeholder="Wprowadź słowa do wykluczenia">{% if external_links_manager.excluded %}{% for keyword in external_links_manager.excluded %}{{ keyword }}{% if not forloop.last %}, {% endif %}{% endfor %}{% else %}facebook, reddit, pinterest, soundcloud, twitter, w.me, {% endif %}</textarea>
                     </div>
                 </div>
             </div>

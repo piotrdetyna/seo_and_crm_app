@@ -75,10 +75,7 @@ aside {
 }
   
 main {
-  margin-top: 80px;
-  margin-left: 250px;
-  margin-right: 30px;
-  margin-bottom: 40px;
+  margin: 80px 30px 40px 250px;
   border-radius: 15px;
   -webkit-box-shadow: 0px 0px 20px -4px rgba(231, 231, 231, 1);
 -moz-box-shadow: 0px 0px 20px -4px rgba(231, 231, 231, 1);
@@ -91,7 +88,7 @@ box-shadow: 0px 0px 20px -4px rgba(231, 231, 231, 1);
 }
 
 .main-full-width {
-  margin-left: 30px;
+  margin: 80px 10px 40px 10px;
 }
 
 
@@ -238,7 +235,7 @@ aside a {
   padding-top: 0;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1000px) {
   .row {
     flex-direction: column;
   }
@@ -273,9 +270,6 @@ aside a {
 
   transition: 0.5s;
 }
-
-
-
 
 
 input[type="checkbox"] {
@@ -726,7 +720,7 @@ input.small-input:hover {
 @media (max-width: 767px) {
 
   main {
-    margin-left: 30px;
+    margin: 80px 10px 40px 10px;
   }
   .menu-right, .menu-left {
     display: none;

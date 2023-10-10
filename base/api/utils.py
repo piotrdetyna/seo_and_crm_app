@@ -66,7 +66,6 @@ def check_position(keyword, domain, max_pages=3):
     for page in range(max_pages):
         url = f"https://www.google.com/search?q={keyword}&start={page*10}"
         response = requests.get(url, headers=headers)
-        print(position, response.status_code, keyword, domain)
         if response.status_code != 200:
             return None
 
@@ -75,9 +74,7 @@ def check_position(keyword, domain, max_pages=3):
         
         for result in search_results:
             link = result.find('a')['href']
-            print(position, link, domain, domain in link)
             if domain in link:
-                print('end', position)
                 return position
             position += 1
         sleep(3)
