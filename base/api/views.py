@@ -139,8 +139,8 @@ def check_domain_expiry(request, site_id=None):
     
     errors = 0
     for site in sites:
-        site.expiry_date = get_domain_expiry_date(site.url)
-        if not site.expiry_date:
+        site.domain_expiry_date = get_domain_expiry_date(site.url)
+        if not site.domain_expiry_date:
             errors += 1
         else:
             site.save()
@@ -648,3 +648,5 @@ def check_keyword_position(request, keyword_id=None):
         'message': 'Checked positions',
         'keywords': serializers.ExtendedKeywordSerializer(keywords, many=True).data,
     }, 200)
+
+

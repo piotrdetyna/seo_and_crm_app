@@ -20,9 +20,9 @@
             <div class="column">
                 <p>ID strony: {{ site.id }}</p>
                 <p>
-                    {% if site.expiry_date %}
+                    {% if site.domain_expiry_date %}
                         Data wygaśnięcia: 
-                        <strong>{{ site.expiry_date|date:"Y-m-d" }}</strong>
+                        <strong>{{ site.domain_expiry_date|date:"Y-m-d" }}</strong>
                         <small class="clickable purple-text" id="check-expiry">Zaktualizuj</small>
                     {% else %}
                         <p class="clickable purple-text" id="check-expiry">Sprawdź datę wygaśnięcia domeny</p>

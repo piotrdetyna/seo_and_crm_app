@@ -31,7 +31,7 @@
                     </td>
                     <td><a href="/site/{{ site.id }}">{{ site.url }}</a></td>
                     <td><a href="/client/{{ site.client.id }}">{{ site.client }}</a></td>
-                    <td>{{ site.expiry_date|date:"Y-m-d" }}</td>
+                    <td>{{ site.domain_expiry_date|date:"Y-m-d" }}</td>
                     <td>{{ site.date|date:"Y-m-d"  }}</td>
                 </tr>
                 {% endfor %}
