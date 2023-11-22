@@ -37,18 +37,18 @@ _Are you interested in the technical details of the application? You will find t
 ## Endpoints
 - **api/sites/**
   -  Allowed methods: 
-<img src="https://piotr.detyna.pl/get.png" style="width: 40px; margin-bottom: -5px;"> 
-<img src="https://piotr.detyna.pl/post.png" style="width: 40px; margin-bottom: -5px;"> 
-  - <img src="https://piotr.detyna.pl/post.png" style="width: 40px; margin-bottom: -5px;"> request data: 
+<span float="left"><img src="https://piotr.detyna.pl/get.png" style="width: 40px; margin-bottom: -5px;"> 
+<img src="https://piotr.detyna.pl/post.png" style="width: 40px; margin-bottom: -5px;"></span> 
+  - <span float="left"><img src="https://piotr.detyna.pl/post.png" style="width: 40px; margin-bottom: -5px;"></span> request data: 
     - url - text
     - logo (optional) - graphic file
     - client_id - integer
 - **api/sites/{site_id}/**
   - Allowed methods: 
-<img src="https://piotr.detyna.pl/get.png" style="width: 40px; margin-bottom: -5px;"> 
+<span float="left"><img src="https://piotr.detyna.pl/get.png" style="width: 40px; margin-bottom: -5px;"> 
 <img src="https://piotr.detyna.pl/patch.png" style="width: 40px; margin-bottom: -5px;"> 
-<img src="https://piotr.detyna.pl/delete.png" style="width: 40px; margin-bottom: -5px;"> 
-  - <img src="https://piotr.detyna.pl/get.png" style="width: 40px; margin-bottom: -5px;"> available query parameters (e.g api/sites/1?attributes=attr1,attr2):
+<img src="https://piotr.detyna.pl/delete.png" style="width: 40px; margin-bottom: -5px;"></span> 
+  - <span float="left"><img src="https://piotr.detyna.pl/get.png" style="width: 40px; margin-bottom: -5px;"></span> available query parameters (e.g api/sites/1?attributes=attr1,attr2):
     - id
     - url
     - logo
@@ -60,15 +60,15 @@ _Are you interested in the technical details of the application? You will find t
     - backlinks
     - client
     
-  - <img src="https://piotr.detyna.pl/patch.png" style="width: 40px; margin-bottom: -5px;"> request data: 
+  - <span float="left"><img src="https://piotr.detyna.pl/patch.png" style="width: 40px; margin-bottom: -5px;"></span> request data: 
     - url - text
     - logo (optional) - graphic file
 - **api/sites/{site_id}/expiry/**
   - This endpoint updates the expiration date of the site's domain
-  - Allowed methods: <img src="https://piotr.detyna.pl/put.png" style="width: 40px; margin-bottom: -5px;"> 
+  - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/put.png" style="width: 40px; margin-bottom: -5px;"> </span>
 - **api/sites/expiry/**
   - This endpoint updates **all** sites domain expiration dates
-  - Allowed methods: <img src="https://piotr.detyna.pl/put.png" style="width: 40px; margin-bottom: -5px;"> 
+  - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/put.png" style="width: 40px; margin-bottom: -5px;"></span>
   
 
 
