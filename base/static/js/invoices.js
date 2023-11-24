@@ -67,7 +67,7 @@ async function updateOverduityAttribute() {
 
 
 async function getClientInfo() {
-    const response = await fetch(`/api/clients/${selectedContractClient}/?api=true`, {
+    const response = await fetch(`/api/clients/${selectedContractClient}/?regon_api=true`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',

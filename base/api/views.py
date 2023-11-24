@@ -213,10 +213,10 @@ class ClientView(APIView):
         attributes = get_query_attributes(request.GET.get('attributes'))
         serializer = get_accurate_serializer(client, attributes)
         
-        get_company_info_from_api = request.GET.get('api', 'false').lower() == 'true' 
+        get_company_info_from_api = request.GET.get('regon_api', 'false').lower() == 'true' 
         if get_company_info_from_api:
             if not client.is_company:
-                company = {'error': 'api=true is provided in the URL, but client is not a company'}
+                company = {'error': 'regon_api=true is provided in the URL, but client is not a company'}
             else:
                 company = get_company_info(client.nip)['data']
 
