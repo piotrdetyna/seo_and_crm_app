@@ -367,6 +367,10 @@ class InvoiceView(APIView):
         invoice = get_object_or_404(Invoice, id=invoice_id)
         attributes = get_query_attributes(request.GET.get('attributes'))
         
+        if not attributes:
+            serializer = get_accurate_serializer(invoice)
+            return Response({'invoices': serializer.data}, 200)
+        
         # check if at least one field should return a file
         for attribute in attributes:
             if attribute in self.file_fields:
