@@ -707,7 +707,7 @@ _Are you interested in the technical details of the application? You will find t
 
     The app scraps every page of given site in search for outgoing links, and updates your external links manager object.
 
-- **api/external-links-managers/status/**
+- **api/external-links-managers/{site_id}/status/**
   - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/put.png" style="width: 40px; margin-bottom: -5px;"></span>
   - This endpoint updates the _is_linked_page_available_ field in external links manager related to given site. The app goes through every _linked_page_ in external_links field, scraps the page and retrieves information about the link.
   
@@ -774,24 +774,26 @@ _Are you interested in the technical details of the application? You will find t
 
       The app scraps the Google results page for query _keyword_ and returns your site's position.
   
-- **api/keywords/status**
+- **api/keywords/position**
   - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/put.png" style="width: 40px; margin-bottom: -5px;"></span>
-  - This endpoint does the same as _api/keywords/{keyword_id}/position/_, but for every keyword. It is worth mentioning it is very time-expensive operation, and you will be quickly blocked by Google, so it probably isn't desired approach.
+  - **Site query parameter** - if you want to check position of every keyword related to given page, you can use this parameter. Example: /api/keywords/position/?site=1.
+  - This endpoint does the same as _api/keywords/{keyword_id}/position/_, but for every keyword in a site or in the whole database. It is worth mentioning it is very time-expensive operation, and you will be quickly blocked by Google, so it probably isn't desired approach.
 
 
 ### Login/Logout
-- **api/logout/**
+- **api/login/**
   - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/post.png" style="width: 40px; margin-bottom: -5px;"></span>
-  - 
-- **api/logout/**
-  - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/delete.png" style="width: 40px; margin-bottom: -5px;"></span>
-  - <span float="left"><img src="https://piotr.detyna.pl/delete.png" style="width: 40px; margin-bottom: -5px;"></span> Example request data:
+  - <span float="left"><img src="https://piotr.detyna.pl/post.png" style="width: 40px; margin-bottom: -5px;"></span> Example request data:
     ```
     {
       "username": "username",
       "password": "password",
     }
     ```
+- **api/logout/**
+  - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/delete.png" style="width: 40px; margin-bottom: -5px;"></span>
+  
+
 
 
 
