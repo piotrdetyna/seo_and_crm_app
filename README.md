@@ -9,6 +9,7 @@ The application consists of two main parts - SEO related functions and CRM.
 
 - **External links (outgoing links)** - The application searches for outgoing links from customer websites and checks whether the pages they lead to are still operational. Except that
 saves the rel attributes of these links.
+  ![](https://piotr.detyna.pl/seo-crm-app/external-links.gif)
 
 - **Notes** - It allows you to conveniently save notes about a given page.
 
@@ -798,4 +799,4 @@ _Are you interested in the technical details of the application? You will find t
 
 
 ## Database
-![Databse diagram](https://piotr.detyna.pl/crm-app-db-diagram.svg? "Databse diagram")
+![Databse diagram](https://piotr.detyna.pl/seo-crm-app/crm-app-db-diagram.svg "Databse diagram")
