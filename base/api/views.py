@@ -10,14 +10,13 @@ from crm.settings import ALLOWED_USERS
 from django.http import FileResponse
 from rest_framework.views import APIView
 from django.db.models.base import ModelBase
-from time import sleep
 
 class IsAllowedUser(BasePermission):
 
     def has_permission(self, request, view):
         return request.user.username in ALLOWED_USERS
     
-def get_query_attributes(query_attributes):
+def parse_query_attributes(query_attributes):
     if not query_attributes:
         return None
     attributes = query_attributes.split(',')
@@ -86,7 +85,7 @@ class SiteView(APIView):
             return Response({'sites': serializer.data}, 200)
 
         site = get_object_or_404(Site, id=site_id)
-        attributes = get_query_attributes(request.GET.get('attributes'))
+        attributes = parse_query_attributes(request.GET.get('attributes'))
         serializer = get_normal_or_extended_serializer(site, attributes)
         return Response({'sites': serializer.data})
         
@@ -110,7 +109,7 @@ class CurrentSiteView(APIView):
             return Response({'message': 'There is no current site set in the session'}, 404)
         
         site = get_object_or_404(Site, id=site_id)
-        attributes = get_query_attributes(request.GET.get('attributes'))
+        attributes = parse_query_attributes(request.GET.get('attributes'))
         serializer = get_normal_or_extended_serializer(site, attributes)
         return Response({'sites': serializer.data})
     
@@ -127,32 +126,21 @@ class CurrentSiteView(APIView):
 @permission_classes([IsAuthenticated, IsAllowedUser])
 def check_domain_expiry(request, site_id=None):
     if site_id:
-        sites = [get_object_or_404(Site, id=site_id)]
-    else:
-        sites = Site.objects.all()
+        site = Site.objects.get(id=site_id)
+        site.update_domain_expiry_date()
+        return Response({
+            'message': "Updated expiry date",
+            'sites': serializers.SiteSerializer(site).data
+        }, 200)
     
-    errors = 0
+    sites = Site.objects.all()
     for site in sites:
-        site.domain_expiry_date = get_domain_expiry_date(site.url)
-        if not site.domain_expiry_date:
-            errors += 1
-        else:
-            site.save()
+        site.update_domain_expiry_date()
 
-    if errors == 0:
-        message = f'Successfully checked {len(sites)} sites expiry date. Unsuccessful attempts: {errors}'
-        status = 200
-    elif errors == len(sites):
-        message = f'Tried to check {len(sites)} sites, but none were successful.'
-        status = 424
-    else:
-        message = f'Successfully checked {len(sites) - errors} sites expiry date. Unsuccessful attempts: {errors}'
-        status = 207
-        
     return Response({
-        'message': message,
+        'message': "Updated expiry dates",
         'sites': serializers.SiteSerializer(sites, many=True).data
-    }, status)
+    }, 200)
 
 
 class ClientView(APIView):
@@ -190,10 +178,10 @@ class ClientView(APIView):
 
     def delete(self, request, client_id, *args, **kwargs):
         client = get_object_or_404(Client, id=client_id)
-        current_site = request.session.get('current_site')
+        session_current_site = request.session.get('current_site')
 
         #clear the session, if current_site belongs to deleted client
-        if any(site.id == current_site for site in client.sites.all()):
+        if any(site.id == session_current_site for site in client.sites.all()):
             del request.session['current_site']
         client.delete()
         return Response(status=204)
@@ -205,7 +193,7 @@ class ClientView(APIView):
             return Response({'clients': serializer.data}, 200)
 
         client = get_object_or_404(Client, id=client_id)
-        attributes = get_query_attributes(request.GET.get('attributes'))
+        attributes = parse_query_attributes(request.GET.get('attributes'))
         serializer = get_normal_or_extended_serializer(client, attributes)
         
         get_company_info_from_api = request.GET.get('regon_api', 'false').lower() == 'true' 
@@ -245,7 +233,7 @@ class NoteView(APIView):
             return Response({'notes': serializer.data}, 200)
         
         note = get_object_or_404(Note, id=note_id)
-        attributes = get_query_attributes(request.GET.get('attributes'))
+        attributes = parse_query_attributes(request.GET.get('attributes'))
         serializer = get_normal_or_extended_serializer(note, attributes)
         return Response({'notes': serializer.data}, 200)
 
@@ -292,7 +280,7 @@ class ContractView(APIView):
             return Response({'contracts': serializer.data}, 200)
         
         contract = get_object_or_404(Contract, id=contract_id)
-        attributes = get_query_attributes(request.GET.get('attributes'))
+        attributes = parse_query_attributes(request.GET.get('attributes'))
         serializer = get_normal_or_extended_serializer(contract, attributes)
         return Response({'contracts': serializer.data}, 200)
     
@@ -359,7 +347,7 @@ class InvoiceView(APIView):
         
 
         invoice = get_object_or_404(Invoice, id=invoice_id)
-        attributes = get_query_attributes(request.GET.get('attributes'))
+        attributes = parse_query_attributes(request.GET.get('attributes'))
         
         if not attributes:
             serializer = get_normal_or_extended_serializer(invoice, None)
@@ -473,7 +461,7 @@ class BacklinkView(APIView):
             return Response({'backlinks': serializer.data}, 200)
         
         backlink = get_object_or_404(Backlink, id=backlink_id)
-        attributes = get_query_attributes(request.GET.get('attributes'))
+        attributes = parse_query_attributes(request.GET.get('attributes'))
         serializer = get_normal_or_extended_serializer(backlink, attributes)
         return Response({'backlinks': serializer.data}, 200)
 
@@ -561,7 +549,7 @@ class ExternalLinksManagersView(APIView):
             return Response({'external_links_managers': serializer.data}, 200)
 
         external_links_manager = get_object_or_404(ExternalLinksManager, site_id=site_id)
-        attributes = get_query_attributes(request.GET.get('attributes'))  
+        attributes = parse_query_attributes(request.GET.get('attributes'))  
         serializer = get_normal_or_extended_serializer(external_links_manager, attributes)
         return Response({'external_links_managers': serializer.data}, 200)
     
@@ -573,7 +561,6 @@ def check_external_links_status(external_links_manager):
     external_links_manager.update(progress_target=len(unique_linked_pages))
 
     for linked_page in unique_linked_pages:
-        #update every ExternalLink object where linked_page is equal to current unique page
         objects_to_update = external_links_manager.external_links.filter(linked_page=linked_page)
         for object_to_update in objects_to_update:
             object_to_update.update(is_linked_page_available=is_site_available(linked_page))
@@ -625,7 +612,7 @@ class KeywordView(APIView):
             return Response({'keywords': serializer.data}, 200)
         
         keyword = get_object_or_404(Keyword, id=keyword_id)
-        attributes = get_query_attributes(request.GET.get('attributes'))
+        attributes = parse_query_attributes(request.GET.get('attributes'))
         serializer = get_normal_or_extended_serializer(keyword, attributes)
         return Response({'keywords': serializer.data}, 200)
     

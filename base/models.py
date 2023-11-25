@@ -7,7 +7,7 @@ from django.dispatch import receiver
 import os
 from django.core.validators import MinValueValidator, MaxValueValidator
 from datetime import date, timedelta
-from base.api.utils import check_position
+from base.api.utils import check_position, get_domain_expiry_date
 
 private_storage = FileSystemStorage(location=PRIVATE_STORAGE_ROOT)
 
@@ -128,7 +128,11 @@ class Site(models.Model):
             self.save()
         else:
             super(Site, self).save(*args, **kwargs)
-        
+    
+    def update_domain_expiry_date(self):
+        self.domain_expiry_date = get_domain_expiry_date(self.url)
+        self.save()
+
     def __str__(self):
         return self.url        
     
