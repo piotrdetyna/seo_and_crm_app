@@ -208,6 +208,7 @@ def validate_file_size(value):
 
 
 class Invoice(models.Model):
+    file_fields = ['report_file', 'invoice_file']
     contract = models.ForeignKey(Contract, on_delete=models.CASCADE, related_name="invoices")
     is_paid = models.BooleanField(default=False)
     is_overdue = models.BooleanField(default=False)
