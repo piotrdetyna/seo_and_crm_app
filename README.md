@@ -6,25 +6,29 @@ The application consists of two main parts - SEO related functions and CRM.
 
 ### SEO
 - **Backlinks** - The application allows you to track acquired incoming links to customer websites. In addition to storing all links in one place, it checks whether a given link still exists (if it is active) and checks whether the rel attribute has changed.
+  ![Backlinks gif](https://piotr.detyna.pl/seo-crm-app/backlinks.gif)
 
 - **External links (outgoing links)** - The application searches for outgoing links from customer websites and checks whether the pages they lead to are still operational. Except that
 saves the rel attributes of these links.
-  ![](https://piotr.detyna.pl/seo-crm-app/external-links.gif)
+  ![External links gif](https://piotr.detyna.pl/seo-crm-app/external-links.gif)
 
 - **Notes** - It allows you to conveniently save notes about a given page.
+  ![Notes gif](https://piotr.detyna.pl/seo-crm-app/notes.gif)
 
 - **Position checker** - Checks the current positions of clients' websites for given keywords.
+  ![Position checker gif](https://piotr.detyna.pl/seo-crm-app/keywords.gif)
 
-- **Sites** - Orgnanizes data about clients' websites. This information is used in almost every other function of the app. Among the things worth mentioning, the application checks the **expiration date of the domain of each website using the WHOIS library**.
-
+- **Sites** - Organizes data about clients' websites. This information is used in almost every other function of the app. Among the things worth mentioning, the application checks the **expiration date of the domain of each website using the WHOIS library**.
+  ![Sites gif](https://piotr.detyna.pl/seo-crm-app/sites.gif)
 
 ### CRM
 - **Clients** - Organizes information about customers, which is useful primarily when issuing invoices and adding contracts.
+  ![Clients gif](https://piotr.detyna.pl/seo-crm-app/clients.gif)
 
 - **Contracts** - Makes it easier to manage contracts. You can create many contracts for each website (e.g. positioning contract, website development contract).
   
     In turn, for each contract, you add information such as the frequency of invoices, the amount on the invoice and the date of the next invoice. In addition, if the next invoice is due in a few days (you can specify the number of these days by editing the contract), the contract is marked as urgent.
-
+  ![Contracts gif](https://piotr.detyna.pl/seo-crm-app/contracts.gif)
 - **Invoices** - It improves management and issuing invoices on many levels. 
 
     Firstly, it supports you when issuing an invoice by displaying all the necessary data, such as the amount (using the contract to which the invoice is assigned) and customer details, Tax Identification Number and other company data. This is possible thanks to **integration with the REGON API**, which provides information about the company based on the Tax Identification Number (NIP) that you provide when adding a client to the program.
@@ -32,6 +36,7 @@ saves the rel attributes of these links.
     Secondly, the application allows you to **send invoices and reports as a PDF file to the server**. Storing these files in the program makes it easier for you to stay organized.
 
     In addition, invoices are marked as paid or unpaid, so you can easily track which invoices you have issued are still unpaid.
+    ![Invoices gif](https://piotr.detyna.pl/seo-crm-app/invoices.gif)
 
 _Are you interested in the technical details of the application? You will find them below._
 
