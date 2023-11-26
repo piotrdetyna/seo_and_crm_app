@@ -220,7 +220,7 @@ class NoteView(APIView):
             serializer.save()
             return Response({
                 'message': 'Successfully added a note',
-                'note': serializer.data,
+                'notes': serializer.data,
             }, 201)
         return Response({
             'message': 'Submitted data is incorrect.',

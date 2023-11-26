@@ -28,7 +28,7 @@ saves the rel attributes of these links.
 - **Contracts** - Makes it easier to manage contracts. You can create many contracts for each website (e.g. positioning contract, website development contract).
   
     In turn, for each contract, you add information such as the frequency of invoices, the amount on the invoice and the date of the next invoice. In addition, if the next invoice is due in a few days (you can specify the number of these days by editing the contract), the contract is marked as urgent.
-  ![Contracts gif](https://piotr.detyna.pl/seo-crm-app/contracts.gif)
+  ![Contracts gif](https://piotr.detyna.pl/seo-crm-app/contracts.gif?)
 - **Invoices** - It improves management and issuing invoices on many levels. 
 
     Firstly, it supports you when issuing an invoice by displaying all the necessary data, such as the amount (using the contract to which the invoice is assigned) and customer details, Tax Identification Number and other company data. This is possible thanks to **integration with the REGON API**, which provides information about the company based on the Tax Identification Number (NIP) that you provide when adding a client to the program.

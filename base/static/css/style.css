@@ -259,7 +259,7 @@ aside a {
 
 .sites-list {
   overflow: auto;
-  max-height: 250px;
+  max-height: 180px;
 }
 
 .clients-list label{
