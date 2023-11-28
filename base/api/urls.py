@@ -8,6 +8,8 @@ urlpatterns = [
     path('sites/<int:site_id>/expiry/', views.check_domain_expiry, name='site_expiry_date'),
     
     path('session/current-site/', views.CurrentSiteView.as_view(), name="current_site"),
+    path('session/login/', views.login_view, name="login_view"), 
+    path('session/logout/', views.logout_view, name="logout_view"),    
 
     path('clients/', views.ClientView.as_view(), name='clients'),
     path('clients/<int:client_id>/', views.ClientView.as_view(), name='client_details'),
@@ -39,7 +41,4 @@ urlpatterns = [
     path('keywords/<int:keyword_id>/', views.KeywordView.as_view(), name='keyword_details'),
     path('keywords/position/', views.check_keyword_position, name="keywords_status"),
     path('keywords/<int:keyword_id>/position/', views.check_keyword_position, name="keyword_position"),
-
-    path('login/', views.login_view, name="login_view"), 
-    path('logout/', views.logout_view, name="logout_view"),    
 ]

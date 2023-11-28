@@ -2,7 +2,7 @@ function sendForm() {
     let username = document.querySelector('#username').value
     let password = document.querySelector('#password').value
 
-    fetch('/api/login/', {
+    fetch('/api/session/login/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

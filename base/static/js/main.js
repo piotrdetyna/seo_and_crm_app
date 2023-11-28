@@ -45,7 +45,7 @@ async function getSite(site_id) {
 
 
 async function logout() {
-    const response = await fetch(`/api/logout/`, {
+    const response = await fetch(`/api/session/logout/`, {
         method: 'DELETE',
         headers: {'X-CSRFToken': document.querySelector('[name="csrfmiddlewaretoken"]').value},
     })
