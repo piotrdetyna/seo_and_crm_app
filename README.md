@@ -1,8 +1,27 @@
-# SEO and CRM app 
+
+# SEO and CRM app <!-- omit from toc -->
 Web application for interactive agencies for customer management with useful SEO functions.
+- [General overview](#general-overview)
+  - [SEO](#seo)
+  - [CRM](#crm)
+- [Technical overview](#technical-overview)
+  - [Stack \& used technologies](#stack--used-technologies)
+- [Database](#database)
+- [Endpoints](#endpoints)
+  - [Sites](#sites)
+  - [Clients](#clients)
+  - [Notes](#notes)
+  - [Contracts](#contracts)
+  - [Invoices](#invoices)
+  - [Backlinks](#backlinks)
+  - [External links managers](#external-links-managers)
+  - [Keywords](#keywords)
+  - [Session](#session)
+  - [Login/Logout](#loginlogout)
+
 
 ## General overview
-The application consists of two main parts - SEO related functions and CRM.
+The application consists of two main parts - SEO related functions and CRM. Written in Django and Django Rest Framework with restful
 
 ### SEO
 - **Backlinks** - The application allows you to track acquired incoming links to customer websites. In addition to storing all links in one place, it checks whether a given link still exists (if it is active) and checks whether the rel attribute has changed.
@@ -40,6 +59,17 @@ saves the rel attributes of these links.
 
 _Are you interested in the technical details of the application? You will find them below._
 
+## Technical overview
+### Stack & used technologies
+
+<span float="left"><img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/python/python-original.svg" alt="python" width="40" height="40"/> <img src="https://cdn.worldvectorlogo.com/logos/django.svg" alt="django" width="40" height="40"/> <img src="https://www.vectorlogo.zone/logos/sqlite/sqlite-icon.svg" alt="sqlite" width="40" height="40"/> <img src="https://www.vectorlogo.zone/logos/git-scm/git-scm-icon.svg" alt="git" width="40" height="40"/> <img src="https://res.cloudinary.com/apideck/image/upload/w_128,f_auto/v1616206512/icons/django-rest-framework.png" alt="git" width="40" height="40"/> <img src="https://static-00.iconduck.com/assets.00/postman-icon-497x512-beb7sy75.png" alt="javascript" width="40" height="40"/> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/css3/css3-original-wordmark.svg" alt="css3" width="40" height="40"/> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/html5/html5-original-wordmark.svg" alt="html5" width="40" height="40"/> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/javascript/javascript-original.svg" alt="javascript" width="40" height="40"/></span>
+
+
+
+## Database
+[![Databse diagram](https://piotr.detyna.pl/seo-crm-app/crm-app-db-diagram.svg "Databse diagram")](https://piotr.detyna.pl/seo-crm-app/db-diagram.html)
+
+[Open in interactive mode](https://piotr.detyna.pl/seo-crm-app/db-diagram.html)
 ## Endpoints
 
 ### Sites
@@ -160,35 +190,6 @@ _Are you interested in the technical details of the application? You will find t
   - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/put.png" style="width: 40px; margin-bottom: -5px;"> </span>
   - This endpoint updates the expiry date of the site's domain
    
-
-  
-  
-### Session
-
-- **api/session/current-site/**
-  - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/get.png" style="width: 40px; margin-bottom: -5px;"> <img src="https://piotr.detyna.pl/put.png" style="width: 40px; margin-bottom: -5px;"> <img src="https://piotr.detyna.pl/delete.png" style="width: 40px; margin-bottom: -5px;"></span>
-  - <span float="left"><img src="https://piotr.detyna.pl/get.png" style="width: 40px; margin-bottom: -5px;"></span> returns current site data (if it is set in the session)
-    - Example response from _api/session/current-site/_ using the GET method when current_site in the session is set to 12 (id of the site):
-        ```
-          {
-            "sites": {
-              "id": 12,
-              "url": "site.com",
-              "logo": "/media/sites/12/logo.png",
-              "date": "2023-11-22",
-              "domain_expiry_date": "2024-05-21",
-              "client": 2
-            }
-          }
-        ```
-  - <span float="left"><img src="https://piotr.detyna.pl/put.png" style="width: 40px; margin-bottom: -5px;"></span> updates (or adds if it isn't set) current_site value in the session with a new site id
-    - Example request data for api/session/current-site/ using the PUT method:
-      ```
-      {
-        "site_id": 10
-      }
-      ```
-  - <span float="left"><img src="https://piotr.detyna.pl/delete.png" style="width: 40px; margin-bottom: -5px;"></span> removes current_site from the session, of course it doesn't deletes a whole site object.
 
 ### Clients
 - **api/clients/**
@@ -785,7 +786,33 @@ _Are you interested in the technical details of the application? You will find t
   - **Site query parameter** - if you want to check position of every keyword related to given page, you can use this parameter. Example: /api/keywords/position/?site=1.
   - This endpoint does the same as _api/keywords/{keyword_id}/position/_, but for every keyword in a site or in the whole database. It is worth mentioning it is very time-expensive operation, and you will be quickly blocked by Google, so it probably isn't desired approach.
 
+### Session
 
+- **api/session/current-site/**
+  - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/get.png" style="width: 40px; margin-bottom: -5px;"> <img src="https://piotr.detyna.pl/put.png" style="width: 40px; margin-bottom: -5px;"> <img src="https://piotr.detyna.pl/delete.png" style="width: 40px; margin-bottom: -5px;"></span>
+  - <span float="left"><img src="https://piotr.detyna.pl/get.png" style="width: 40px; margin-bottom: -5px;"></span> returns current site data (if it is set in the session)
+    - Example response from _api/session/current-site/_ using the GET method when current_site in the session is set to 12 (id of the site):
+        ```
+          {
+            "sites": {
+              "id": 12,
+              "url": "site.com",
+              "logo": "/media/sites/12/logo.png",
+              "date": "2023-11-22",
+              "domain_expiry_date": "2024-05-21",
+              "client": 2- [SEO and CRM app](#seo-and-crm-app)
+            }
+          }
+        ```
+  - <span float="left"><img src="https://piotr.detyna.pl/put.png" style="width: 40px; margin-bottom: -5px;"></span> updates (or adds if it isn't set) current_site value in the session with a new site id
+    - Example request data for api/session/current-site/ using the PUT method:
+      ```
+      {
+        "site_id": 10
+      }
+      ```
+  - <span float="left"><img src="https://piotr.detyna.pl/delete.png" style="width: 40px; margin-bottom: -5px;"></span> removes current_site from the session, of course it doesn't deletes a whole site object.
+  
 ### Login/Logout
 - **api/login/**
   - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/post.png" style="width: 40px; margin-bottom: -5px;"></span>
@@ -803,5 +830,3 @@ _Are you interested in the technical details of the application? You will find t
 
 
 
-## Database
-![Databse diagram](https://piotr.detyna.pl/seo-crm-app/crm-app-db-diagram.svg "Databse diagram")
