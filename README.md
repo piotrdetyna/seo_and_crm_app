@@ -1,11 +1,21 @@
 
 # SEO and CRM app <!-- omit from toc -->
-Web application for interactive agencies for customer management with useful SEO functions.
+Web application for interactive agencies to manage clients with useful SEO features. Written in Django with a fully functional, convention-compliant REST API made in the Django Rest Framework. It has integrations with, among others: REGON_API (API for retrievng data of Polish business entities) and WHOIS domain database. In addition, it scrapes data (e.g. automatically collects outgoing links from the website, checks positions in Google) from the Internet.
+
+<span float="left"><img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/python/python-original.svg" alt="python" width="40" height="40"/> <img src="https://cdn.worldvectorlogo.com/logos/django.svg" alt="django" width="40" height="40"/> <img src="https://www.vectorlogo.zone/logos/sqlite/sqlite-icon.svg" alt="sqlite" width="40" height="40"/> <img src="https://res.cloudinary.com/apideck/image/upload/w_128,f_auto/v1616206512/icons/django-rest-framework.png" alt="git" width="40" height="40"/>  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/css3/css3-original-wordmark.svg" alt="css3" width="40" height="40"/> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/html5/html5-original-wordmark.svg" alt="html5" width="40" height="40"/> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/javascript/javascript-original.svg" alt="javascript" width="40" height="40"/>&nbsp;&nbsp;&nbsp;&nbsp; <img src="https://static-00.iconduck.com/assets.00/postman-icon-497x512-beb7sy75.png" alt="javascript" width="40" height="40"/> <img src="https://www.vectorlogo.zone/logos/git-scm/git-scm-icon.svg" alt="git" width="40" height="40"/></span>
+
 - [General overview](#general-overview)
   - [SEO](#seo)
   - [CRM](#crm)
 - [Technical overview](#technical-overview)
-  - [Stack \& used technologies](#stack--used-technologies)
+  - [Stack and used technologies](#stack-and-used-technologies)
+- [How it works?](#how-it-works)
+  - [Finding outgoing links](#finding-outgoing-links)
+  - [Checking outgoing links status](#checking-outgoing-links-status)
+  - [Checking backlinks status](#checking-backlinks-status)
+  - [Checking domain expiry date](#checking-domain-expiry-date)
+  - [Retrieving client's data](#retrieving-clients-data)
+  - [Checking positions in Google](#checking-positions-in-google)
 - [Database](#database)
 - [Endpoints](#endpoints)
   - [Sites](#sites)
@@ -17,11 +27,11 @@ Web application for interactive agencies for customer management with useful SEO
   - [External links managers](#external-links-managers)
   - [Keywords](#keywords)
   - [Session](#session)
-  - [Login/Logout](#loginlogout)
 
 
 ## General overview
-The application consists of two main parts - SEO related functions and CRM. Written in Django and Django Rest Framework with restful
+The application consists of two main parts - SEO related functions and CRM. 
+
 
 ### SEO
 - **Backlinks** - The application allows you to track acquired incoming links to customer websites. In addition to storing all links in one place, it checks whether a given link still exists (if it is active) and checks whether the rel attribute has changed.
@@ -59,11 +69,32 @@ saves the rel attributes of these links.
 
 _Are you interested in the technical details of the application? You will find them below._
 
+
 ## Technical overview
-### Stack & used technologies
 
-<span float="left"><img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/python/python-original.svg" alt="python" width="40" height="40"/> <img src="https://cdn.worldvectorlogo.com/logos/django.svg" alt="django" width="40" height="40"/> <img src="https://www.vectorlogo.zone/logos/sqlite/sqlite-icon.svg" alt="sqlite" width="40" height="40"/> <img src="https://www.vectorlogo.zone/logos/git-scm/git-scm-icon.svg" alt="git" width="40" height="40"/> <img src="https://res.cloudinary.com/apideck/image/upload/w_128,f_auto/v1616206512/icons/django-rest-framework.png" alt="git" width="40" height="40"/> <img src="https://static-00.iconduck.com/assets.00/postman-icon-497x512-beb7sy75.png" alt="javascript" width="40" height="40"/> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/css3/css3-original-wordmark.svg" alt="css3" width="40" height="40"/> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/html5/html5-original-wordmark.svg" alt="html5" width="40" height="40"/> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/javascript/javascript-original.svg" alt="javascript" width="40" height="40"/></span>
+### Stack and used technologies
+<span float="left"><img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/python/python-original.svg" alt="python" width="40" height="40"/> <img src="https://cdn.worldvectorlogo.com/logos/django.svg" alt="django" width="40" height="40"/> <img src="https://www.vectorlogo.zone/logos/sqlite/sqlite-icon.svg" alt="sqlite" width="40" height="40"/> <img src="https://res.cloudinary.com/apideck/image/upload/w_128,f_auto/v1616206512/icons/django-rest-framework.png" alt="git" width="40" height="40"/>  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/css3/css3-original-wordmark.svg" alt="css3" width="40" height="40"/> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/html5/html5-original-wordmark.svg" alt="html5" width="40" height="40"/> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/javascript/javascript-original.svg" alt="javascript" width="40" height="40"/>&nbsp;&nbsp;&nbsp;&nbsp; <img src="https://static-00.iconduck.com/assets.00/postman-icon-497x512-beb7sy75.png" alt="javascript" width="40" height="40"/> <img src="https://www.vectorlogo.zone/logos/git-scm/git-scm-icon.svg" alt="git" width="40" height="40"/></span>
 
+## How it works?
+Below I will describe, in my opinion, the most interesting functionalities of the application. I'll skip the "usual stuff", like CRUD operations, or .
+
+### Finding outgoing links
+The app takes advantage of given site's sitemap(s), it scraps each sitemap (e.g. sitemap-posts.xml, sitemap-categories.xml), retrieves from them a list of all pages in the site. Then it scraps each of these sites and, with help of BeautifulSoup4 library, retrieves all outgoing links.
+
+### Checking outgoing links status
+After finding the outgoing links from the site, the app lets user easily check, if linked sites still works. It is significant from SEO point of view. 
+
+### Checking backlinks status
+When user has added some backlinks to the database, he can check, if they are still active, or if the rel attribute is as it should be. To achieve that, the app also uses requests and BS4 libraries to retrieve outgoing links from specified linking page.
+
+### Checking domain expiry date
+The app, thanks to the WHOIS library, can check when your domain will expire.
+
+### Retrieving client's data
+Program uses the [API REGON](https://api.stat.gov.pl/Home/RegonApi) interface to retrive information about your clients, everyting you have to do, is entering client's company NIP (_Tax Identification Number_). It especially useful while issuing invoices.
+
+### Checking positions in Google
+The application can check positions of your sites in Google's SERP (search engine results page) on specified keywords. Similarly to some previous functionalities, the app scraps SERPs, and retrieves positions. 
 
 
 ## Database
@@ -813,8 +844,7 @@ _Are you interested in the technical details of the application? You will find t
       ```
   - <span float="left"><img src="https://piotr.detyna.pl/delete.png" style="width: 40px; margin-bottom: -5px;"></span> removes current_site from the session, of course it doesn't deletes a whole site object.
   
-### Login/Logout
-- **api/login/**
+- **api/session/login/**
   - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/post.png" style="width: 40px; margin-bottom: -5px;"></span>
   - <span float="left"><img src="https://piotr.detyna.pl/post.png" style="width: 40px; margin-bottom: -5px;"></span> Example request data:
     ```
@@ -823,7 +853,7 @@ _Are you interested in the technical details of the application? You will find t
       "password": "password",
     }
     ```
-- **api/logout/**
+- **api/session/logout/**
   - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/delete.png" style="width: 40px; margin-bottom: -5px;"></span>
   
 
