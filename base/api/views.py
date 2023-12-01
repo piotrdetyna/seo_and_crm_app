@@ -2,7 +2,7 @@ from . import serializers
 from .utils import get_external_links, get_pages_from_sitemap, is_site_available, get_company_info, get_domain_expiry_date
 from ..models import Site, ExternalLinksManager, Keyword, Check, ExternalLink, Note, Backlink, Client, Contract, Invoice
 from rest_framework.response import Response
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, throttle_classes
 from django.shortcuts import get_object_or_404, get_list_or_404
 from django.contrib.auth import authenticate, login, logout
 from rest_framework.permissions import IsAuthenticated, BasePermission
@@ -10,6 +10,7 @@ from crm.settings import ALLOWED_USERS
 from django.http import FileResponse
 from rest_framework.views import APIView
 from django.db.models.base import ModelBase
+from rest_framework.throttling import AnonRateThrottle
 
 class IsAllowedUser(BasePermission):
 
@@ -408,6 +409,7 @@ def update_invoice_overduity(request, invoice_id=None):
 
 
 @api_view(['POST'])
+@throttle_classes([AnonRateThrottle])
 def login_view(request):
     serializer = serializers.LoginSerializer(data=request.data)
     if not serializer.is_valid():
