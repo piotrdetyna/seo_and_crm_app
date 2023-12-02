@@ -14,7 +14,6 @@ headers = {
     'Accept-Encoding': 'gzip, deflate',
     'Accept-Language': 'pl-PL,pl;q=0.9,en-US;q=0.8,en;q=0.7',
     'Cache-Control': 'no-cache',
-    'Cookie': 'PHPSESSID=6daocdjrk1u39ikn2pp9cn9005; _snrs_sb=ssuid:2b37b9ab-943a-4570-abbe-49ee4dc114c9&leaves:1693384058; _snrs_sa=ssuid:2b37b9ab-943a-4570-abbe-49ee4dc114c9&appear:1693384057&sessionVisits:1; _snrs_p=host:www.mediaexpert.pl&permUuid:e70725a4-b230-47bb-8d42-aabc7d0a96d6&uuid:e70725a4-b230-47bb-8d42-aabc7d0a96d6&identityHash:&user_hash:&init:1693384058&last:1693384058&current:1693384058&uniqueVisits:1&allVisits:1; _snrs_uuid=e70725a4-b230-47bb-8d42-aabc7d0a96d6; _snrs_puuid=e70725a4-b230-47bb-8d42-aabc7d0a96d6; SPARK_TEST=1; _snrs_cid=0; __cf_bm=oNUccz7nSkpqgoAUcrtVsAnLeweVUnXaQmCaqhn_dzI-1693384059-0-AcpraOMO07EPv3Krtkc9yNpRYdfdV4NJipcTyeoAvISjs6ivSiOTMN4hRRAh8HuIiG79/EH4uMiCsR4wZ+qU3eo=; new_csem=; _snrs_dc_views_sd_3bf815ba-9f13-4dc5-90b2-ca57c8289ead=1; OptanonConsent=isGpcEnabled=0&datestamp=Wed+Aug+30+2023+10%3A33%3A44+GMT%2B0200+(czas+%C5%9Brodkowoeuropejski+letni)&version=202304.1.0&browserGpcFlag=0&isIABGlobal=false&hosts=&consentId=61041d51-9e62-4838-910e-d77ad71fa78f&interactionCount=1&landingPath=https%3A%2F%2Fwww.mediaexpert.pl%2Fdom-i-ogrod%2Fartykuly-dla-zwierzat%2Fkarmy-dla-psow&groups=ME001%3A1%2CME002%3A0%2CME003%3A0%2CME004%3A0',
     'Pragma': 'no-cache',
     'Sec-Ch-Ua': '"Not.A/Brand";v="8", "Chromium";v="114", "Opera GX";v="100"',
     'Sec-Ch-Ua-Mobile': '?0',
@@ -29,16 +28,15 @@ headers = {
 
 def get_domain_from_url(url):
     if not url.startswith('http'):
-        url = 'https://' + url
+        url = add_https(url)
     
     parsed_url = urlparse(url)
     if parsed_url.netloc:
         domain = parsed_url.netloc
         if domain.startswith('www.'):
-            domain = domain[4:]
+            domain = remove_www(url)
         return domain
-    else:
-        return None
+    return
     
 
 def add_https(url):
@@ -46,31 +44,38 @@ def add_https(url):
         return f"https://{url}"
     return url
 
+def remove_www(url):
+    if url.startswith('www.'):
+        return url[4:]
+    return url
+
+def is_response_code_ok(code):
+    return code >= 200 and code < 300
 
 def is_site_available(url):
     try:
         response = requests.get(url, headers=headers)
-        if response.status_code >= 200 and response.status_code < 300:
-            return True
-        else:
-            return False
+        return is_response_code_ok(response.status_code)
+    
     except requests.RequestException:
         return False
     
+def extract_search_results_from_html(text):
+    soup = BeautifulSoup(text, 'html.parser')
+    search_results = soup.find_all('div', class_='tF2Cxc')
+    return search_results
+
 
 def check_position(keyword, domain, max_pages=3):
-    
     position = 1
     for page in range(max_pages):
+
         url = f"https://www.google.com/search?q={keyword}&start={page*10}"
         response = requests.get(url, headers=headers)
         if response.status_code != 200:
             return None
-
-        soup = BeautifulSoup(response.text, 'html.parser')
-        search_results = soup.find_all('div', class_='tF2Cxc')
-        
-        for result in search_results:
+                
+        for result in extract_search_results_from_html(response.text):
             link = result.find('a')['href']
             if domain in link:
                 return position
@@ -163,7 +168,6 @@ def get_domain_expiry_date(domain):
         date = w.get('expiration_date', None)
         if date:
             return date.date()
-        return
     except Exception as e:
         print(f"An error encountered while checking {domain}'s expiration date: {e}")
-        return None
+    return None
