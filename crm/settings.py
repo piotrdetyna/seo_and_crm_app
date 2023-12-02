@@ -50,7 +50,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'csp.middleware.CSPMiddleware',
 ]
 
 ROOT_URLCONF = 'crm.urls'
@@ -151,4 +150,3 @@ ALLOWED_USERS = ['admin']
 
 SECURE_HSTS_SECONDS = 3600
 X_FRAME_OPTIONS = 'DENY'
-CSP_DEFAULT_SRC = ("'none'", )

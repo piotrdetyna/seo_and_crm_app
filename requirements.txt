@@ -1,0 +1,10 @@
+django
+djangorestframework
+django_cleanup
+requests
+beautifulsoup4
+litex.regon
+xmltodict
+python-dateutil
+pillow
+python-whois
