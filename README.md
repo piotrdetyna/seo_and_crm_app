@@ -1,21 +1,32 @@
 
 # SEO and CRM app <!-- omit from toc -->
-Web application for interactive agencies to manage clients with useful SEO features. Written in Django with a fully functional, convention-compliant REST API made in the Django Rest Framework. It has integrations with, among others: REGON_API (API for retrievng data of Polish business entities) and WHOIS domain database. In addition, it scrapes data (e.g. automatically collects outgoing links from the website, checks positions in Google) from the Internet.
+Web application for interactive agencies to manage clients with useful SEO features. Written in Django with a fully functional, convention-compliant REST API made in the Django Rest Framework. It has integrations with, including REGON_API (API for retrieving data of Polish business entities) and WHOIS domain database. In addition, it scrapes data (e.g. automatically collects outgoing links from the website, checks positions in Google) from the Internet.
+
+## About me
+Hi, my name is Piotr Detyna, I'm 17 years old and I'm a beginner backend developer and cybersecurity enthusiast. This is my first big project, so there are definitely some oversights, but I'm still really proud of it.
+
+### What to pay attention to and what to pay less attention to?
+
+As I like the backend much more than the frontend, **I am encouraged to look more at the API structure, database design and Django code**. While the UI/UX is less refined, I hope the robust backend functionalities of the application will be of primary interest.
 
 <span float="left"><img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/python/python-original.svg" alt="python" width="40" height="40"/> <img src="https://cdn.worldvectorlogo.com/logos/django.svg" alt="django" width="40" height="40"/> <img src="https://www.vectorlogo.zone/logos/sqlite/sqlite-icon.svg" alt="sqlite" width="40" height="40"/> <img src="https://res.cloudinary.com/apideck/image/upload/w_128,f_auto/v1616206512/icons/django-rest-framework.png" alt="git" width="40" height="40"/>  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/css3/css3-original-wordmark.svg" alt="css3" width="40" height="40"/> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/html5/html5-original-wordmark.svg" alt="html5" width="40" height="40"/> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/javascript/javascript-original.svg" alt="javascript" width="40" height="40"/>&nbsp;&nbsp;&nbsp;&nbsp; <img src="https://static-00.iconduck.com/assets.00/postman-icon-497x512-beb7sy75.png" alt="javascript" width="40" height="40"/> <img src="https://www.vectorlogo.zone/logos/git-scm/git-scm-icon.svg" alt="git" width="40" height="40"/></span>
 
+- [About me](#about-me)
+  - [What to pay attention to and what to pay less attention to?](#what-to-pay-attention-to-and-what-to-pay-less-attention-to)
 - [General overview](#general-overview)
   - [SEO](#seo)
   - [CRM](#crm)
 - [Technical overview](#technical-overview)
   - [Stack and used technologies](#stack-and-used-technologies)
-- [How it works?](#how-it-works)
-  - [Finding outgoing links](#finding-outgoing-links)
-  - [Checking outgoing links status](#checking-outgoing-links-status)
-  - [Checking backlinks status](#checking-backlinks-status)
-  - [Checking domain expiry date](#checking-domain-expiry-date)
-  - [Retrieving client's data](#retrieving-clients-data)
-  - [Checking positions in Google](#checking-positions-in-google)
+  - [How it works?](#how-it-works)
+    - [Finding outgoing links](#finding-outgoing-links)
+    - [Checking outgoing links status](#checking-outgoing-links-status)
+    - [Checking backlinks status](#checking-backlinks-status)
+    - [Checking domain expiry date](#checking-domain-expiry-date)
+    - [Retrieving client's data](#retrieving-clients-data)
+    - [Checking positions in Google](#checking-positions-in-google)
+  - [RESTFUL API Design](#restful-api-design)
+  - [API Security](#api-security)
 - [Database](#database)
 - [Endpoints](#endpoints)
   - [Sites](#sites)
@@ -75,26 +86,49 @@ _Are you interested in the technical details of the application? You will find t
 ### Stack and used technologies
 <span float="left"><img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/python/python-original.svg" alt="python" width="40" height="40"/> <img src="https://cdn.worldvectorlogo.com/logos/django.svg" alt="django" width="40" height="40"/> <img src="https://www.vectorlogo.zone/logos/sqlite/sqlite-icon.svg" alt="sqlite" width="40" height="40"/> <img src="https://res.cloudinary.com/apideck/image/upload/w_128,f_auto/v1616206512/icons/django-rest-framework.png" alt="git" width="40" height="40"/>  <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/css3/css3-original-wordmark.svg" alt="css3" width="40" height="40"/> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/html5/html5-original-wordmark.svg" alt="html5" width="40" height="40"/> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/javascript/javascript-original.svg" alt="javascript" width="40" height="40"/>&nbsp;&nbsp;&nbsp;&nbsp; <img src="https://static-00.iconduck.com/assets.00/postman-icon-497x512-beb7sy75.png" alt="javascript" width="40" height="40"/> <img src="https://www.vectorlogo.zone/logos/git-scm/git-scm-icon.svg" alt="git" width="40" height="40"/></span>
 
-## How it works?
-Below I will describe, in my opinion, the most interesting functionalities of the application. I'll skip the "usual stuff", like CRUD operations, or .
+### How it works?
+Below I will describe, in my opinion, the most interesting functionalities of the application. I'll skip the "usual stuff", like CRUD operations.
 
-### Finding outgoing links
-The app takes advantage of given site's sitemap(s), it scraps each sitemap (e.g. sitemap-posts.xml, sitemap-categories.xml), retrieves from them a list of all pages in the site. Then it scraps each of these sites and, with help of BeautifulSoup4 library, retrieves all outgoing links.
+#### Finding outgoing links
+The app takes advantage of given site's sitemap(s), it scrapes each sitemap (e.g. sitemap-posts.xml, sitemap-categories.xml), retrieves from them a list of all pages in the site. Then it scrapes each of these sites and, with help of BeautifulSoup4 library, retrieves all outgoing links.
 
-### Checking outgoing links status
-After finding the outgoing links from the site, the app lets user easily check, if linked sites still works. It is significant from SEO point of view. 
+#### Checking outgoing links status
+After finding the outgoing links from the site, the app lets user easily check, if linked sites still works by sending some requests to those sites and checking response code. It is significant from SEO point of view. 
 
-### Checking backlinks status
+#### Checking backlinks status
 When user has added some backlinks to the database, he can check, if they are still active, or if the rel attribute is as it should be. To achieve that, the app also uses requests and BS4 libraries to retrieve outgoing links from specified linking page.
 
-### Checking domain expiry date
+#### Checking domain expiry date
 The app, thanks to the WHOIS library, can check when your domain will expire.
 
-### Retrieving client's data
-Program uses the [API REGON](https://api.stat.gov.pl/Home/RegonApi) interface to retrive information about your clients, everyting you have to do, is entering client's company NIP (_Tax Identification Number_). It especially useful while issuing invoices.
+#### Retrieving client's data
+Program uses the [API REGON](https://api.stat.gov.pl/Home/RegonApi) interface to retrieve information about your clients, everyting you have to do, is entering client's company NIP (_Tax Identification Number_). It especially useful while issuing invoices.
 
-### Checking positions in Google
-The application can check positions of your sites in Google's SERP (search engine results page) on specified keywords. Similarly to some previous functionalities, the app scraps SERPs, and retrieves positions. 
+#### Checking positions in Google
+The application can check positions of your sites in Google's SERP (search engine results page) on specified keywords. Similarly to some previous functionalities, the app scrapes SERPs, and retrieves positions. 
+
+### RESTFUL API Design
+- [x] Use resources endpoint and HTTP Verbs
+- [x] Return correct HTTP codes
+- [x] Fields projection support
+
+### API Security
+
+Below you'll find several aspects of the API, which increase the broadly understood API security. They come from _[https://roadmap.sh/best-practices/api-security](https://roadmap.sh/best-practices/api-security)_ site. 
+- [x] Avoid ‘Basic Authentication’
+- [x] Use `Max Retry’ and jail features in Login
+- [x] Limit requests (throttling) to avoid DDoS / Brute Force attacks
+- [x] Use HSTS header with SSL to avoid SSL Strip attacks.
+- [x] Turn off directory listings
+- [x] Use proper HTTP methods for the operation
+- [x] Validate user input to avoid common vulnerabilities
+- [x] Send X-Content-Type-Options: nosniff header
+- [x] Send X-Frame-Options: deny header
+- [x] Only return the data that is needed for the client to function.
+- [x] Return the proper status code according to the operation completed
+
+
+
 
 
 ## Database
@@ -650,7 +684,7 @@ The application can check positions of your sites in Google's SERP (search engin
 
 - **api/backlinks/{backlink_id}/status/**
   - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/put.png" style="width: 40px; margin-bottom: -5px;"></span>
-  - This endpoint updates the _rel_, _active_, _rel_changed_ and _status_changed_ fields in given backlink. The app scraps the _linking_page_ and retrieves information about the link.
+  - This endpoint updates the _rel_, _active_, _rel_changed_ and _status_changed_ fields in given backlink. The app scrapes the _linking_page_ and retrieves information about the link.
   
 - **api/backlinks/status**
   - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/put.png" style="width: 40px; margin-bottom: -5px;"></span>
@@ -743,11 +777,11 @@ The application can check positions of your sites in Google's SERP (search engin
 
   - <span float="left"><img src="https://piotr.detyna.pl/put.png" style="width: 40px; margin-bottom: -5px;"></span> Creates new external links objects and replaces current external links in the external links manager with them.
 
-    The app scraps every page of given site in search for outgoing links, and updates your external links manager object.
+    The app scrapes every page of given site in search for outgoing links, and updates your external links manager object.
 
 - **api/external-links-managers/{site_id}/status/**
   - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/put.png" style="width: 40px; margin-bottom: -5px;"></span>
-  - This endpoint updates the _is_linked_page_available_ field in external links manager related to given site. The app goes through every _linked_page_ in external_links field, scraps the page and retrieves information about the link.
+  - This endpoint updates the _is_linked_page_available_ field in external links manager related to given site. The app goes through every _linked_page_ in external_links field, scrapes the page and retrieves information about the link.
   
 - **api/external-links-managers/status/**
   - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/put.png" style="width: 40px; margin-bottom: -5px;"></span>
@@ -810,7 +844,7 @@ The application can check positions of your sites in Google's SERP (search engin
   - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/put.png" style="width: 40px; margin-bottom: -5px;"></span>
   - This endpoint creates a new check object and adds it to the keyword's _checks_ field.
 
-      The app scraps the Google results page for query _keyword_ and returns your site's position.
+      The app scrapes the Google results page for query _keyword_ and returns your site's position.
   
 - **api/keywords/position**
   - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/put.png" style="width: 40px; margin-bottom: -5px;"></span>
@@ -831,7 +865,7 @@ The application can check positions of your sites in Google's SERP (search engin
               "logo": "/media/sites/12/logo.png",
               "date": "2023-11-22",
               "domain_expiry_date": "2024-05-21",
-              "client": 2- [SEO and CRM app](#seo-and-crm-app)
+              "client": 2
             }
           }
         ```
@@ -842,7 +876,7 @@ The application can check positions of your sites in Google's SERP (search engin
         "site_id": 10
       }
       ```
-  - <span float="left"><img src="https://piotr.detyna.pl/delete.png" style="width: 40px; margin-bottom: -5px;"></span> removes current_site from the session, of course it doesn't deletes a whole site object.
+  - <span float="left"><img src="https://piotr.detyna.pl/delete.png" style="width: 40px; margin-bottom: -5px;"></span> removes current_site from the session, of course it doesn't delete a whole site object.
   
 - **api/session/login/**
   - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/post.png" style="width: 40px; margin-bottom: -5px;"></span>
