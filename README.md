@@ -141,8 +141,8 @@ Below you'll find several aspects of the API, which increase the broadly underst
 ### Sites
 - **api/sites/**
   -  Allowed methods: 
-<span float="left"><img src="https://piotr.detyna.pl/get.png" style="width: 40px; margin-bottom: -5px;"> <img src="https://piotr.detyna.pl/post.png" style="width: 40px; margin-bottom: -5px;"></span> 
-  - <span float="left"><img src="https://piotr.detyna.pl/get.png" style="width: 40px; margin-bottom: -5px;"></span> returns list of all sites.
+<span float="left"><img src="https://piotr.detyna.pl/methods/get.png" style="width: 40px; margin-bottom: -5px;"> <img src="https://piotr.detyna.pl/methods/post.png" style="width: 40px; margin-bottom: -5px;"></span> 
+  - <span float="left"><img src="https://piotr.detyna.pl/methods/get.png" style="width: 40px; margin-bottom: -5px;"></span> returns list of all sites.
     - Example response from `api/sites/` using the GET method:
       ``` 
       {
@@ -167,7 +167,7 @@ Below you'll find several aspects of the API, which increase the broadly underst
           ]
       }
       ```
-  - <span float="left"><img src="https://piotr.detyna.pl/post.png" style="width: 40px; margin-bottom: -5px;"></span> adds new site.
+  - <span float="left"><img src="https://piotr.detyna.pl/methods/post.png" style="width: 40px; margin-bottom: -5px;"></span> adds new site.
     - Example request data for `api/clients` with the POST method:
       ``` 
       {
@@ -180,9 +180,9 @@ Below you'll find several aspects of the API, which increase the broadly underst
 
 
 - **api/sites/{site_id}/**
-  - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/get.png" style="width: 40px; margin-bottom: -5px;"> <img src="https://piotr.detyna.pl/patch.png" style="width: 40px; margin-bottom: -5px;"> <img src="https://piotr.detyna.pl/delete.png" style="width: 40px; margin-bottom: -5px;"></span> 
+  - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/methods/get.png" style="width: 40px; margin-bottom: -5px;"> <img src="https://piotr.detyna.pl/methods/patch.png" style="width: 40px; margin-bottom: -5px;"> <img src="https://piotr.detyna.pl/methods/delete.png" style="width: 40px; margin-bottom: -5px;"></span> 
 
-  - <span float="left"><img src="https://piotr.detyna.pl/get.png" style="width: 40px; margin-bottom: -5px;"></span> returns data of site with given id
+  - <span float="left"><img src="https://piotr.detyna.pl/methods/get.png" style="width: 40px; margin-bottom: -5px;"></span> returns data of site with given id
     - Example response from `api/sites/{site_id}/` with the GET method where `site_id` = 1:
       ```
       {
@@ -239,28 +239,28 @@ Below you'll find several aspects of the API, which increase the broadly underst
       }
       ```
     
-  - <span float="left"><img src="https://piotr.detyna.pl/patch.png" style="width: 40px; margin-bottom: -5px;"></span> Updates given site object with passed values.
+  - <span float="left"><img src="https://piotr.detyna.pl/methods/patch.png" style="width: 40px; margin-bottom: -5px;"></span> Updates given site object with passed values.
     - Example request data for `api/sites/{site_id}/` with the PATCH method, where `site_id` is the id of site we want to change its data, in this case `id` = 1 and we want to update `url` field.
       ```
       {
         "url": "new-domain.com"
       }
       ```
-  - <span float="left"><img src="https://piotr.detyna.pl/delete.png" style="width: 40px; margin-bottom: -5px;"></span> deletes given site from the database. As well as all its related records.
+  - <span float="left"><img src="https://piotr.detyna.pl/methods/delete.png" style="width: 40px; margin-bottom: -5px;"></span> deletes given site from the database. As well as all its related records.
 
 - **api/sites/expiry/**
-  - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/put.png" style="width: 40px; margin-bottom: -5px;"></span>
+  - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/methods/put.png" style="width: 40px; margin-bottom: -5px;"></span>
   - This endpoint updates **all** sites domains expiry dates
   
 - **api/sites/{site_id}/expiry/**
-  - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/put.png" style="width: 40px; margin-bottom: -5px;"> </span>
+  - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/methods/put.png" style="width: 40px; margin-bottom: -5px;"> </span>
   - This endpoint updates the expiry date of the site's domain
    
 
 ### Clients
 - **api/clients/**
-  - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/get.png" style="width: 40px; margin-bottom: -5px;"> <img src="https://piotr.detyna.pl/post.png" style="width: 40px; margin-bottom: -5px;"></span>
-  - <span float="left"><img src="https://piotr.detyna.pl/get.png" style="width: 40px; margin-bottom: -5px;"></span> returns list of clients' data.
+  - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/methods/get.png" style="width: 40px; margin-bottom: -5px;"> <img src="https://piotr.detyna.pl/methods/post.png" style="width: 40px; margin-bottom: -5px;"></span>
+  - <span float="left"><img src="https://piotr.detyna.pl/methods/get.png" style="width: 40px; margin-bottom: -5px;"></span> returns list of clients' data.
     - Example response from `api/clients` with the GET method:
       ```
       {
@@ -287,7 +287,7 @@ Below you'll find several aspects of the API, which increase the broadly underst
           ]
       }
       ```
-  - <span float="left"><img src="https://piotr.detyna.pl/post.png" style="width: 40px; margin-bottom: -5px;"></span> adds new client.
+  - <span float="left"><img src="https://piotr.detyna.pl/methods/post.png" style="width: 40px; margin-bottom: -5px;"></span> adds new client.
     - Example request data for `api/clients` with the POST method:
       ```
         {
@@ -303,8 +303,8 @@ Below you'll find several aspects of the API, which increase the broadly underst
 
 
 - **api/clients/{client_id}/**
-  - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/get.png" style="width: 40px; margin-bottom: -5px;"> <img src="https://piotr.detyna.pl/patch.png" style="width: 40px; margin-bottom: -5px;"> <img src="https://piotr.detyna.pl/delete.png" style="width: 40px; margin-bottom: -5px;"></span>
-  - <span float="left"><img src="https://piotr.detyna.pl/get.png" style="width: 40px; margin-bottom: -5px;"></span> returns data of client with given id
+  - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/methods/get.png" style="width: 40px; margin-bottom: -5px;"> <img src="https://piotr.detyna.pl/methods/patch.png" style="width: 40px; margin-bottom: -5px;"> <img src="https://piotr.detyna.pl/methods/delete.png" style="width: 40px; margin-bottom: -5px;"></span>
+  - <span float="left"><img src="https://piotr.detyna.pl/methods/get.png" style="width: 40px; margin-bottom: -5px;"></span> returns data of client with given id
     - Example response from `api/clients/{client_id}/` with the GET method where `client_id` = 1:
       ```
       {
@@ -387,7 +387,7 @@ Below you'll find several aspects of the API, which increase the broadly underst
         ```
 
 
-  - <span float="left"><img src="https://piotr.detyna.pl/patch.png" style="width: 40px; margin-bottom: -5px;"></span> Updates given client object with passed values.
+  - <span float="left"><img src="https://piotr.detyna.pl/methods/patch.png" style="width: 40px; margin-bottom: -5px;"></span> Updates given client object with passed values.
     - Example request data for `api/clients/{client_id}/` with the PATCH method, where `client_id` is the id of client we want to change his data, in this case id = 1 and we want to update nip and name fields.
       ```
         {
@@ -395,12 +395,12 @@ Below you'll find several aspects of the API, which increase the broadly underst
           "name": "Microsoft"
         }
       ```
-  - <span float="left"><img src="https://piotr.detyna.pl/delete.png" style="width: 40px; margin-bottom: -5px;"></span> deletes given client from the database. As well as all his sites. 
+  - <span float="left"><img src="https://piotr.detyna.pl/methods/delete.png" style="width: 40px; margin-bottom: -5px;"></span> deletes given client from the database. As well as all his sites. 
   
 ### Notes
 - **api/notes/**
-  - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/get.png" style="width: 40px; margin-bottom: -5px;"> <img src="https://piotr.detyna.pl/post.png" style="width: 40px; margin-bottom: -5px;"></span>
-  - <span float="left"><img src="https://piotr.detyna.pl/get.png" style="width: 40px; margin-bottom: -5px;"></span> returns list of notes objects.
+  - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/methods/get.png" style="width: 40px; margin-bottom: -5px;"> <img src="https://piotr.detyna.pl/methods/post.png" style="width: 40px; margin-bottom: -5px;"></span>
+  - <span float="left"><img src="https://piotr.detyna.pl/methods/get.png" style="width: 40px; margin-bottom: -5px;"></span> returns list of notes objects.
     - Example response from `api/notes/` with the GET method:
       ```
         
@@ -422,7 +422,7 @@ Below you'll find several aspects of the API, which increase the broadly underst
           ]
         }
       ```
-  - <span float="left"><img src="https://piotr.detyna.pl/post.png" style="width: 40px; margin-bottom: -5px;"></span> adds new note.
+  - <span float="left"><img src="https://piotr.detyna.pl/methods/post.png" style="width: 40px; margin-bottom: -5px;"></span> adds new note.
     - Example request data for `api/notes/` with the POST method:
       ```
         {
@@ -432,8 +432,8 @@ Below you'll find several aspects of the API, which increase the broadly underst
         }
       ``` 
 - **api/notes/{note_id}/**
-  - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/get.png" style="width: 40px; margin-bottom: -5px;"> <img src="https://piotr.detyna.pl/patch.png" style="width: 40px; margin-bottom: -5px;"> <img src="https://piotr.detyna.pl/delete.png" style="width: 40px; margin-bottom: -5px;"></span>
-  - <span float="left"><img src="https://piotr.detyna.pl/get.png" style="width: 40px; margin-bottom: -5px;"></span> returns data of note with given id
+  - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/methods/get.png" style="width: 40px; margin-bottom: -5px;"> <img src="https://piotr.detyna.pl/methods/patch.png" style="width: 40px; margin-bottom: -5px;"> <img src="https://piotr.detyna.pl/methods/delete.png" style="width: 40px; margin-bottom: -5px;"></span>
+  - <span float="left"><img src="https://piotr.detyna.pl/methods/get.png" style="width: 40px; margin-bottom: -5px;"></span> returns data of note with given id
     - Example response from `api/notes/{note_id}/` with the GET method where `note_id` = 1:
       ```
       {
@@ -448,7 +448,7 @@ Below you'll find several aspects of the API, which increase the broadly underst
     - Available values for the query parameter **attributes**: `text, title, id, date`.
 
 
-  - <span float="left"><img src="https://piotr.detyna.pl/patch.png" style="width: 40px; margin-bottom: -5px;"></span> Updates given note object with passed values.
+  - <span float="left"><img src="https://piotr.detyna.pl/methods/patch.png" style="width: 40px; margin-bottom: -5px;"></span> Updates given note object with passed values.
     - Example request data for `api/notes/{note_id}/` with the PATCH method, we want to update text and title fields.
       ```
         {
@@ -456,13 +456,13 @@ Below you'll find several aspects of the API, which increase the broadly underst
           "content": "new content"
         }
       ```
-  - <span float="left"><img src="https://piotr.detyna.pl/delete.png" style="width: 40px; margin-bottom: -5px;"></span> deletes given note from the database. 
+  - <span float="left"><img src="https://piotr.detyna.pl/methods/delete.png" style="width: 40px; margin-bottom: -5px;"></span> deletes given note from the database. 
 
 
 ### Contracts
 - **api/contracts/**
-  - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/get.png" style="width: 40px; margin-bottom: -5px;"> <img src="https://piotr.detyna.pl/post.png" style="width: 40px; margin-bottom: -5px;"></span>
-  - <span float="left"><img src="https://piotr.detyna.pl/get.png" style="width: 40px; margin-bottom: -5px;"></span> returns list of contracts objects.
+  - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/methods/get.png" style="width: 40px; margin-bottom: -5px;"> <img src="https://piotr.detyna.pl/methods/post.png" style="width: 40px; margin-bottom: -5px;"></span>
+  - <span float="left"><img src="https://piotr.detyna.pl/methods/get.png" style="width: 40px; margin-bottom: -5px;"></span> returns list of contracts objects.
     - Example response from `api/contracts/` with the GET method:
       ``` 
         {
@@ -489,7 +489,7 @@ Below you'll find several aspects of the API, which increase the broadly underst
           ]
         }
       ```
-  - <span float="left"><img src="https://piotr.detyna.pl/post.png" style="width: 40px; margin-bottom: -5px;"></span> adds new contract.
+  - <span float="left"><img src="https://piotr.detyna.pl/methods/post.png" style="width: 40px; margin-bottom: -5px;"></span> adds new contract.
     - Example request data for `api/contracts/` with the POST method:
       ```
         {
@@ -502,8 +502,8 @@ Below you'll find several aspects of the API, which increase the broadly underst
         }
       ``` 
 - **api/contracts/{contract_id}/**
-  - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/get.png" style="width: 40px; margin-bottom: -5px;"> <img src="https://piotr.detyna.pl/patch.png" style="width: 40px; margin-bottom: -5px;"> <img src="https://piotr.detyna.pl/delete.png" style="width: 40px; margin-bottom: -5px;"></span>
-  - <span float="left"><img src="https://piotr.detyna.pl/get.png" style="width: 40px; margin-bottom: -5px;"></span> returns data of contract with given `id`
+  - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/methods/get.png" style="width: 40px; margin-bottom: -5px;"> <img src="https://piotr.detyna.pl/methods/patch.png" style="width: 40px; margin-bottom: -5px;"> <img src="https://piotr.detyna.pl/methods/delete.png" style="width: 40px; margin-bottom: -5px;"></span>
+  - <span float="left"><img src="https://piotr.detyna.pl/methods/get.png" style="width: 40px; margin-bottom: -5px;"></span> returns data of contract with given `id`
     - Example response from `api/contracts/{contract_id}/` with the GET method where `contract_id` = 1:
       ```
       {
@@ -521,7 +521,7 @@ Below you'll find several aspects of the API, which increase the broadly underst
     - Available values for the query parameter **attributes**: `invoice_frequency, value, category, invoice_date, is_urgent, id, days_before_invoice_date_to_mark_urgent`.
 
 
-  - <span float="left"><img src="https://piotr.detyna.pl/patch.png" style="width: 40px; margin-bottom: -5px;"></span> Updates given contract object with passed values. As well as all its invoices.
+  - <span float="left"><img src="https://piotr.detyna.pl/methods/patch.png" style="width: 40px; margin-bottom: -5px;"></span> Updates given contract object with passed values. As well as all its invoices.
     - Example request data for `api/contracts/{contract_id}/` with the PATCH method, we want to update `value` and `invoice_date` fields.
       ```
         {
@@ -529,22 +529,22 @@ Below you'll find several aspects of the API, which increase the broadly underst
           "invoice_date": "2023-12-30"
         }
       ```
-  - <span float="left"><img src="https://piotr.detyna.pl/delete.png" style="width: 40px; margin-bottom: -5px;"></span> deletes given contract from the database. 
+  - <span float="left"><img src="https://piotr.detyna.pl/methods/delete.png" style="width: 40px; margin-bottom: -5px;"></span> deletes given contract from the database. 
 
 - **api/contracts/{contract_id}/urgency**
-  - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/put.png" style="width: 40px; margin-bottom: -5px;"></span>
+  - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/methods/put.png" style="width: 40px; margin-bottom: -5px;"></span>
   - This endpoint updates the `is_urgent` field in given contract. If `invoice_date` is passing in less than `days_before_invoice_date_to_mark_urgent` days, the contract is marked as urgent (`is_urgent = True`).
 
 - **api/contracts/urgency**
-  - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/put.png" style="width: 40px; margin-bottom: -5px;"></span>
+  - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/methods/put.png" style="width: 40px; margin-bottom: -5px;"></span>
   - This endpoint does the same as `api/contracts/{contract_id}/urgency`, but for every contract in the database.
 
 
 
 ### Invoices
 - **api/invoices/**
-  - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/get.png" style="width: 40px; margin-bottom: -5px;"> <img src="https://piotr.detyna.pl/post.png" style="width: 40px; margin-bottom: -5px;"></span>
-  - <span float="left"><img src="https://piotr.detyna.pl/get.png" style="width: 40px; margin-bottom: -5px;"></span> returns list of invoices objects.
+  - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/methods/get.png" style="width: 40px; margin-bottom: -5px;"> <img src="https://piotr.detyna.pl/methods/post.png" style="width: 40px; margin-bottom: -5px;"></span>
+  - <span float="left"><img src="https://piotr.detyna.pl/methods/get.png" style="width: 40px; margin-bottom: -5px;"></span> returns list of invoices objects.
     - Example response from `api/invoices/` with the GET method:
       ``` 
       {
@@ -567,7 +567,7 @@ Below you'll find several aspects of the API, which increase the broadly underst
         ]
       }
       ```
-  - <span float="left"><img src="https://piotr.detyna.pl/post.png" style="width: 40px; margin-bottom: -5px;"></span> adds new invoice.
+  - <span float="left"><img src="https://piotr.detyna.pl/methods/post.png" style="width: 40px; margin-bottom: -5px;"></span> adds new invoice.
     - Example request data for `api/invoices/` with the POST method:
       ```
         {
@@ -578,8 +578,8 @@ Below you'll find several aspects of the API, which increase the broadly underst
         }
       ``` 
 - **api/invoices/{invoice_id}/**
-  - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/get.png" style="width: 40px; margin-bottom: -5px;"> <img src="https://piotr.detyna.pl/patch.png" style="width: 40px; margin-bottom: -5px;"> <img src="https://piotr.detyna.pl/delete.png" style="width: 40px; margin-bottom: -5px;"></span>
-  - <span float="left"><img src="https://piotr.detyna.pl/get.png" style="width: 40px; margin-bottom: -5px;"></span> returns data of invoice with given `id`
+  - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/methods/get.png" style="width: 40px; margin-bottom: -5px;"> <img src="https://piotr.detyna.pl/methods/patch.png" style="width: 40px; margin-bottom: -5px;"> <img src="https://piotr.detyna.pl/methods/delete.png" style="width: 40px; margin-bottom: -5px;"></span>
+  - <span float="left"><img src="https://piotr.detyna.pl/methods/get.png" style="width: 40px; margin-bottom: -5px;"></span> returns data of invoice with given `id`
     - Example response from `api/invoices/{invoice_id}/` with the GET method where `invoice_id` = 1:
       ```
       {
@@ -598,28 +598,28 @@ Below you'll find several aspects of the API, which increase the broadly underst
 
 
 
-  - <span float="left"><img src="https://piotr.detyna.pl/patch.png" style="width: 40px; margin-bottom: -5px;"></span> Updates given invoice object with passed values.
+  - <span float="left"><img src="https://piotr.detyna.pl/methods/patch.png" style="width: 40px; margin-bottom: -5px;"></span> Updates given invoice object with passed values.
     - Example request data for `api/invoices/{invoice_id}/` with the PATCH method, we want to update the `is_paid` field.
       ```
         {
           "is_paid": false,
         }
       ```
-  - <span float="left"><img src="https://piotr.detyna.pl/delete.png" style="width: 40px; margin-bottom: -5px;"></span> deletes given invoice from the database. 
+  - <span float="left"><img src="https://piotr.detyna.pl/methods/delete.png" style="width: 40px; margin-bottom: -5px;"></span> deletes given invoice from the database. 
 
 - **api/invoices/{invoice_id}/overduity/**
-  - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/put.png" style="width: 40px; margin-bottom: -5px;"></span>
+  - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/methods/put.png" style="width: 40px; margin-bottom: -5px;"></span>
   - This endpoint updates the `is_overdue` field in given invoice. If the `payment_date` has passed and `is_paid == False`, the invoice will be marked as overdued (`is_overdue = True`)
   
 - **api/invoices/overduity**
-  - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/put.png" style="width: 40px; margin-bottom: -5px;"></span>
+  - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/methods/put.png" style="width: 40px; margin-bottom: -5px;"></span>
   - This endpoint does the same as `api/invoices/{invoice_id}/overduity/`, but for every invoice in the database.
 
 
 ### Backlinks
 - **api/backlinks/**
-  - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/get.png" style="width: 40px; margin-bottom: -5px;"> <img src="https://piotr.detyna.pl/post.png" style="width: 40px; margin-bottom: -5px;"></span>
-  - <span float="left"><img src="https://piotr.detyna.pl/get.png" style="width: 40px; margin-bottom: -5px;"></span> returns list of backlinks objects.
+  - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/methods/get.png" style="width: 40px; margin-bottom: -5px;"> <img src="https://piotr.detyna.pl/methods/post.png" style="width: 40px; margin-bottom: -5px;"></span>
+  - <span float="left"><img src="https://piotr.detyna.pl/methods/get.png" style="width: 40px; margin-bottom: -5px;"></span> returns list of backlinks objects.
     - Example response from `api/backlinks/` with the GET method:
       ``` 
       {
@@ -646,7 +646,7 @@ Below you'll find several aspects of the API, which increase the broadly underst
         ]
       }
       ```
-  - <span float="left"><img src="https://piotr.detyna.pl/post.png" style="width: 40px; margin-bottom: -5px;"></span> adds new backlink.
+  - <span float="left"><img src="https://piotr.detyna.pl/methods/post.png" style="width: 40px; margin-bottom: -5px;"></span> adds new backlink.
     - Example request data for `api/backlinks/` with the POST method:
       ```
         {
@@ -655,8 +655,8 @@ Below you'll find several aspects of the API, which increase the broadly underst
         }
       ``` 
 - **api/backlinks/{backlink_id}/**
-  - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/get.png" style="width: 40px; margin-bottom: -5px;"> <img src="https://piotr.detyna.pl/patch.png" style="width: 40px; margin-bottom: -5px;"> <img src="https://piotr.detyna.pl/delete.png" style="width: 40px; margin-bottom: -5px;"></span>
-  - <span float="left"><img src="https://piotr.detyna.pl/get.png" style="width: 40px; margin-bottom: -5px;"></span> returns data of backlink with given id
+  - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/methods/get.png" style="width: 40px; margin-bottom: -5px;"> <img src="https://piotr.detyna.pl/methods/patch.png" style="width: 40px; margin-bottom: -5px;"> <img src="https://piotr.detyna.pl/methods/delete.png" style="width: 40px; margin-bottom: -5px;"></span>
+  - <span float="left"><img src="https://piotr.detyna.pl/methods/get.png" style="width: 40px; margin-bottom: -5px;"></span> returns data of backlink with given id
     - Example response from `api/backlinks/{backlink_id}/` with the GET method where `backlink_id` = 2:
       ```
       {
@@ -674,21 +674,21 @@ Below you'll find several aspects of the API, which increase the broadly underst
     - Available values for the query parameter **attributes**: `id, linking_page, active, rel, rel_changed, status_changed, site`.
 
 
-  - <span float="left"><img src="https://piotr.detyna.pl/patch.png" style="width: 40px; margin-bottom: -5px;"></span> Updates given backlink object with passed values.
+  - <span float="left"><img src="https://piotr.detyna.pl/methods/patch.png" style="width: 40px; margin-bottom: -5px;"></span> Updates given backlink object with passed values.
     - Example request data for `api/backlinks/{backlink_id}/` with the PATCH method, we want to update the `linking_page` field.
       ```
         {
           "linking_page": "https://new-links.pl"
         }
       ```
-  - <span float="left"><img src="https://piotr.detyna.pl/delete.png" style="width: 40px; margin-bottom: -5px;"></span> deletes given backlink from the database. 
+  - <span float="left"><img src="https://piotr.detyna.pl/methods/delete.png" style="width: 40px; margin-bottom: -5px;"></span> deletes given backlink from the database. 
 
 - **api/backlinks/{backlink_id}/status/**
-  - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/put.png" style="width: 40px; margin-bottom: -5px;"></span>
+  - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/methods/put.png" style="width: 40px; margin-bottom: -5px;"></span>
   - This endpoint updates the `rel`, `active`, `rel_changed` and `status_changed` fields in given backlink. The app scrapes the `linking_page` and retrieves information about the link.
   
 - **api/backlinks/status**
-  - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/put.png" style="width: 40px; margin-bottom: -5px;"></span>
+  - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/methods/put.png" style="width: 40px; margin-bottom: -5px;"></span>
   - **Site query parameter** - if you want to update every backlink related to given page, you can use this parameter. Example: `/api/backlinks/status/?site=1`.
   - This endpoint does the same as `api/backlinks/{backlink_id}/status/`, but for every backlink, or for every backlink associated with the given site in the database.
 
@@ -696,8 +696,8 @@ Below you'll find several aspects of the API, which increase the broadly underst
 
 ### External links managers
 - **api/external-links-managers/**
-  - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/get.png" style="width: 40px; margin-bottom: -5px;"></span>
-  - <span float="left"><img src="https://piotr.detyna.pl/get.png" style="width: 40px; margin-bottom: -5px;"></span> returns list of external links managers objects.
+  - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/methods/get.png" style="width: 40px; margin-bottom: -5px;"></span>
+  - <span float="left"><img src="https://piotr.detyna.pl/methods/get.png" style="width: 40px; margin-bottom: -5px;"></span> returns list of external links managers objects.
     - Example response from `api/external-links-managers/` with the GET method:
       ``` 
       {
@@ -740,8 +740,8 @@ Below you'll find several aspects of the API, which increase the broadly underst
       }
       ```
 - **api/external-links-managers/{site_id}/**
-  - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/get.png" style="width: 40px; margin-bottom: -5px;"> <img src="https://piotr.detyna.pl/put.png" style="width: 40px; margin-bottom: -5px;"></span>
-  - <span float="left"><img src="https://piotr.detyna.pl/get.png" style="width: 40px; margin-bottom: -5px;"></span> returns data of external links manager object related to `site` with the given `id`
+  - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/methods/get.png" style="width: 40px; margin-bottom: -5px;"> <img src="https://piotr.detyna.pl/methods/put.png" style="width: 40px; margin-bottom: -5px;"></span>
+  - <span float="left"><img src="https://piotr.detyna.pl/methods/get.png" style="width: 40px; margin-bottom: -5px;"></span> returns data of external links manager object related to `site` with the given `id`
     - Example response from `api/external-links-managers/{site_id}/` with the GET method where `site_id` = 1:
       ``` 
       {
@@ -776,24 +776,24 @@ Below you'll find several aspects of the API, which increase the broadly underst
     - Available values for the query parameter **attributes**: `id, external_links, excluded, date, progress_current, progress_target, site`.
 
 
-  - <span float="left"><img src="https://piotr.detyna.pl/put.png" style="width: 40px; margin-bottom: -5px;"></span> Creates new external links objects and replaces current external links in the external links manager with them.
+  - <span float="left"><img src="https://piotr.detyna.pl/methods/put.png" style="width: 40px; margin-bottom: -5px;"></span> Creates new external links objects and replaces current external links in the external links manager with them.
 
     The app scrapes every page of given site in search for outgoing links, and updates your external links manager object.
 
 - **api/external-links-managers/{site_id}/status/**
-  - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/put.png" style="width: 40px; margin-bottom: -5px;"></span>
+  - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/methods/put.png" style="width: 40px; margin-bottom: -5px;"></span>
   - This endpoint updates the `is_linked_page_available` field in external links manager related to given site. The app goes through every `linked_page` in `external_links` field, scrapes the page and retrieves information about the link.
   
 - **api/external-links-managers/status/**
-  - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/put.png" style="width: 40px; margin-bottom: -5px;"></span>
+  - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/methods/put.png" style="width: 40px; margin-bottom: -5px;"></span>
   - This endpoint does the same as `api/external-links-managers/status/`, but for every external links manager. It is worth mentioning it is very time-expensive operation, so it probably isn't desired approach.
 
 
 
 ### Keywords
 - **api/keywords/**
-  - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/get.png" style="width: 40px; margin-bottom: -5px;"> <img src="https://piotr.detyna.pl/post.png" style="width: 40px; margin-bottom: -5px;"></span>
-  - <span float="left"><img src="https://piotr.detyna.pl/get.png" style="width: 40px; margin-bottom: -5px;"></span> returns list of keywords objects.
+  - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/methods/get.png" style="width: 40px; margin-bottom: -5px;"> <img src="https://piotr.detyna.pl/methods/post.png" style="width: 40px; margin-bottom: -5px;"></span>
+  - <span float="left"><img src="https://piotr.detyna.pl/methods/get.png" style="width: 40px; margin-bottom: -5px;"></span> returns list of keywords objects.
     - Example response from `api/keywords/` with the GET method:
       ``` 
       {
@@ -814,7 +814,7 @@ Below you'll find several aspects of the API, which increase the broadly underst
         ]
       }
       ```
-  - <span float="left"><img src="https://piotr.detyna.pl/post.png" style="width: 40px; margin-bottom: -5px;"></span> adds new keyword.
+  - <span float="left"><img src="https://piotr.detyna.pl/methods/post.png" style="width: 40px; margin-bottom: -5px;"></span> adds new keyword.
     - Example request data for `api/keywords/` with the POST method:
       ```
       {
@@ -823,8 +823,8 @@ Below you'll find several aspects of the API, which increase the broadly underst
       }
       ``` 
 - **api/keywords/{keyword_id}/**
-  - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/get.png" style="width: 40px; margin-bottom: -5px;"> <img src="https://piotr.detyna.pl/delete.png" style="width: 40px; margin-bottom: -5px;"></span>
-  - <span float="left"><img src="https://piotr.detyna.pl/get.png" style="width: 40px; margin-bottom: -5px;"></span> returns data of keyword with given `id`
+  - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/methods/get.png" style="width: 40px; margin-bottom: -5px;"> <img src="https://piotr.detyna.pl/methods/delete.png" style="width: 40px; margin-bottom: -5px;"></span>
+  - <span float="left"><img src="https://piotr.detyna.pl/methods/get.png" style="width: 40px; margin-bottom: -5px;"></span> returns data of keyword with given `id`
     - Example response from `api/keywords/{keyword_id}/` with the GET method where `keyword_id` = 1:
       ```
       {
@@ -839,24 +839,24 @@ Below you'll find several aspects of the API, which increase the broadly underst
     - Available values for the query parameter **attributes**: `id, position, keyword, site, checks`.
 
 
-  - <span float="left"><img src="https://piotr.detyna.pl/delete.png" style="width: 40px; margin-bottom: -5px;"></span> deletes given `keyword` from the database. As well as all its checks objects. 
+  - <span float="left"><img src="https://piotr.detyna.pl/methods/delete.png" style="width: 40px; margin-bottom: -5px;"></span> deletes given `keyword` from the database. As well as all its checks objects. 
 
 - **api/keywords/{keyword_id}/position/**
-  - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/put.png" style="width: 40px; margin-bottom: -5px;"></span>
+  - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/methods/put.png" style="width: 40px; margin-bottom: -5px;"></span>
   - This endpoint creates a new check object and adds it to the keyword's `checks` field.
 
       The app scrapes the Google results page for query `keyword` and returns your site's position.
   
 - **api/keywords/position**
-  - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/put.png" style="width: 40px; margin-bottom: -5px;"></span>
+  - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/methods/put.png" style="width: 40px; margin-bottom: -5px;"></span>
   - **Site query parameter** - if you want to check position of every keyword related to given page, you can use this parameter. Example: `/api/keywords/position/?site=1`.
   - This endpoint does the same as `api/keywords/{keyword_id}/position/`, but for every keyword in a site or in the whole database. It is worth mentioning it is very time-expensive operation, and you will be quickly blocked by Google, so it probably isn't desired approach.
 
 ### Session
 
 - **api/session/current-site/**
-  - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/get.png" style="width: 40px; margin-bottom: -5px;"> <img src="https://piotr.detyna.pl/put.png" style="width: 40px; margin-bottom: -5px;"> <img src="https://piotr.detyna.pl/delete.png" style="width: 40px; margin-bottom: -5px;"></span>
-  - <span float="left"><img src="https://piotr.detyna.pl/get.png" style="width: 40px; margin-bottom: -5px;"></span> returns current site data (if it is set in the session)
+  - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/methods/get.png" style="width: 40px; margin-bottom: -5px;"> <img src="https://piotr.detyna.pl/methods/put.png" style="width: 40px; margin-bottom: -5px;"> <img src="https://piotr.detyna.pl/methods/delete.png" style="width: 40px; margin-bottom: -5px;"></span>
+  - <span float="left"><img src="https://piotr.detyna.pl/methods/get.png" style="width: 40px; margin-bottom: -5px;"></span> returns current site data (if it is set in the session)
     - Example response from `api/session/current-site/` using the GET method when `current_site` in the session is set to 12 (`id` of the site):
         ```
           {
@@ -870,26 +870,26 @@ Below you'll find several aspects of the API, which increase the broadly underst
             }
           }
         ```
-  - <span float="left"><img src="https://piotr.detyna.pl/put.png" style="width: 40px; margin-bottom: -5px;"></span> updates (or adds if it isn't set) current_site value in the session with a new site `id`
+  - <span float="left"><img src="https://piotr.detyna.pl/methods/put.png" style="width: 40px; margin-bottom: -5px;"></span> updates (or adds if it isn't set) current_site value in the session with a new site `id`
     - Example request data for `api/session/current-site/` using the PUT method:
       ```
       {
         "site_id": 10
       }
       ```
-  - <span float="left"><img src="https://piotr.detyna.pl/delete.png" style="width: 40px; margin-bottom: -5px;"></span> removes `current_site` from the session, of course it doesn't delete a whole site object.
+  - <span float="left"><img src="https://piotr.detyna.pl/methods/delete.png" style="width: 40px; margin-bottom: -5px;"></span> removes `current_site` from the session, of course it doesn't delete a whole site object.
   
 - **api/session/login/**
-  - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/post.png" style="width: 40px; margin-bottom: -5px;"></span>
-  - <span float="left"><img src="https://piotr.detyna.pl/post.png" style="width: 40px; margin-bottom: -5px;"></span> Example request data:
+  - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/methods/post.png" style="width: 40px; margin-bottom: -5px;"></span>
+  - <span float="left"><img src="https://piotr.detyna.pl/methods/post.png" style="width: 40px; margin-bottom: -5px;"></span> Example request data:
     ```
     {
       "username": "username",
       "password": "password",
     }
-    ```
+    ``` 
 - **api/session/logout/**
-  - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/delete.png" style="width: 40px; margin-bottom: -5px;"></span>
+  - Allowed methods: <span float="left"><img src="https://piotr.detyna.pl/methods/delete.png" style="width: 40px; margin-bottom: -5px;"></span>
   
 
 
